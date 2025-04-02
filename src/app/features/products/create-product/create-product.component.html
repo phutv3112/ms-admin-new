@@ -1,0 +1,121 @@
+<p-fluid>
+    <div class="flex">
+        <div class="card flex flex-col gap-6 w-full">
+            <div class="font-semibold text-xl">Create new product</div>
+            <div class="flex flex-col md:flex-row gap-6">
+                <div class="flex flex-wrap gap-2 w-full">
+                    <label for="name">Product Name</label>
+                    <input pInputText id="name" type="text" />
+                </div>
+                <div class="flex flex-wrap gap-2 w-full">
+                    <label for="categories">Category</label>
+                    <p-multiselect [options]="countries" [(ngModel)]="selectedCountries" placeholder="Select Countries"
+                        optionLabel="name" styleClass="w-full" display="chip">
+                        <ng-template let-country #item>
+                            <div class="flex items-center gap-2">
+                                <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+                                    [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" />
+                                <div>{{ country.name }}</div>
+                            </div>
+                        </ng-template>
+                        <ng-template #dropdownicon>
+                            <i class="pi pi-map"></i>
+                        </ng-template>
+                        <ng-template #filtericon>
+                            <i class="pi pi-map-marker"></i>
+                        </ng-template>
+                        <ng-template #header>
+                            <div class="font-medium px-3 py-2">Available Countries</div>
+                        </ng-template>
+                        <ng-template #footer>
+                            <div class="p-3 flex justify-between">
+                                <p-button label="Add New" severity="secondary" text size="small" icon="pi pi-plus" />
+                                <p-button label="Remove All" severity="danger" text size="small" icon="pi pi-times" />
+                            </div>
+                        </ng-template>
+                    </p-multiselect>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row gap-6">
+                <div class="flex flex-wrap gap-2 w-full">
+                    <label for="categories">Brand</label>
+                    <p-select [options]="countries" [(ngModel)]="selectedCountries" placeholder="Select Countries"
+                        optionLabel="name" styleClass="w-full" display="chip">
+                        <ng-template let-country #item>
+                            <div class="flex items-center gap-2">
+                                <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+                                    [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" />
+                                <div>{{ country.name }}</div>
+                            </div>
+                        </ng-template>
+                        <ng-template #dropdownicon>
+                            <i class="pi pi-map"></i>
+                        </ng-template>
+                        <ng-template #filtericon>
+                            <i class="pi pi-map-marker"></i>
+                        </ng-template>
+                        <ng-template #header>
+                            <div class="font-medium px-3 py-2">Available Countries</div>
+                        </ng-template>
+                        <ng-template #footer>
+                            <div class="p-3 flex justify-between">
+                                <p-button label="Add New" severity="secondary" text size="small" icon="pi pi-plus" />
+                            </div>
+                        </ng-template>
+                    </p-select>
+                </div>
+                <div class="flex flex-wrap gap-2 w-full">
+                    <label for="categories">Type</label>
+                    <p-select [options]="countries" [(ngModel)]="selectedCountries" placeholder="Select Countries"
+                        optionLabel="name" styleClass="w-full" display="chip">
+                        <ng-template let-country #item>
+                            <div class="flex items-center gap-2">
+                                <img src="https://primefaces.org/cdn/primeng/images/demo/flag/flag_placeholder.png"
+                                    [class]="'flag flag-' + country.code.toLowerCase()" style="width: 18px" />
+                                <div>{{ country.name }}</div>
+                            </div>
+                        </ng-template>
+                        <ng-template #dropdownicon>
+                            <i class="pi pi-map"></i>
+                        </ng-template>
+                        <ng-template #filtericon>
+                            <i class="pi pi-map-marker"></i>
+                        </ng-template>
+                        <ng-template #header>
+                            <div class="font-medium px-3 py-2">Available Countries</div>
+                        </ng-template>
+                        <ng-template #footer>
+                            <div class="p-3 flex justify-between">
+                                <p-button label="Add New" severity="secondary" text size="small" icon="pi pi-plus" />
+                            </div>
+                        </ng-template>
+                    </p-select>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-6">
+                <div class="flex flex-wrap gap-2 w-full">
+                    <label for="address">Short Description</label>
+                    <textarea pTextarea id="address" rows="4"></textarea>
+                </div>
+                <div class="flex flex-wrap gap-2 w-full">
+                    <label for="price">Price</label>
+                    <p-inputnumber [(ngModel)]="value1" inputId="currency-vn" mode="currency" currency="VND"
+                        locale="vi-VN" />
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-6">
+                <div class="flex flex-wrap gap-2 w-full">
+                    <label for="state">State</label>
+                    <p-select id="state" [(ngModel)]="dropdownItem" [options]="dropdownItems" optionLabel="name"
+                        placeholder="Select One" class="w-full"></p-select>
+                </div>
+                <div class="flex flex-wrap gap-2 w-full">
+                    <label for="zip">Zip</label>
+                    <input pInputText id="zip" type="text" />
+                </div>
+            </div>
+        </div>
+    </div>
+</p-fluid>
