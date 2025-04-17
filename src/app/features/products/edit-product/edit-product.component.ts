@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumber } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
@@ -18,7 +18,10 @@ import { ProductService } from '../../../core/service/product.service';
 import { ToastModule } from 'primeng/toast';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Dialog } from 'primeng/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Product, ProductImage } from '../../../shared/models/catalog/product';
+import { LoadingService } from '../../../core/service/loading.service';
+import { Subscription } from 'rxjs';
 
 interface UploadEvent {
   originalEvent: Event;
@@ -26,7 +29,7 @@ interface UploadEvent {
 }
 
 @Component({
-  selector: 'app-create-product',
+  selector: 'app-edit-product',
   standalone: true,
   imports: [
     FileUploadModule,
@@ -45,25 +48,23 @@ interface UploadEvent {
     ToastModule,
     ProgressSpinner,
   ],
-  templateUrl: './create-product.component.html',
-  styleUrl: './create-product.component.scss',
+  templateUrl: './edit-product.component.html',
+  styleUrl: './edit-product.component.scss',
   providers: [MessageService],
 })
-export class CreateProductComponent implements OnInit {
-  private categoryService = inject(CategoryService);
+export class EditProductComponent implements OnInit, OnDestroy {
+  private route = inject(ActivatedRoute);
   private productService = inject(ProductService);
+  private fb = inject(FormBuilder);
+  private messageService = inject(MessageService);
+  private categoryService = inject(CategoryService);
+  private loadingService = inject(LoadingService);
 
-  productImages: File[] = [];
   productForm: FormGroup;
+  productId: string | null = null;
+  isLoading = false;
 
-  productVariants: {
-    color: string;
-    size: string;
-    quantity: number;
-    additionalPrice: number;
-  }[] = [];
-
-  categories: Category[] = [];
+  categories: any[] = [];
   selectedCategories: Category[] = [];
 
   brands: string[] = [];
@@ -73,58 +74,70 @@ export class CreateProductComponent implements OnInit {
   selectedType: string = '';
 
   uploadedFiles: any[] = [];
+  productImages: ProductImage[] = [];
 
-  isLoading = false;
+  loading$ = this.loadingService.loading$;
 
-  constructor(
-    private fb: FormBuilder,
-    private messageService: MessageService,
-    private router: Router
-  ) {
+  private sub: Subscription;
+
+  constructor(private router: Router) {
     this.productForm = this.fb.group({
       name: ['', Validators.required],
       shortDescription: ['', Validators.required],
       description: ['', Validators.required],
-      price: ['', Validators.required],
+      price: [0, [Validators.required, Validators.min(0)]],
+      originalPrice: [0, [Validators.required, Validators.min(0)]],
       brand: ['', Validators.required],
       type: ['', Validators.required],
-      stock: [''],
-      categories: [[]], // Multi-select
-      productImages: [[], Validators.required],
-      variants: this.fb.array([]), // Mảng biến thể
+      stock: [0, [Validators.required, Validators.min(0)]],
+      categories: [[]],
+      productImages: [[]],
+      variants: this.fb.array([]),
+    });
+
+    this.sub = this.loading$.subscribe((value) => {
+      this.isLoading = value;
     });
   }
-
   isInvalid(field: string): boolean {
     return (
       this.productForm.controls[field].invalid &&
       this.productForm.controls[field].touched
     );
   }
-
   ngOnInit() {
-    this.categoryService.getCategories().subscribe((data) => {
-      this.categories = data;
-    });
-
     this.categoryService.getAllBrands().subscribe((data) => {
       this.brands = data.brands;
     });
     this.categoryService.getAllProductTypes().subscribe((data) => {
       this.types = data.types;
     });
+
+    this.route.paramMap.subscribe((params) => {
+      this.productId = params.get('id');
+      if (this.productId) {
+        this.loadProduct();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
   }
 
   get variants(): FormArray<FormGroup> {
     return this.productForm.get('variants') as FormArray<FormGroup>;
   }
 
-  addVariant() {
+  addVariant(color = '', size = '', stock = 0, additionalPrice = 0) {
     const variantForm = this.fb.group({
-      color: [''],
-      size: [''],
-      additionalPrice: [''],
-      stock: [''],
+      color: [color, Validators.required],
+      size: [size, Validators.required],
+      stock: [stock, [Validators.required, Validators.min(0)]],
+      additionalPrice: [
+        additionalPrice,
+        [Validators.required, Validators.min(0)],
+      ],
     });
     this.variants.push(variantForm);
   }
@@ -143,12 +156,60 @@ export class CreateProductComponent implements OnInit {
     const files: File[] = Array.from(event.files);
 
     // Cập nhật giá trị vào form control
-    this.productForm.patchValue({
-      productImages: files,
-    });
-
+    if (files.length > 0) {
+      this.productForm.patchValue({
+        productImages: files,
+      });
+    }
     // Log để kiểm tra
     console.log('Selected Product Images:', files);
+  }
+
+  loadProduct() {
+    this.isLoading = true;
+    this.categoryService.getCategories().subscribe((data) => {
+      this.categories = data;
+      this.productService.getProductById(this.productId!).subscribe({
+        next: (response) => {
+          const product: Product = response.product;
+          this.productForm.patchValue({
+            name: product.name,
+            shortDescription: product.shortDescription,
+            description: product.description,
+            price: product.price,
+            originalPrice: product.originalPrice,
+            brand: product.brand,
+            type: product.type,
+            stock: product.stock,
+            //categories: product.categories,
+            categories: this.categories.filter((c) =>
+              product.categories.some((pc: any) => pc.name === c.name)
+            ),
+            //categories: product.categories.map((c: any) => c.name),
+          });
+
+          // Load variants
+          this.variants.clear();
+          for (const variant of product.variants) {
+            this.addVariant(
+              variant.color,
+              variant.size,
+              variant.stock,
+              variant.additionalPrice
+            );
+          }
+          this.productImages = product.imageUrls;
+          this.isLoading = false;
+
+          console.log('Product categories:', this.productForm.value.categories);
+          console.log('All categories:', this.categories);
+        },
+        error: (error) => {
+          console.error(error);
+          this.isLoading = false;
+        },
+      });
+    });
   }
 
   submitForm() {
@@ -156,20 +217,20 @@ export class CreateProductComponent implements OnInit {
       this.messageService.add({
         severity: 'warn',
         summary: 'Warning',
-        detail: 'Please fill all required fields',
+        detail: 'Please fill out all required fields',
       });
       return;
     }
-    this.isLoading = true;
 
+    this.isLoading = true;
     const formData = new FormData();
     const formValue = this.productForm.value;
 
-    // Thêm các thông tin khác vào FormData
     formData.append('Name', formValue.name);
     formData.append('ShortDescription', formValue.shortDescription);
     formData.append('Description', formValue.description);
     formData.append('Price', formValue.price);
+    formData.append('OriginalPrice', formValue.originalPrice);
     formData.append('Brand', formValue.brand);
     formData.append('Type', formValue.type);
     formData.append('Stock', formValue.stock);
@@ -184,8 +245,6 @@ export class CreateProductComponent implements OnInit {
       productImages.forEach((image: File) => {
         formData.append('ProductImages', image, image.name);
       });
-    } else {
-      console.log('No images selected or productImages is not an array');
     }
 
     // Thêm các biến thể vào FormData (nếu có)
@@ -193,22 +252,22 @@ export class CreateProductComponent implements OnInit {
       formData.append('Variants', JSON.stringify(this.variants.value));
     }
 
-    this.productService.createProduct(formData).subscribe({
+    this.productService.updateProduct(this.productId!, formData).subscribe({
       next: (response) => {
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'Create new product successfully',
+          detail: 'Product updated successfully',
         });
-        console.log('Product created successfully', response);
+        console.log('Product updated successfully', response);
       },
       error: (error) => {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Failed to create new product',
+          detail: 'Failed to update product',
         });
-        console.error('Error creating product', error);
+        console.error('Error updating product', error);
       },
       complete: () => {
         this.isLoading = false;

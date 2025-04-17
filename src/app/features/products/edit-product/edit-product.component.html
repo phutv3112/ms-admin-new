@@ -6,12 +6,12 @@
             <form [formGroup]="productForm" (ngSubmit)="submitForm()">
                 <div class="flex flex-col md:flex-row gap-6 my-4">
                     <div class="flex flex-wrap gap-2 w-full">
-                        <label for="name">Product Name</label>
+                        <label for="name" class="font-semibold">Product Name</label>
                         <input pInputText id="name" formControlName="name" type="text" />
                         <small class="text-red-500" *ngIf="isInvalid('name')">Name is required.</small>
                     </div>
                     <div class="flex flex-wrap gap-2 w-full">
-                        <label for="categories">Category</label>
+                        <label for="categories" class="font-semibold">Category</label>
                         <p-multiselect [options]="categories" formControlName="categories"
                             placeholder="Select Categories" optionLabel="name" styleClass="w-full" display="chip">
                             <ng-template let-country #item>
@@ -90,31 +90,38 @@
 
                 <div class="flex flex-col md:flex-row gap-6 my-4">
                     <div class="flex flex-wrap gap-2 w-full">
-                        <label for="shortDescription">Short Description</label>
+                        <label for="shortDescription" class="font-semibold">Short Description</label>
                         <textarea pTextarea id="shortDescription" formControlName="shortDescription"
                             rows="4"></textarea>
                     </div>
                 </div>
                 <div class="flex flex-col md:flex-row gap-6 my-4">
                     <div class="flex flex-wrap gap-2 w-full">
-                        <label for="price">Price</label>
+                        <label for="price" class="font-semibold">Price</label>
                         <p-inputnumber formControlName="price" inputId="currency-vn" mode="currency" currency="VND"
                             locale="vi-VN" min="0" />
                     </div>
                     <div class="flex flex-wrap gap-2 w-full">
-                        <label for="stock">Stock</label>
+                        <label for="originalPrice" class="font-semibold">Original Price</label>
+                        <p-inputnumber formControlName="originalPrice" inputId="currency-vn" mode="currency"
+                            currency="VND" locale="vi-VN" min="0" />
+                    </div>
+                    <div class="flex flex-wrap gap-2 w-full">
+                        <label for="stock" class="font-semibold">Stock</label>
                         <p-inputnumber formControlName="stock" />
                     </div>
                 </div>
                 <div class="flex flex-col md:flex-row gap-6 my-4">
                     <div class="flex flex-wrap gap-2 w-full">
-                        <label for="descriptions">Descriptions</label>
+                        <label for="description" class="font-semibold">Descriptions</label>
                         <p-editor class="w-full" formControlName="description" [style]="{height: '320px' }" />
                     </div>
                 </div>
-                <div class="flex flex-col md:flex-row gap-6 my-4">
-                    <div class="flex flex-wrap gap-2 w-full">
-                        <label for="productImages">Products Images</label>
+
+                <div class="my-4 space-y-6">
+                    <!-- Upload section -->
+                    <div class="w-full">
+                        <label for="productImages" class="font-semibold block mb-2">Product Images</label>
                         <p-fileupload class="w-full" name="productImages" (onUpload)="onUpload($event)"
                             (onSelect)="onFileSelect($event)" [multiple]="true" accept="image/*" maxFileSize="1000000"
                             mode="advanced" url="https://www.primefaces.org/cdn/api/upload.php">
@@ -123,12 +130,25 @@
                             </ng-template>
                             <ng-template #content>
                                 <ul *ngIf="uploadedFiles.length">
-                                    <li *ngFor="let file of uploadedFiles">{{ file.name }} - {{ file.size }} bytes</li>
+                                    <li *ngFor="let file of uploadedFiles">
+                                        {{ file.name }} - {{ file.size }} bytes
+                                    </li>
                                 </ul>
                             </ng-template>
                         </p-fileupload>
                     </div>
+
+                    <!-- Preview section -->
+                    <div class="w-full">
+                        <label class="font-semibold block mb-2">Preview</label>
+                        <div class="flex flex-wrap gap-2">
+                            <img *ngFor="let img of productImages" [src]="img.imageUrl" alt="Product Image"
+                                class="w-24 h-24 object-cover rounded border border-gray-300" />
+                        </div>
+                    </div>
                 </div>
+
+
                 <div class="flex flex-col md:flex-row gap-6 my-4">
                     <div class="flex flex-wrap gap-2 w-full">
                         <p-button label="Add Product Variant" icon="pi pi-plus" (click)="addVariant()"
@@ -168,7 +188,7 @@
                 </div>
                 <div class="flex justify-end mt-4">
                     <!-- <p-button label="Submit" type="submit" icon="pi pi-check" /> -->
-                    <button pButton type="button" label="Create Product" icon="pi pi-check" [disabled]="isLoading"
+                    <button pButton type="button" label="Update Product" icon="pi pi-check" [disabled]="isLoading"
                         (click)="submitForm()">
                     </button>
                 </div>
@@ -180,7 +200,7 @@
 
 <p-dialog [(visible)]="isLoading" [modal]="true" [closable]="false" [showHeader]="false">
     <div class="flex flex-column align-items-center justify-content-center">
-        <p-progressSpinner></p-progressSpinner>
+        <p-progressSpinner *ngIf="loading$ | async"></p-progressSpinner>
         <p class="mt-2">Processing, please wait...</p>
     </div>
 </p-dialog>

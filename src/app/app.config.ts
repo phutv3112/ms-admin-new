@@ -9,12 +9,18 @@ import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 
 import { routes } from './app.routes';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withFetch,
+  withInterceptors,
+} from '@angular/common/http';
+import { loadingInterceptor } from './core/interceptors/loading.interceptor';
+import { MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(), withInterceptors([loadingInterceptor])),
     provideRouter(
       routes,
       withInMemoryScrolling({
@@ -29,5 +35,6 @@ export const appConfig: ApplicationConfig = {
         preset: Aura,
       },
     }),
+    MessageService,
   ],
 };

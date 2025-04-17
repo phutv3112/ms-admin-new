@@ -104,8 +104,7 @@ export class CategoriesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.categoryService.getCategories();
-    this.categoryService.categories$.subscribe((data) => {
+    this.categoryService.getCategories().subscribe((data) => {
       this.categories = data;
     });
 
@@ -140,7 +139,9 @@ export class CategoriesComponent implements OnInit {
               summary: 'Success',
               detail: 'Record deleted',
             });
-            this.categoryService.getCategories();
+            this.categoryService.getCategories().subscribe((data) => {
+              this.categories = data;
+            });
           },
           error: (error) => {
             console.error(error);
@@ -171,7 +172,9 @@ export class CategoriesComponent implements OnInit {
           summary: 'Success',
           detail: 'Category created successfully',
         });
-        this.categoryService.getCategories();
+        this.categoryService.getCategories().subscribe((data) => {
+          this.categories = data;
+        });
       },
       error: (error) => {
         console.error(error);
@@ -196,7 +199,9 @@ export class CategoriesComponent implements OnInit {
             summary: 'Success',
             detail: 'Category updated successfully',
           });
-          this.categoryService.getCategories();
+          this.categoryService.getCategories().subscribe((data) => {
+            this.categories = data;
+          });
         },
         error: (error) => {
           console.error(error);
