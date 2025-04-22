@@ -1,0 +1,91 @@
+<div class="card">
+    <div class="font-semibold text-xl mb-4 flex justify-between items-center">
+        <p>History</p>
+        <p-button pTooltip="Back" tooltipPosition="top" [routerLink]="['/inventories']" label="Back"
+            icon="pi pi-arrow-left" severity="secondary" />
+    </div>
+    <p-table #dt1 [value]="histories" dataKey="id" [rows]="10" [rowHover]="true" [showGridlines]="true"
+        [paginator]="true" [globalFilterFields]="['oldQuantity','newQuantity','changedBy', 'changedAt']"
+        responsiveLayout="scroll">
+        <ng-template #caption>
+            <div class="flex justify-between items-center flex-column sm:flex-row">
+                <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash"
+                    (click)="clear(dt1)"></button>
+                <p-iconfield iconPosition="left" class="ml-auto">
+                    <p-inputicon>
+                        <i class="pi pi-search"></i>
+                    </p-inputicon>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt1, $event)" placeholder="Search keyword" />
+                </p-iconfield>
+            </div>
+        </ng-template>
+        <ng-template #header>
+            <tr>
+                <th style="min-width: 12rem" pSortableColumn="productName">
+                    <div class="flex justify-between items-center">
+                        Numerical Order
+                    </div>
+                </th>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">
+                        <span><p-sortIcon field="oldQuantity" /> Old quantity</span>
+                        <p-columnFilter type="number" field="oldQuantity"
+                            placeholder="Search by quantity"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 12rem" pSortableColumn="quantity">
+                    <div class="flex justify-between items-center">
+                        <span><p-sortIcon field="newQuantity" /> New Quantity</span>
+                        <p-columnFilter type="number" field="newQuantity"
+                            placeholder="Search by quantity"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">
+                        Reason
+                    </div>
+                </th>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">
+                        Changed By
+                    </div>
+                </th>
+                <th style="min-width: 10rem" pSortableColumn="changedAt"><p-sortIcon field="changedAt" />
+                    Changed At
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-history let-index="rowIndex">
+            <tr>
+                <td class="w-10">
+                    <p-tag [value]="'#' + (index + 1)" severity="info" styleClass="dark:!bg-surface-900" />
+                </td>
+                <td class="font-semibold">
+                    {{ history.oldQuantity }}
+                </td>
+                <td class="font-semibold">
+                    {{ history.newQuantity }}
+                </td>
+                <td>
+                    {{ history.reason }}
+                </td>
+                <td>
+                    {{ history.changedBy }}
+                </td>
+                <td>
+                    {{ history.changedAt | date: 'dd/MM/yyyy HH:mm:ss' }}
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="8">No inventory history found.</td>
+            </tr>
+        </ng-template>
+        <ng-template #loadingbody>
+            <tr>
+                <td colspan="8">Loading inventory history data. Please wait.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

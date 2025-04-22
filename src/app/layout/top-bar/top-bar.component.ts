@@ -6,6 +6,7 @@ import { StyleClassModule } from 'primeng/styleclass';
 import { AppConfigurator } from '../configs/app.configurator';
 import { LayoutService } from '../service/layout.service';
 import { SplitButtonModule } from 'primeng/splitbutton';
+import { AuthService } from '../../core/service/auth.service';
 
 @Component({
   selector: 'app-top-bar',
@@ -23,7 +24,10 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 export class TopBarComponent {
   items!: MenuItem[];
 
-  constructor(public layoutService: LayoutService) {
+  constructor(
+    public layoutService: LayoutService,
+    private authService: AuthService
+  ) {
     this.items = [
       {
         label: 'Update',
@@ -46,7 +50,7 @@ export class TopBarComponent {
         label: 'Quit',
         icon: 'pi pi-power-off',
         command: () => {
-          window.open('https://angular.io/', '_blank');
+          this.authService.logout();
         },
       },
     ];

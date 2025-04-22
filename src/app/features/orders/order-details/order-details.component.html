@@ -1,0 +1,83 @@
+@if(order){
+<div class="max-w-5xl mx-auto p-6 space-y-6" id="oderDetails">
+    <!-- Thông tin đơn hàng -->
+    <p-panel header="Order Details" [toggleable]="true" class="p-4">
+        <div class="grid grid-cols-2 gap-4 text-lg">
+            <div><strong>Order ID:</strong> {{ order.id }}</div>
+            <div><strong>Order Date:</strong> {{ order.orderDate | date: 'dd/MM/yy, h:mm a' }}</div>
+            <div><strong>Status:</strong>
+                <p-tag [value]="order.status" [severity]="getStatusSeverity(order.status)" />
+            </div>
+            <div><strong>Buyer Email:</strong> {{ order.buyerEmail }}</div>
+        </div>
+    </p-panel>
+
+    <!-- Địa chỉ giao hàng -->
+    <p-panel header="Shipping Address" [toggleable]="true" class="p-4">
+        <div class="text-lg space-y-1">
+            <div><strong>Name:</strong> {{ order.shippingAddress.name }}</div>
+            <div><strong>Address:</strong> {{ order.shippingAddress.line1 }}</div>
+            <div><strong>City:</strong> {{ order.shippingAddress.city }}</div>
+            <div><strong>State:</strong> {{ order.shippingAddress.state }}</div>
+            <div><strong>Postal Code:</strong> {{ order.shippingAddress.postalCode }}</div>
+            <div><strong>Country:</strong> {{ order.shippingAddress.country }}</div>
+        </div>
+    </p-panel>
+
+    <!-- Thanh toán -->
+    <p-panel header="Payment" [toggleable]="true" class="p-4">
+        <div class="text-lg space-y-1">
+            <div><strong>Payment Intent ID:</strong> {{ order.payment.paymentIntentId }}</div>
+            <div><strong>Payment Type:</strong> {{ getPaymentTypeLabel(order.payment.paymentType) }}</div>
+            <div *ngIf="isJson(order.payment.paymentDetails)">
+                <strong>Details:</strong>
+                <ul class="list-disc list-inside ml-4">
+                    <li *ngIf="parsedPayment?.brand">Brand: {{ parsedPayment.brand }}</li>
+                    <li *ngIf="parsedPayment?.last4">Last4: **** **** **** {{ parsedPayment.last4 }}</li>
+                    <li *ngIf="parsedPayment?.expMonth">Expires: {{ parsedPayment.expMonth }}/{{ parsedPayment.expYear
+                        }}</li>
+                </ul>
+            </div>
+            <div *ngIf="!isJson(order.payment.paymentDetails)">
+                <strong>Details:</strong> {{ order.payment.paymentDetails }}
+            </div>
+        </div>
+    </p-panel>
+
+    <!-- Danh sách sản phẩm -->
+    <p-panel header="Order Items" [toggleable]="true" class="p-4">
+        <p-table [value]="order.orderItems" responsiveLayout="scroll">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Image</th>
+                    <th>Product</th>
+                    <th>Variant</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td><img [src]="item.pictureUrl" alt="product" class="w-16 h-16 object-contain" /></td>
+                    <td>{{ item.productName }}</td>
+                    <td *ngIf="item.variant">
+                        {{ item.variant.color }} / Size {{ item.variant.size }}
+                    </td>
+                    <td *ngIf="!item.variant">-</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.price | number:'1.0-0' }}</td>
+                    <td>{{ (item.quantity * item.price) | number:'1.0-0' }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </p-panel>
+
+    <!-- Tổng thanh toán -->
+    <div class="text-right space-y-2 text-lg">
+        <div><strong>Subtotal:</strong> {{ order.subtotal | number:'1.0-0' }}₫</div>
+        <div><strong>Shipping:</strong> {{ order.shippingPrice | number:'1.0-0' }}₫</div>
+        <div class="text-lg font-semibold"><strong>Total:</strong> {{ order.total | number:'1.0-0' }}₫</div>
+    </div>
+</div>
+}

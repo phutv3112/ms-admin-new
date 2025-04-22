@@ -1,0 +1,206 @@
+<div class="flex flex-col gap-6">
+    <div class="w-full max-w-4xl px-4" id="discountForm">
+        <!-- Discount Info Form -->
+        <form [formGroup]="discountForm" *ngIf="discount" class="grid grid-cols-12 gap-4">
+
+            <!-- Name -->
+            <div class="col-span-12 md:col-span-4">
+                <label for="name" class="block font-semibold mb-1">Name</label>
+                <input pInputText id="name" formControlName="name" class="w-full" autocomplete="off" />
+                <small class="text-red-500" *ngIf="f['name'].touched && f['name'].errors?.['required']">Name is
+                    required</small>
+            </div>
+
+            <!-- Start Date -->
+            <div class="col-span-12 md:col-span-4">
+                <label for="startDate" class="block font-semibold mb-1">Start Date</label>
+                <p-datepicker appendTo="body" [showIcon]="true" inputId="startDate" formControlName="startDate"
+                    [showTime]="true" hourFormat="24" dateFormat="yy-mm-dd" />
+                <small class="text-red-500" *ngIf="f['startDate'].touched && f['startDate'].errors?.['required']">Start
+                    date
+                    is required</small>
+            </div>
+
+            <!-- End Date -->
+            <div class="col-span-12 md:col-span-4">
+                <label for="endDate" class="block font-semibold mb-1">End Date</label>
+                <p-datepicker appendTo="body" [showIcon]="true" inputId="endDate" formControlName="endDate"
+                    [showTime]="true" hourFormat="24" dateFormat="yy-mm-dd" />
+                <small class="text-red-500" *ngIf="f['endDate'].touched && f['endDate'].errors?.['required']">End date
+                    is
+                    required</small>
+                <small class="text-red-500" *ngIf="discountForm.errors?.['startAfterEnd'] && f['endDate'].touched">
+                    End date must be after start date
+                </small>
+            </div>
+
+            <!-- Description -->
+            <div class="col-span-12">
+                <label for="description" class="block font-semibold mb-1">Description</label>
+                <p-floatlabel variant="in" class="w-full">
+                    <textarea pTextarea formControlName="description" rows="3" class="w-full"></textarea>
+                    <label for="description">Description</label>
+                </p-floatlabel>
+            </div>
+
+            <!-- Is Active -->
+            <div class="col-span-12 md:col-span-4 flex items-center gap-3">
+                <label for="isActive" class="font-semibold">Is Active</label>
+                <p-checkbox formControlName="isActive" binary="true"></p-checkbox>
+            </div>
+
+            <!-- Readonly Info -->
+            <div class="col-span-12 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-500 dark:text-gray-400">
+                <div><strong>Created By:</strong> {{ discount.createdBy }}</div>
+                <div><strong>Created Date:</strong> {{ discount.createdDate | date: 'short' }}</div>
+                <div><strong>Updated By:</strong> {{ discount.updatedBy }}</div>
+                <div><strong>Updated Date:</strong> {{ discount.updatedDate | date: 'short' }}</div>
+            </div>
+
+            <!-- Actions -->
+            <div class="col-span-12 flex justify-end gap-2 mt-2">
+                <p-button label="Clear" severity="info" (click)="discountForm.reset()" />
+                <p-button label="Save" (click)="updateDiscount()" [disabled]="discountForm.invalid" />
+            </div>
+
+        </form>
+    </div>
+
+
+    <!-- Discount Codes Section -->
+    <div class="border border-surface-200 dark:border-surface-700 rounded-lg p-4">
+        <div class="card mt-6">
+            <div class="font-semibold text-xl mb-4 flex justify-between items-center">
+                <p>Discount Codes</p>
+                <div>
+                    <p-button [routerLink]="['/discounts']" severity="secondary" class="me-4" label="Back to list" />
+                    <p-button [routerLink]="['/discounts/coupon/create',id]" label="+ Add new code" />
+                </div>
+            </div>
+
+            <p-table #dtCodes [value]="discountCodes" dataKey="id" [rows]="10" [rowHover]="true" [showGridlines]="true"
+                [paginator]="true"
+                [globalFilterFields]="['code', 'type', 'value','minSubtotal','maxDiscountAmount','usageLimit','usedCount','isActive']"
+                responsiveLayout="scroll">
+
+                <ng-template #caption>
+                    <div class="flex justify-between items-center flex-column sm:flex-row">
+                        <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash"
+                            (click)="clear(dtCodes)"></button>
+                        <p-iconfield iconPosition="left" class="ml-auto">
+                            <p-inputicon>
+                                <i class="pi pi-search"></i>
+                            </p-inputicon>
+                            <input pInputText type="text" (input)="onGlobalFilter(dtCodes, $event)"
+                                placeholder="Search code or type" />
+                        </p-iconfield>
+                    </div>
+                </ng-template>
+
+                <ng-template #header>
+                    <tr>
+                        <th pSortableColumn="code">
+                            <p-sortIcon field="code" /> Code
+                            <p-columnFilter field="code" display="menu" placeholder="Search by code" />
+                        </th>
+                        <th pSortableColumn="type">
+                            <p-sortIcon field="type" /> Discount Type
+                            <p-columnFilter field="type" matchMode="equals" display="menu">
+                                <ng-template #filter let-value let-filter="filterCallback">
+                                    <p-select [ngModel]="value" [options]="discountTypes"
+                                        (onChange)="filter($event.value)" placeholder="Any"
+                                        [style]="{ 'min-width': '12rem' }">
+                                        <ng-template let-option #item>
+                                            <span [class]="'customer-badge status-' + option.value">{{ option.label
+                                                }}</span>
+                                        </ng-template>
+                                    </p-select>
+                                </ng-template>
+                            </p-columnFilter>
+                        </th>
+                        <th style="min-width: 10rem" pSortableColumn="value"><p-sortIcon field="value" />
+                            Amount
+                        </th>
+                        <th style="min-width: 10rem" pSortableColumn="minSubtotal"><p-sortIcon field="minSubtotal" />
+                            Min Subtotal
+                        </th>
+                        <th style="min-width: 10rem" pSortableColumn="maxDiscountAmount"><p-sortIcon
+                                field="maxDiscountAmount" />
+                            Max Discount
+                        </th>
+                        <th>Usage</th>
+                        <th>Status
+                            <p-columnFilter field="isActive" matchMode="equals" display="menu">
+                                <ng-template #filter let-value let-filter="filterCallback">
+                                    <p-select [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)"
+                                        placeholder="Any" [style]="{ 'min-width': '12rem' }">
+                                        <ng-template let-option #item>
+                                            <span [class]="'customer-badge status-' + option.value">{{ option.label
+                                                }}</span>
+                                        </ng-template>
+                                    </p-select>
+                                </ng-template>
+                            </p-columnFilter>
+                        </th>
+                        <th style="min-width: 10rem" pSortableColumn="startDate"><p-sortIcon field="startDate" />
+                            Start Date
+                        </th>
+                        <th style="min-width: 10rem" pSortableColumn="endDate"><p-sortIcon field="endDate" />
+                            End Date
+                        </th>
+                        <th>Actions</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template #body let-code>
+                    <tr>
+                        <td class="font-semibold">{{ code.code }}</td>
+                        <td class="font-semibold"><span *ngIf="code.type == '0'">Percentage</span>
+                            <span *ngIf="code.type == '1'">Fixed Amount</span>
+                        </td>
+                        <td class="font-semibold">
+                            <span *ngIf="code.type == '0'">{{ code.value }}%</span>
+                            <span *ngIf="code.type == '1'">{{ code.value | currency : 'VND' }}</span>
+                        </td>
+                        <td class="font-semibold">{{ code.minSubtotal | currency : 'VND' }}</td>
+                        <td class="font-semibold">
+                            <span *ngIf="code.type == '0'">{{ code.maxDiscountAmount | currency : 'VND' }}</span>
+                            <span *ngIf="code.type == '1'">NA</span>
+
+                        </td>
+                        <td class="font-semibold">{{ code.usedCount }}/{{ code.usageLimit }}</td>
+                        <td>
+                            <p-tag [value]="code.isActive ? 'Active' : 'Inactive'"
+                                [severity]="code.isActive ? 'success' : 'danger'" />
+                        </td>
+                        <td>{{ code.startDate | date: 'dd/MM/yyyy-HH:mm' }}
+                        </td>
+                        <td>{{ code.endDate | date: 'dd/MM/yyyy-HH:mm' }}</td>
+                        <td>
+                            <p-button icon="pi pi-pencil" severity="info"
+                                [routerLink]="['/discounts/coupon/edit',code.id]" class="mx-1" />
+                            <p-button (click)="confirmDelete($event, code)" severity="danger" [outlined]="true"
+                                icon="pi pi-trash" severity="danger" class="mx-2" />
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <ng-template #emptymessage>
+                    <tr>
+                        <td colspan="10">No discount codes found.</td>
+                    </tr>
+                </ng-template>
+
+                <ng-template #loadingbody>
+                    <tr>
+                        <td colspan="10">Loading codes...</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+    </div>
+
+</div>
+<p-toast />
+<p-confirmdialog />

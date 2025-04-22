@@ -1,12 +1,13 @@
 <div class="card">
     <div class="font-semibold text-xl mb-4 flex justify-between items-center">
-        <p>List Product</p>
+        <p class="font-semibold text-xl">List Product</p>
         <div>
             <p-button routerLink="/products/create" label="+ Create new product" />
         </div>
     </div>
     <p-table #dt1 [value]="products" dataKey="id" [rows]="10" [rowHover]="true" [showGridlines]="true"
-        [paginator]="true" [globalFilterFields]="['name', 'price', 'brand','type','stock']" responsiveLayout="scroll">
+        [paginator]="true" [globalFilterFields]="['name', 'price', 'brand','type','stock','averageRating']"
+        responsiveLayout="scroll">
         <ng-template #caption>
             <div class="flex justify-between items-center flex-column sm:flex-row">
                 <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash"
@@ -36,7 +37,7 @@
                 <th style="min-width: 12rem" pSortableColumn="price">
                     <div class="flex justify-between items-center">
                         <span><p-sortIcon field="price" /> Price</span>
-                        <p-columnFilter type="text" field="price" display="menu"
+                        <p-columnFilter type="numeric" field="price" display="menu"
                             placeholder="Search by price"></p-columnFilter>
                     </div>
                 </th>
@@ -63,7 +64,9 @@
                 </th>
                 <th style="min-width: 12rem">
                     <div class="flex justify-between items-center">
-                        Rating
+                        <span><p-sortIcon field="averageRating" /> Rating</span>
+                        <p-columnFilter type="numeric" field="averageRating" display="menu"
+                            placeholder="Search by rating"></p-columnFilter>
                     </div>
                 </th>
                 <th style="min-width: 10rem; position: relative;">
@@ -78,13 +81,13 @@
                 </td>
                 <td>
                     <img *ngIf="product.imageUrls?.length > 0; else noImage" [src]="product.imageUrls[0]?.imageUrl"
-                        [alt]="product.name" class="w-24 rounded" />
+                        [alt]="product.name" class="w-16 rounded" />
                     <ng-template #noImage>
                         <span>No Image</span>
                     </ng-template>
                 </td>
-                <td>
-                    {{ product.price }}
+                <td class="font-semibold">
+                    {{ product.price | currency:'VND':'symbol':'1.0-0' }}
                 </td>
                 <td>
                     {{ product.brand}}
@@ -93,10 +96,28 @@
                     {{ product.type}}
                 </td>
                 <td>
-                    {{ product.stock }}
+                    <span class="font-semibold" *ngIf="product.stock > 0; else outOfStock">
+                        {{ product.stock }}
+                    </span>
+                    <ng-template #outOfStock>
+                        <span class="bg-red-400 text-white p-1">Out of Stock</span>
+                    </ng-template>
                 </td>
                 <td>
-                    rating
+                    <div class="flex items-center">
+                        <svg class="w-4 h-4 text-yellow-300 me-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor" viewBox="0 0 22 20">
+                            <path
+                                d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                        </svg>
+                        <p class="ms-2 mb-0 text-base font-bold text-gray-900 dark:text-white">{{product.averageRating}}
+                        </p>
+                        <span class="w-1 h-1 mx-1.5 bg-gray-500 rounded-full dark:bg-gray-400"></span>
+                        <a [routerLink]="['/products/reviews', product.id]"
+                            class="text-base font-medium text-gray-900 underline hover:no-underline dark:text-white">
+                            {{product.totalReview}} reviews
+                        </a>
+                    </div>
                 </td>
                 <td>
                     <p-button [routerLink]="['/products', product.id]" icon="pi pi-pencil" severity="info"

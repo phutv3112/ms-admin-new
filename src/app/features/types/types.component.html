@@ -1,0 +1,166 @@
+<div class="card">
+    <div class="font-semibold text-xl mb-4 flex justify-between items-center">
+        <p class="font-bold uppercase">Types</p>
+        <div>
+            <p-button (click)="showCreateDialog()" label="+ Create new type" />
+        </div>
+    </div>
+    <p-table #dt1 [value]="types" dataKey="id" [rows]="10" [rowHover]="true" [showGridlines]="true" [paginator]="true"
+        [globalFilterFields]="['name', 'isActive', 'changedBy','productCount','updatedDate']" responsiveLayout="scroll">
+        <ng-template #caption>
+            <div class="flex justify-between items-center flex-column sm:flex-row">
+                <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash"
+                    (click)="clear(dt1)"></button>
+                <p-iconfield iconPosition="left" class="ml-auto">
+                    <p-inputicon>
+                        <i class="pi pi-search"></i>
+                    </p-inputicon>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt1, $event)" placeholder="Search keyword" />
+                </p-iconfield>
+            </div>
+        </ng-template>
+        <ng-template #header>
+            <tr>
+                <th style="min-width: 12rem" pSortableColumn="name">
+                    <div class="flex justify-between items-center">
+                        <span><p-sortIcon field="name" /> Name</span>
+                        <p-columnFilter type="text" field="name" display="menu"
+                            placeholder="Search by name"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 12rem" pSortableColumn="changedBy">
+                    <div class="flex justify-between items-center">
+                        <span><p-sortIcon field="changedBy" /> Changed By</span>
+                        <p-columnFilter type="text" field="changedBy" display="menu"
+                            placeholder="Search by changedBy"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">
+                        Status
+                        <p-columnFilter field="isActived" matchMode="equals" display="menu">
+                            <ng-template #filter let-value let-filter="filterCallback">
+                                <p-select [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)"
+                                    placeholder="Any" [style]="{ 'min-width': '12rem' }">
+                                    <ng-template let-option #item>
+                                        <span [class]="'customer-badge status-' + option.value">{{ option.label
+                                            }}</span>
+                                    </ng-template>
+                                </p-select>
+                            </ng-template>
+                        </p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 10rem" pSortableColumn="productCount"><p-sortIcon field="productCount" />
+                    Product Count
+                </th>
+                <th style="min-width: 10rem" pSortableColumn="updatedDate"><p-sortIcon field="updatedDate" />
+                    Last Modified
+                </th>
+                <th style="min-width: 10rem; position: relative;">
+                    Actions
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-brand let-index="rowIndex">
+            <tr>
+                <td>
+                    <span style="max-width: 250px; display: inline-block; word-wrap: break-word; white-space: normal;">
+                        {{ brand.name }}
+                    </span>
+                </td>
+                <td>
+                    {{ brand.changedBy }}
+                </td>
+                <td>
+                    <p-tag [value]="brand.isActive ? 'active' : 'inactive'" [severity]="getSeverity(brand.isActive)"
+                        styleClass="dark:!bg-surface-900" />
+                </td>
+                <td class="font-semibold">
+                    {{ brand.productCount }}
+                </td>
+                <td>
+                    {{ brand.updatedDate | date: 'dd/MM/yy, h:mm a' }}
+                </td>
+                <td>
+                    <p-button pTooltip="Update inventory" tooltipPosition="top" (click)="showEditTypeDialog(brand.id)"
+                        icon="pi pi-pencil" severity="info" class="mx-2" />
+
+                    <p-button pTooltip="Delete" tooltipPosition="top" (click)="confirmDelete($event, brand)"
+                        severity="danger" [outlined]="true" icon="pi pi-trash" severity="danger" class="mx-2" />
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="8">No types found.</td>
+            </tr>
+        </ng-template>
+        <ng-template #loadingbody>
+            <tr>
+                <td colspan="8">Loading types data. Please wait.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<!-- toast and confirm dialog -->
+<p-toast />
+<p-confirmdialog />
+
+<!-- Create inventory dialog -->
+<p-dialog header="Create Brand" [modal]="true" [(visible)]="createVisible" [style]="{ width: '40rem' }">
+    <form #typeCreateForm="ngForm" (ngSubmit)="createNewType()" novalidate>
+        <!-- Brand Name -->
+        <div class="flex flex-col md:flex-row gap-6 my-4">
+            <div class="flex flex-wrap gap-2 w-full">
+                <label for="brandName" class="font-semibold">Brand Name</label>
+                <input pInputText id="typeName" type="text" [(ngModel)]="createType.name" name="typeName" class="w-full"
+                    autocomplete="off" required #brandNameRef="ngModel"
+                    [ngClass]="{ 'p-invalid': brandNameRef.invalid && brandNameRef.touched }" />
+            </div>
+        </div>
+        <!-- Hiển thị lỗi -->
+        <div *ngIf="brandNameRef.invalid && brandNameRef.touched" class="text-red-500 text-sm mb-2">
+            Type name is required.
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-end gap-2">
+            <p-button label="Cancel" severity="secondary" (click)="createVisible = false" />
+            <p-button label="Create" type="submit" [disabled]="typeCreateForm.invalid" />
+        </div>
+    </form>
+</p-dialog>
+
+<!-- Edit inventory dialog -->
+<p-dialog header="Update Brand" [modal]="true" [(visible)]="editVisible" [style]="{ width: '40rem' }">
+    <form #brandUpdateForm="ngForm" (ngSubmit)="updateBrand()" novalidate>
+        <!-- Brand Name -->
+        <div class="flex flex-col md:flex-row gap-6 my-4">
+            <div class="flex flex-wrap gap-2 w-full">
+                <label for="brandName" class="font-semibold">Brand Name</label>
+                <input pInputText id="typeName" type="text" [(ngModel)]="editType.name" name="typeName" class="w-full"
+                    autocomplete="off" required #brandNameRef="ngModel"
+                    [ngClass]="{ 'p-invalid': brandNameRef.invalid && brandNameRef.touched }" />
+            </div>
+        </div>
+        <!-- Hiển thị lỗi -->
+        <div *ngIf="brandNameRef.invalid && brandNameRef.touched" class="text-red-500 text-sm mb-2">
+            Type name is required.
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-end gap-2">
+            <p-button label="Cancel" severity="secondary" (click)="editVisible = false" />
+            <p-button label="Update" type="submit" [disabled]="brandUpdateForm.invalid" />
+        </div>
+    </form>
+</p-dialog>
+
+<p-dialog [(visible)]="isLoading" [modal]="true" [closable]="false" [showHeader]="false">
+    <div class="flex flex-column align-items-center justify-content-center">
+        <p-progressSpinner *ngIf="loading$ | async"></p-progressSpinner>
+        <p class="mt-2">Processing, please wait...</p>
+    </div>
+</p-dialog>

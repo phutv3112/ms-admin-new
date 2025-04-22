@@ -8,7 +8,7 @@ export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
   const loadingService = inject(LoadingService);
   const messageService = inject(MessageService);
 
-  const DEFAULT_TIMEOUT = 10000; // 10s
+  const DEFAULT_TIMEOUT = 1000000; // 10s
 
   loadingService.setLoading(true);
 

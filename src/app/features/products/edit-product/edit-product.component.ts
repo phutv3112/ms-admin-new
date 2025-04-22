@@ -18,11 +18,10 @@ import { ProductService } from '../../../core/service/product.service';
 import { ToastModule } from 'primeng/toast';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Dialog } from 'primeng/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Product, ProductImage } from '../../../shared/models/catalog/product';
 import { LoadingService } from '../../../core/service/loading.service';
 import { Subscription } from 'rxjs';
-
 interface UploadEvent {
   originalEvent: Event;
   files: File[];
@@ -47,6 +46,7 @@ interface UploadEvent {
     ReactiveFormsModule,
     ToastModule,
     ProgressSpinner,
+    RouterLink,
   ],
   templateUrl: './edit-product.component.html',
   styleUrl: './edit-product.component.scss',
@@ -76,8 +76,8 @@ export class EditProductComponent implements OnInit, OnDestroy {
   uploadedFiles: any[] = [];
   productImages: ProductImage[] = [];
 
+  //loading
   loading$ = this.loadingService.loading$;
-
   private sub: Subscription;
 
   constructor(private router: Router) {
@@ -89,7 +89,7 @@ export class EditProductComponent implements OnInit, OnDestroy {
       originalPrice: [0, [Validators.required, Validators.min(0)]],
       brand: ['', Validators.required],
       type: ['', Validators.required],
-      stock: [0, [Validators.required, Validators.min(0)]],
+      stock: [0],
       categories: [[]],
       productImages: [[]],
       variants: this.fb.array([]),
@@ -129,11 +129,11 @@ export class EditProductComponent implements OnInit, OnDestroy {
     return this.productForm.get('variants') as FormArray<FormGroup>;
   }
 
-  addVariant(color = '', size = '', stock = 0, additionalPrice = 0) {
+  addVariant(id = '', color = '', size = '', additionalPrice = 0) {
     const variantForm = this.fb.group({
+      id: [id],
       color: [color, Validators.required],
       size: [size, Validators.required],
-      stock: [stock, [Validators.required, Validators.min(0)]],
       additionalPrice: [
         additionalPrice,
         [Validators.required, Validators.min(0)],
@@ -192,9 +192,9 @@ export class EditProductComponent implements OnInit, OnDestroy {
           this.variants.clear();
           for (const variant of product.variants) {
             this.addVariant(
+              variant.id,
               variant.color,
               variant.size,
-              variant.stock,
               variant.additionalPrice
             );
           }
@@ -233,7 +233,6 @@ export class EditProductComponent implements OnInit, OnDestroy {
     formData.append('OriginalPrice', formValue.originalPrice);
     formData.append('Brand', formValue.brand);
     formData.append('Type', formValue.type);
-    formData.append('Stock', formValue.stock);
 
     formValue.categories.forEach((category: Category) => {
       formData.append('Categories', category.name);

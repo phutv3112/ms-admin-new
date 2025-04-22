@@ -3,3 +3,19 @@
 @use './assets/layout/layout.scss';
 @use 'primeicons/primeicons.css';
 @use './assets/demo/demo.scss';
+
+.disabled-div {
+    opacity: 0.5;
+    pointer-events: none; 
+}
+.p-datatable-thead > tr > th{
+    background-color: #bfdbfe !important;
+}
+
+#discountForm .p-datepicker{
+    width: 100% !important;
+}
+::ng-deep .p-confirmdialog-icon {
+    font-size: 2rem !important; 
+    color: #dc3545 !important;  
+}

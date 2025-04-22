@@ -6,12 +6,12 @@
             <form [formGroup]="productForm" (ngSubmit)="submitForm()">
                 <div class="flex flex-col md:flex-row gap-6 my-4">
                     <div class="flex flex-wrap gap-2 w-full">
-                        <label for="name">Product Name</label>
+                        <label for="name" class="font-semibold">Product Name</label>
                         <input pInputText id="name" formControlName="name" type="text" />
                         <small class="text-red-500" *ngIf="isInvalid('name')">Name is required.</small>
                     </div>
                     <div class="flex flex-wrap gap-2 w-full">
-                        <label for="categories">Category</label>
+                        <label for="categories" class="font-semibold">Category</label>
                         <p-multiselect [options]="categories" formControlName="categories"
                             placeholder="Select Categories" optionLabel="name" styleClass="w-full" display="chip">
                             <ng-template let-country #item>
@@ -30,8 +30,8 @@
                             </ng-template>
                             <ng-template #footer>
                                 <div class="p-3 flex justify-between">
-                                    <p-button label="Add New" severity="secondary" text size="small"
-                                        icon="pi pi-plus" />
+                                    <p-button [routerLink]="['/categories']" label="Add New" severity="secondary" text
+                                        size="small" icon="pi pi-plus" />
                                     <p-button label="Remove All" severity="danger" text size="small"
                                         icon="pi pi-times" />
                                 </div>
@@ -41,7 +41,7 @@
                 </div>
                 <div class="flex flex-col md:flex-row gap-6 my-4">
                     <div class="flex flex-wrap gap-2 w-full">
-                        <label for="brand">Brand</label>
+                        <label for="brand" class="font-semibold">Brand</label>
                         <p-select [options]="brands" formControlName="brand" placeholder="Select Brand"
                             styleClass="w-full" display="chip">
                             <ng-template let-brand #item>
@@ -57,14 +57,14 @@
                             </ng-template>
                             <ng-template #footer>
                                 <div class="p-3 flex justify-between">
-                                    <p-button label="Add New" severity="secondary" text size="small"
-                                        icon="pi pi-plus" />
+                                    <p-button [routerLink]="['/brands']" label="Add New" severity="secondary" text
+                                        size="small" icon="pi pi-plus" />
                                 </div>
                             </ng-template>
                         </p-select>
                     </div>
                     <div class="flex flex-wrap gap-2 w-full">
-                        <label for="type">Type</label>
+                        <label for="type" class="font-semibold">Type</label>
                         <p-select [options]="types" formControlName="type" placeholder="Select Type" styleClass="w-full"
                             display="chip">
                             <ng-template let-type #item>
@@ -80,8 +80,8 @@
                             </ng-template>
                             <ng-template #footer>
                                 <div class="p-3 flex justify-between">
-                                    <p-button label="Add New" severity="secondary" text size="small"
-                                        icon="pi pi-plus" />
+                                    <p-button [routerLink]="['/types']" label="Add New" severity="secondary" text
+                                        size="small" icon="pi pi-plus" />
                                 </div>
                             </ng-template>
                         </p-select>
@@ -90,31 +90,36 @@
 
                 <div class="flex flex-col md:flex-row gap-6 my-4">
                     <div class="flex flex-wrap gap-2 w-full">
-                        <label for="shortDescription">Short Description</label>
+                        <label for="shortDescription" class="font-semibold">Short Description</label>
                         <textarea pTextarea id="shortDescription" formControlName="shortDescription"
                             rows="4"></textarea>
                     </div>
                 </div>
                 <div class="flex flex-col md:flex-row gap-6 my-4">
                     <div class="flex flex-wrap gap-2 w-full">
-                        <label for="price">Price</label>
+                        <label for="price" class="font-semibold">Price</label>
                         <p-inputnumber formControlName="price" inputId="currency-vn" mode="currency" currency="VND"
                             locale="vi-VN" min="0" />
                     </div>
                     <div class="flex flex-wrap gap-2 w-full">
-                        <label for="stock">Stock</label>
+                        <label for="originalPrice" class="font-semibold">Original Price</label>
+                        <p-inputnumber class="font-semibold" formControlName="originalPrice" inputId="currency-vn"
+                            mode="currency" currency="VND" locale="vi-VN" min="0" />
+                    </div>
+                    <div class="flex flex-wrap gap-2 w-full">
+                        <label for="stock" class="font-semibold">Stock</label>
                         <p-inputnumber formControlName="stock" />
                     </div>
                 </div>
                 <div class="flex flex-col md:flex-row gap-6 my-4">
                     <div class="flex flex-wrap gap-2 w-full">
-                        <label for="descriptions">Descriptions</label>
+                        <label for="descriptions" class="font-semibold">Descriptions</label>
                         <p-editor class="w-full" formControlName="description" [style]="{height: '320px' }" />
                     </div>
                 </div>
                 <div class="flex flex-col md:flex-row gap-6 my-4">
                     <div class="flex flex-wrap gap-2 w-full">
-                        <label for="productImages">Products Images</label>
+                        <label for="productImages" class="font-semibold">Products Images</label>
                         <p-fileupload class="w-full" name="productImages" (onUpload)="onUpload($event)"
                             (onSelect)="onFileSelect($event)" [multiple]="true" accept="image/*" maxFileSize="1000000"
                             mode="advanced" url="https://www.primefaces.org/cdn/api/upload.php">

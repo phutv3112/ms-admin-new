@@ -1,19 +1,31 @@
-import { Component, Renderer2, ViewChild } from '@angular/core';
+import { Component, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
 import { LayoutService } from './layout/service/layout.service';
 import { TopBarComponent } from './layout/top-bar/top-bar.component';
 import { SideBarComponent } from './layout/side-bar/side-bar.component';
+import { AuthService } from './core/service/auth.service';
+import { ButtonModule } from 'primeng/button';
+import { AppLoadingComponent } from './shared/components/app-loading/app-loading.component';
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, TopBarComponent, SideBarComponent, RouterModule],
+  imports: [
+    CommonModule,
+    TopBarComponent,
+    SideBarComponent,
+    RouterModule,
+    ButtonModule,
+    AppLoadingComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'admin-site';
+  isAuthenticated = false;
   overlayMenuOpenSubscription: Subscription;
 
   menuOutsideClickListener: any;
@@ -25,7 +37,8 @@ export class AppComponent {
   constructor(
     public layoutService: LayoutService,
     public renderer: Renderer2,
-    public router: Router
+    public router: Router,
+    public authService: AuthService
   ) {
     this.overlayMenuOpenSubscription =
       this.layoutService.overlayOpen$.subscribe(() => {
@@ -51,6 +64,13 @@ export class AppComponent {
       .subscribe(() => {
         this.hideMenu();
       });
+  }
+  ngOnInit(): void {
+    this.isAuthenticated = this.authService.isAuthenticated;
+  }
+
+  login() {
+    this.authService.login();
   }
 
   isOutsideClicked(event: MouseEvent) {

@@ -1,0 +1,201 @@
+<div class="card">
+
+    <div class="flex justify-between items-center mb-4">
+        <div class="font-semibold text-xl">List Users</div>
+        <div class="flex gap-2">
+            <p-button severity="info" label="See all roles" />
+            <p-button (click)="showCreateDialog()" label="+ Create new user" />
+        </div>
+    </div>
+    <p-table #dt1 [value]="users" dataKey="id" [rows]="10" [rowHover]="true" [showGridlines]="true" [paginator]="true"
+        [globalFilterFields]="['userName', 'fullName', 'email','phoneNumber','role']" responsiveLayout="scroll">
+        <ng-template #caption>
+            <div class="flex justify-between items-center flex-column sm:flex-row">
+                <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash"
+                    (click)="clear(dt1)"></button>
+                <p-iconfield iconPosition="left" class="ml-auto">
+                    <p-inputicon>
+                        <i class="pi pi-search"></i>
+                    </p-inputicon>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt1, $event)" placeholder="Search keyword" />
+                </p-iconfield>
+            </div>
+        </ng-template>
+        <ng-template #header>
+            <tr>
+                <th style="min-width: 12rem" pSortableColumn="userName">
+                    <div class="flex justify-between items-center">
+                        <span><p-sortIcon field="userName" /> Username</span>
+                        <p-columnFilter type="text" field="userName" display="menu"
+                            placeholder="Search by username"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">
+                        <span><p-sortIcon field="fullName" /> Full Name</span>
+                        <p-columnFilter type="text" field="fullName" display="menu"
+                            placeholder="Search by fullName"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">
+                        <span><p-sortIcon field="email" /> Email</span>
+                        <p-columnFilter type="text" field="email" display="menu"
+                            placeholder="Search by email"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">
+                        <span><p-sortIcon field="phoneNumber" /> Phone </span>
+                        <p-columnFilter type="text" field="phoneNumber" display="menu"
+                            placeholder="Search by phone"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">
+                        <span><p-sortIcon field="role" /> Role</span>
+                        <p-columnFilter type="text" field="role" display="menu"
+                            placeholder="Search by role"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 10rem; position: relative;">
+                    Actions
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-user>
+            <tr>
+                <td>
+                    {{ user.userName }}
+                </td>
+                <td>
+                    {{ user.fullName }}
+                </td>
+                <td>
+                    {{ user.email }}
+                </td>
+                <td>
+                    {{ user.phoneNumber }}
+                </td>
+                <td class="font-semibold uppercase">
+                    {{ user.role }}
+                </td>
+                <td>
+                    <div *ngIf="user.role !== 'admin'">
+                        <p-button (click)="showEditUserDialog(user.id)" icon="pi pi-lock" severity="info"
+                            class="mx-2" />
+                        <p-togglebutton [(ngModel)]="user.isLocked" onLabel="Locked" offLabel="Unlocked"
+                            offIcon="pi pi-lock-open" onIcon={{onIconLock}} styleClass="w-36" ariaLabel="Do you confirm"
+                            (click)="confirmLockUser($event,user)" />
+                        <p-button (click)="confirmDelete($event, user)" severity="danger" [outlined]="true"
+                            icon="pi pi-trash" severity="danger" class="mx-2" />
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="8">No users found.</td>
+            </tr>
+        </ng-template>
+        <ng-template #loadingbody>
+            <tr>
+                <td colspan="8">Loading users data. Please wait.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<!-- toast and confirm dialog -->
+<p-toast />
+<p-confirmdialog />
+
+<p-dialog header="Create New User" [modal]="true" [(visible)]="createVisible" [style]="{ width: '50rem' }">
+    <form [formGroup]="userForm" class="flex flex-col gap-4">
+
+        <!-- Username -->
+        <div class="flex items-center gap-4">
+            <label for="userName" class="w-32 font-semibold">Username</label>
+            <input pInputText id="userName" formControlName="userName" class="flex-auto font-normal"
+                autocomplete="off" />
+            <small class="text-red-500" *ngIf="f['userName'].touched && f['userName'].errors?.['required']">
+                Username is required
+            </small>
+        </div>
+
+        <!-- Full Name -->
+        <div class="flex items-center gap-4">
+            <label for="fullName" class="w-32 font-semibold">Full Name</label>
+            <input pInputText id="fullName" formControlName="fullName" class="flex-auto font-normal" />
+            <small class="text-red-500" *ngIf="f['fullName'].touched && f['fullName'].errors?.['required']">
+                Full name is required
+            </small>
+        </div>
+
+        <!-- Email -->
+        <div class="flex items-center gap-4">
+            <label for="email" class="w-32 font-semibold">Email</label>
+            <input pInputText id="email" formControlName="email" class="flex-auto font-normal" />
+            <small class="text-red-500" *ngIf="f['email'].touched && f['email'].errors?.['required']">
+                Email is required
+            </small>
+            <small class="text-red-500" *ngIf="f['email'].errors?.['email']">
+                Invalid email format
+            </small>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="flex items-center gap-4">
+            <label for="phoneNumber" class="w-32 font-semibold">Phone</label>
+            <input pInputText id="phoneNumber" formControlName="phoneNumber" class="flex-auto font-normal" />
+            <small class="text-red-500" *ngIf="f['phoneNumber'].touched && f['phoneNumber'].errors?.['pattern']">
+                Invalid phone number format
+            </small>
+        </div>
+
+        <!-- Password -->
+        <div class="flex items-center gap-4">
+            <label for="password" class="w-32 font-semibold">Password</label>
+            <input pInputText type="password" id="password" formControlName="password" class="flex-auto font-normal" />
+        </div>
+        <div>
+            <small class="text-red-500 block" *ngIf="f['password'].hasError('minlength') && f['password'].touched">
+                Password must be at least 6 characters!
+            </small>
+            <small class="text-red-500 block"
+                *ngIf="f['password'].hasError('passwordRequiresUpper') && f['password'].touched">
+                Password must contain at least one uppercase letter!
+            </small>
+            <small class="text-red-500 block"
+                *ngIf="f['password'].hasError('passwordRequiresDigit') && f['password'].touched">
+                Password must contain at least one digit!
+            </small>
+
+        </div>
+
+        <!-- Role (SelectButton) -->
+        <div class="flex items-center gap-4">
+            <label for="role" class="w-32 font-semibold">Role</label>
+            <p-select appendTo="body" [options]="roles" formControlName="role" placeholder="Select role"
+                styleClass="w-1/2" display="chip">
+                <ng-template let-role #item>
+                    <div class="flex items-center gap-2">
+                        <div>{{ role }}</div>
+                    </div>
+                </ng-template>
+                <ng-template #dropdownicon>
+                    <i class="pi pi-angle-down"></i>
+                </ng-template>
+            </p-select>
+            <small class="text-red-500" *ngIf="f['role'].touched && f['role'].errors?.['required']">
+                Role is required
+            </small>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-end gap-2 mt-5">
+            <p-button severity="info" label="Clear" [raised]="true" (click)="userForm.reset()" />
+            <p-button label="Save" (click)="createUser()" [disabled]="userForm.invalid" />
+        </div>
+    </form>
+</p-dialog>

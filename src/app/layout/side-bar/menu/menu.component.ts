@@ -50,11 +50,6 @@ export class MenuComponent {
                 icon: 'pi pi-fw pi-bookmark',
                 routerLink: ['/categories'],
               },
-              {
-                label: 'Create Category',
-                icon: 'pi pi-fw pi-bookmark',
-                routerLink: ['/categories/create'],
-              },
             ],
           },
           {
@@ -62,14 +57,68 @@ export class MenuComponent {
             icon: 'pi pi-fw pi-warehouse',
             items: [
               {
-                label: 'List Category',
+                label: 'Inventories',
                 icon: 'pi pi-fw pi-bookmark',
-                routerLink: ['/categories'],
+                routerLink: ['/inventories'],
+              },
+            ],
+          },
+          {
+            label: 'Brand & Type',
+            icon: 'pi pi-fw pi-slack',
+            items: [
+              {
+                label: 'Brands',
+                icon: 'pi pi-fw pi-bookmark',
+                routerLink: ['/brands'],
               },
               {
-                label: 'Create Category',
+                label: 'Types',
                 icon: 'pi pi-fw pi-bookmark',
-                routerLink: ['/categories/create'],
+                routerLink: ['/types'],
+              },
+            ],
+          },
+          {
+            label: 'Orders',
+            icon: 'pi pi-fw pi-shopping-cart',
+            items: [
+              {
+                label: 'List Orders',
+                icon: 'pi pi-fw pi-bookmark',
+                routerLink: ['/orders'],
+              },
+            ],
+          },
+          {
+            label: 'Promotions',
+            icon: 'pi pi-fw pi-dollar',
+            items: [
+              {
+                label: 'Discounts',
+                icon: 'pi pi-fw pi-bookmark',
+                routerLink: ['/discounts'],
+              },
+              {
+                label: 'Coupons',
+                icon: 'pi pi-fw pi-bookmark',
+                routerLink: ['/discounts/coupons'],
+              },
+            ],
+          },
+          {
+            label: 'Users & Roles',
+            icon: 'pi pi-fw pi-user-edit',
+            items: [
+              {
+                label: 'Users',
+                icon: 'pi pi-fw pi-bookmark',
+                routerLink: ['/users'],
+              },
+              {
+                label: 'Roles',
+                icon: 'pi pi-fw pi-bookmark',
+                routerLink: ['/roles'],
               },
             ],
           },

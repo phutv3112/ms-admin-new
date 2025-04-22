@@ -1,0 +1,122 @@
+<div class="card">
+    <div class="font-semibold text-xl mb-4 flex justify-between items-center">
+        <p class="uppercase text-2xl">Orders</p>
+    </div>
+
+    <p-table #dt [value]="orders" dataKey="id" [rows]="10" [rowHover]="true" [showGridlines]="true" [paginator]="true"
+        [globalFilterFields]="['buyerEmail', 'orderDate', 'deliveryMethod','status','shippingPrice','paymentType','subtotal','total']"
+        responsiveLayout="scroll">
+
+        <ng-template #caption>
+            <div class="flex justify-between items-center flex-column sm:flex-row">
+                <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash"
+                    (click)="clear(dt)"></button>
+                <p-iconfield iconPosition="left" class="ml-auto">
+                    <p-inputicon>
+                        <i class="pi pi-search"></i>
+                    </p-inputicon>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search keyword" />
+                </p-iconfield>
+            </div>
+        </ng-template>
+
+        <ng-template #header>
+            <tr>
+                <th pSortableColumn="name" style="min-width: 14rem">
+                    <div class="flex justify-between items-center">
+                        <span><p-sortIcon field="buyerEmail" /> Buyer
+                            Email</span>
+                        <p-columnFilter type="text" field="buyerEmail" display="menu"
+                            placeholder="Search by email"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 10rem" pSortableColumn="shippingPrice"><p-sortIcon field="shippingPrice" />
+                    Shipping Price
+                </th>
+                <th style="min-width: 10rem" pSortableColumn="subtotal"><p-sortIcon field="subtotal" />
+                    Subtotal
+                </th>
+                <th style="min-width: 10rem" pSortableColumn="total"><p-sortIcon field="total" />
+                    Total
+                </th>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">
+                        Status
+                        <p-columnFilter field="status" matchMode="equals" display="menu">
+                            <ng-template #filter let-value let-filter="filterCallback">
+                                <p-select [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)"
+                                    placeholder="Any" [style]="{ 'min-width': '12rem' }">
+                                    <ng-template let-option #item>
+                                        <span [class]="'customer-badge status-' + option.value">{{ option.label
+                                            }}</span>
+                                    </ng-template>
+                                </p-select>
+                            </ng-template>
+                        </p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">
+                        Payment Type
+                        <p-columnFilter field="paymentType" matchMode="equals" display="menu">
+                            <ng-template #filter let-value let-filter="filterCallback">
+                                <p-select [ngModel]="value" [options]="paymentTypes" (onChange)="filter($event.value)"
+                                    placeholder="Any" [style]="{ 'min-width': '12rem' }">
+                                    <ng-template let-option #item>
+                                        <span [class]="'customer-badge status-' + option.value">{{ option.label
+                                            }}</span>
+                                    </ng-template>
+                                </p-select>
+                            </ng-template>
+                        </p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 10rem" pSortableColumn="orderDate"><p-sortIcon field="orderDate" />
+                    Order Date
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </ng-template>
+
+        <ng-template #body let-order>
+            <tr>
+                <td>{{ order.buyerEmail }}</td>
+                <td>{{ order.shippingPrice | currency : 'VND' }}
+                </td>
+                <td class="font-semibold">{{ order.subtotal | currency : 'VND'}}</td>
+                <td class="font-semibold">{{ order.total | currency : 'VND'}}</td>
+                <td>
+                    <p-tag [value]="order.status" [severity]="getSeverity(order)" styleClass="dark:!bg-surface-900" />
+                </td>
+                <td>
+                    <p-tag [value]="order.payment.paymentType == 0 ? 'Cards' : 'VnPay'"
+                        styleClass="dark:!bg-surface-900" />
+                </td>
+                <td>{{ order.orderDate | date: 'dd/MM/yy, h:mm a' }}</td>
+                <td>
+                    <p-button [routerLink]="['/orders/details', order.id]" icon="pi pi-eye" severity="info"
+                        class="mx-2" />
+                    <p-button [routerLink]="['/orders', order.id]" label="Refund" icon="pi pi-undo" severity="warn"
+                        class="mx-2" />
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="8">No orders found.</td>
+            </tr>
+        </ng-template>
+
+        <ng-template #loadingbody>
+            <tr>
+                <td colspan="8">Loading orders. Please wait.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-toast></p-toast>
+<p-confirmdialog></p-confirmdialog>

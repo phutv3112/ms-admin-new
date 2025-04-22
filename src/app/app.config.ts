@@ -1,4 +1,8 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import {
+  APP_INITIALIZER,
+  ApplicationConfig,
+  provideZoneChangeDetection,
+} from '@angular/core';
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
@@ -15,12 +19,43 @@ import {
   withInterceptors,
 } from '@angular/common/http';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import {
+  OAuthService,
+  OAuthStorage,
+  provideOAuthClient,
+} from 'angular-oauth2-oidc';
+import { InitService } from './core/service/init.service';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
+
+export function initializeApp(initService: InitService) {
+  return () => initService.init();
+}
+
+export function storageFactory(): OAuthStorage {
+  return localStorage;
+}
+export function initializeAppFactory(
+  oauthService: OAuthService
+): () => Promise<any> {
+  return () => oauthService.loadDiscoveryDocumentAndTryLogin();
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideHttpClient(withFetch(), withInterceptors([loadingInterceptor])),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([loadingInterceptor, authInterceptor])
+    ),
+    provideOAuthClient(),
+    { provide: OAuthStorage, useFactory: storageFactory },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      multi: true,
+      deps: [InitService],
+    },
     provideRouter(
       routes,
       withInMemoryScrolling({
@@ -36,5 +71,6 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     MessageService,
+    ConfirmationService,
   ],
 };

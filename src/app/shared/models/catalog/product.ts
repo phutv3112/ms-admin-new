@@ -20,6 +20,8 @@ export interface Product {
   brand: string;
   type: string;
   stock: number;
+  averageRating: number;
+  totalReview: number;
   imageUrls: ProductImage[];
   variants: ProductVariant[];
   categories: Category[];
@@ -37,4 +39,65 @@ export interface ProductVariant {
   size: string;
   additionalPrice: number;
   stock: number;
+}
+
+export interface InventoryItem {
+  inventoryId: string;
+  productName: string;
+  color: string;
+  size: string;
+  quantity: number;
+  imageUrl: string;
+}
+export interface InventoryById {
+  inventoryId: string;
+  quantity: number;
+}
+
+export interface InventoryHistory {
+  inventoryId: string;
+  oldQuantity: number;
+  newQuantity: number;
+  reason: string;
+  userName: string;
+}
+export interface InventoryHistoryResponse {
+  id: string;
+  inventoryId: string;
+  oldQuantity: number;
+  newQuantity: number;
+  reason: string;
+  changedBy: string;
+  changedAt: Date;
+}
+
+export interface BrandResponse {
+  id: string;
+  name: string;
+  imageUrl: string;
+  isActive: boolean;
+  changedBy: string;
+  createdDate: Date;
+  updatedDate: Date;
+  productCount: number;
+}
+
+export interface ProductTypeResponse {
+  id: string;
+  name: string;
+  isActive: boolean;
+  changedBy: string;
+  createdDate: Date;
+  updatedDate: Date;
+  productCount: number;
+}
+
+export interface ProductReview {
+  id: string;
+  productId: string;
+  userName: string;
+  orderId?: string;
+  rating: number;
+  comment?: string;
+  createdAt: Date;
 }

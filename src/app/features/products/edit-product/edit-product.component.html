@@ -1,197 +1,207 @@
 <p-toast />
 <p-fluid>
     <div class="flex">
-        <div class="card flex flex-col gap-6 w-3/5">
-            <div class="font-semibold text-xl">Create new product</div>
+        <div class="card flex flex-col gap-6 w-full">
+            <div class="flex justify-between items-center mb-4">
+                <div class="font-semibold text-xl">Edit product</div>
+                <div class="flex gap-2">
+                    <p-button icon="pi pi-arrow-left" severity="secondary" label="Back" class="mb-2"
+                        [routerLink]="['/products']"></p-button>
+                    <p-button icon="pi pi-star" severity="warn" label="See reviews" class="mb-2 ml-2"
+                        [routerLink]="['/products/reviews',productId]"></p-button>
+                </div>
+            </div>
             <form [formGroup]="productForm" (ngSubmit)="submitForm()">
-                <div class="flex flex-col md:flex-row gap-6 my-4">
-                    <div class="flex flex-wrap gap-2 w-full">
-                        <label for="name" class="font-semibold">Product Name</label>
-                        <input pInputText id="name" formControlName="name" type="text" />
-                        <small class="text-red-500" *ngIf="isInvalid('name')">Name is required.</small>
-                    </div>
-                    <div class="flex flex-wrap gap-2 w-full">
-                        <label for="categories" class="font-semibold">Category</label>
-                        <p-multiselect [options]="categories" formControlName="categories"
-                            placeholder="Select Categories" optionLabel="name" styleClass="w-full" display="chip">
-                            <ng-template let-country #item>
-                                <div class="flex items-center gap-2">
-                                    <div>{{ country.name }}</div>
-                                </div>
-                            </ng-template>
-                            <ng-template #dropdownicon>
-                                <i class="pi pi-angle-down"></i>
-                            </ng-template>
-                            <ng-template #filtericon>
-                                <i class="pi pi-search"></i>
-                            </ng-template>
-                            <ng-template #header>
-                                <div class="font-medium px-3 py-2">Available Categories</div>
-                            </ng-template>
-                            <ng-template #footer>
-                                <div class="p-3 flex justify-between">
-                                    <p-button label="Add New" severity="secondary" text size="small"
-                                        icon="pi pi-plus" />
-                                    <p-button label="Remove All" severity="danger" text size="small"
-                                        icon="pi pi-times" />
-                                </div>
-                            </ng-template>
-                        </p-multiselect>
-                    </div>
-                </div>
-                <div class="flex flex-col md:flex-row gap-6 my-4">
-                    <div class="flex flex-wrap gap-2 w-full">
-                        <label for="brand">Brand</label>
-                        <p-select [options]="brands" formControlName="brand" placeholder="Select Brand"
-                            styleClass="w-full" display="chip">
-                            <ng-template let-brand #item>
-                                <div class="flex items-center gap-2">
-                                    <div>{{ brand }}</div>
-                                </div>
-                            </ng-template>
-                            <ng-template #dropdownicon>
-                                <i class="pi pi-angle-down"></i>
-                            </ng-template>
-                            <ng-template #filtericon>
-                                <i class="pi pi-search"></i>
-                            </ng-template>
-                            <ng-template #footer>
-                                <div class="p-3 flex justify-between">
-                                    <p-button label="Add New" severity="secondary" text size="small"
-                                        icon="pi pi-plus" />
-                                </div>
-                            </ng-template>
-                        </p-select>
-                    </div>
-                    <div class="flex flex-wrap gap-2 w-full">
-                        <label for="type">Type</label>
-                        <p-select [options]="types" formControlName="type" placeholder="Select Type" styleClass="w-full"
-                            display="chip">
-                            <ng-template let-type #item>
-                                <div class="flex items-center gap-2">
-                                    <div>{{ type }}</div>
-                                </div>
-                            </ng-template>
-                            <ng-template #dropdownicon>
-                                <i class="pi pi-angle-down"></i>
-                            </ng-template>
-                            <ng-template #filtericon>
-                                <i class="pi pi-search"></i>
-                            </ng-template>
-                            <ng-template #footer>
-                                <div class="p-3 flex justify-between">
-                                    <p-button label="Add New" severity="secondary" text size="small"
-                                        icon="pi pi-plus" />
-                                </div>
-                            </ng-template>
-                        </p-select>
-                    </div>
-                </div>
-
-                <div class="flex flex-col md:flex-row gap-6 my-4">
-                    <div class="flex flex-wrap gap-2 w-full">
-                        <label for="shortDescription" class="font-semibold">Short Description</label>
-                        <textarea pTextarea id="shortDescription" formControlName="shortDescription"
-                            rows="4"></textarea>
-                    </div>
-                </div>
-                <div class="flex flex-col md:flex-row gap-6 my-4">
-                    <div class="flex flex-wrap gap-2 w-full">
-                        <label for="price" class="font-semibold">Price</label>
-                        <p-inputnumber formControlName="price" inputId="currency-vn" mode="currency" currency="VND"
-                            locale="vi-VN" min="0" />
-                    </div>
-                    <div class="flex flex-wrap gap-2 w-full">
-                        <label for="originalPrice" class="font-semibold">Original Price</label>
-                        <p-inputnumber formControlName="originalPrice" inputId="currency-vn" mode="currency"
-                            currency="VND" locale="vi-VN" min="0" />
-                    </div>
-                    <div class="flex flex-wrap gap-2 w-full">
-                        <label for="stock" class="font-semibold">Stock</label>
-                        <p-inputnumber formControlName="stock" />
-                    </div>
-                </div>
-                <div class="flex flex-col md:flex-row gap-6 my-4">
-                    <div class="flex flex-wrap gap-2 w-full">
-                        <label for="description" class="font-semibold">Descriptions</label>
-                        <p-editor class="w-full" formControlName="description" [style]="{height: '320px' }" />
-                    </div>
-                </div>
-
-                <div class="my-4 space-y-6">
-                    <!-- Upload section -->
+                <div class="grid grid-cols-2 gap-4">
                     <div class="w-full">
-                        <label for="productImages" class="font-semibold block mb-2">Product Images</label>
-                        <p-fileupload class="w-full" name="productImages" (onUpload)="onUpload($event)"
-                            (onSelect)="onFileSelect($event)" [multiple]="true" accept="image/*" maxFileSize="1000000"
-                            mode="advanced" url="https://www.primefaces.org/cdn/api/upload.php">
-                            <ng-template #empty>
-                                <div>Drag and drop files to here to upload.</div>
-                            </ng-template>
-                            <ng-template #content>
-                                <ul *ngIf="uploadedFiles.length">
-                                    <li *ngFor="let file of uploadedFiles">
-                                        {{ file.name }} - {{ file.size }} bytes
-                                    </li>
-                                </ul>
-                            </ng-template>
-                        </p-fileupload>
-                    </div>
+                        <div class="flex flex-col md:flex-row gap-6 my-4">
+                            <div class="flex flex-wrap gap-2 w-full">
+                                <label for="name" class="font-semibold">Product Name</label>
+                                <input pInputText id="name" formControlName="name" type="text" />
+                                <small class="text-red-500" *ngIf="isInvalid('name')">Name is required.</small>
+                            </div>
+                            <div class="flex flex-wrap gap-2 w-full">
+                                <label for="categories" class="font-semibold">Category</label>
+                                <p-multiselect [options]="categories" formControlName="categories"
+                                    placeholder="Select Categories" optionLabel="name" styleClass="w-full"
+                                    display="chip">
+                                    <ng-template let-country #item>
+                                        <div class="flex items-center gap-2">
+                                            <div>{{ country.name }}</div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template #dropdownicon>
+                                        <i class="pi pi-angle-down"></i>
+                                    </ng-template>
+                                    <ng-template #filtericon>
+                                        <i class="pi pi-search"></i>
+                                    </ng-template>
+                                    <ng-template #header>
+                                        <div class="font-medium px-3 py-2">Available Categories</div>
+                                    </ng-template>
+                                    <ng-template #footer>
+                                        <div class="p-3 flex justify-between">
+                                            <p-button [routerLink]="['/categories']" label="Add New"
+                                                severity="secondary" text size="small" icon="pi pi-plus" />
+                                            <p-button label="Remove All" severity="danger" text size="small"
+                                                icon="pi pi-times" />
+                                        </div>
+                                    </ng-template>
+                                </p-multiselect>
+                            </div>
+                        </div>
+                        <div class="flex flex-col md:flex-row gap-6 my-4">
+                            <div class="flex flex-wrap gap-2 w-full">
+                                <label for="brand">Brand</label>
+                                <p-select [options]="brands" formControlName="brand" placeholder="Select Brand"
+                                    styleClass="w-full" display="chip">
+                                    <ng-template let-brand #item>
+                                        <div class="flex items-center gap-2">
+                                            <div>{{ brand }}</div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template #dropdownicon>
+                                        <i class="pi pi-angle-down"></i>
+                                    </ng-template>
+                                    <ng-template #filtericon>
+                                        <i class="pi pi-search"></i>
+                                    </ng-template>
+                                    <ng-template #footer>
+                                        <div class="p-3 flex justify-between">
+                                            <p-button [routerLink]="['/brands']" label="Add New" severity="secondary"
+                                                text size="small" icon="pi pi-plus" />
+                                        </div>
+                                    </ng-template>
+                                </p-select>
+                            </div>
+                            <div class="flex flex-wrap gap-2 w-full">
+                                <label for="type">Type</label>
+                                <p-select [options]="types" formControlName="type" placeholder="Select Type"
+                                    styleClass="w-full" display="chip">
+                                    <ng-template let-type #item>
+                                        <div class="flex items-center gap-2">
+                                            <div>{{ type }}</div>
+                                        </div>
+                                    </ng-template>
+                                    <ng-template #dropdownicon>
+                                        <i class="pi pi-angle-down"></i>
+                                    </ng-template>
+                                    <ng-template #filtericon>
+                                        <i class="pi pi-search"></i>
+                                    </ng-template>
+                                    <ng-template #footer>
+                                        <div class="p-3 flex justify-between">
+                                            <p-button [routerLink]="['/types']" label="Add New" severity="secondary"
+                                                text size="small" icon="pi pi-plus" />
+                                        </div>
+                                    </ng-template>
+                                </p-select>
+                            </div>
+                        </div>
 
-                    <!-- Preview section -->
-                    <div class="w-full">
-                        <label class="font-semibold block mb-2">Preview</label>
-                        <div class="flex flex-wrap gap-2">
-                            <img *ngFor="let img of productImages" [src]="img.imageUrl" alt="Product Image"
-                                class="w-24 h-24 object-cover rounded border border-gray-300" />
+                        <div class="my-4 space-y-6">
+                            <!-- Upload section -->
+                            <div class="w-full">
+                                <label for="productImages" class="font-semibold block mb-2">Product Images</label>
+                                <p-fileupload class="w-full" name="productImages" (onUpload)="onUpload($event)"
+                                    (onSelect)="onFileSelect($event)" [multiple]="true" accept="image/*"
+                                    maxFileSize="1000000" mode="advanced"
+                                    url="https://www.primefaces.org/cdn/api/upload.php">
+                                    <ng-template #empty>
+                                        <div>Drag and drop files to here to upload.</div>
+                                    </ng-template>
+                                    <ng-template #content>
+                                        <ul *ngIf="uploadedFiles.length">
+                                            <li *ngFor="let file of uploadedFiles">
+                                                {{ file.name }} - {{ file.size }} bytes
+                                            </li>
+                                        </ul>
+                                    </ng-template>
+                                </p-fileupload>
+                            </div>
+
+                            <!-- Preview section -->
+                            <div class="w-full">
+                                <label class="font-semibold block mb-2">Preview</label>
+                                <div class="flex flex-wrap gap-2">
+                                    <img *ngFor="let img of productImages" [src]="img.imageUrl" alt="Product Image"
+                                        class="w-24 h-24 object-cover rounded border border-gray-300" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col md:flex-row gap-6 my-4">
+                            <div class="flex flex-wrap gap-2 w-full">
+                                <p-button label="Add Product Variant" icon="pi pi-plus" (click)="addVariant()"
+                                    severity="secondary" class="mt-2" />
+
+                                <div *ngFor="let variant of variants.controls; let i = index" [formGroup]="variant"
+                                    class="flex gap-4 items-center w-full">
+
+                                    <div class="w-1/4">
+                                        <label for="color-{{i}}" class="block font-semibold">Color</label>
+                                        <input id="color-{{i}}" pInputText placeholder="Color" formControlName="color"
+                                            class="w-full" />
+                                    </div>
+
+                                    <div class="w-1/4">
+                                        <label for="size-{{i}}" class="block font-semibold">Size</label>
+                                        <input id="size-{{i}}" pInputText placeholder="Size" formControlName="size"
+                                            class="w-full" />
+                                    </div>
+
+                                    <div class="w-1/4">
+                                        <label for="price-{{i}}" class="block font-semibold">Additional Price</label>
+                                        <p-inputnumber id="price-{{i}}" min="0" placeholder="Additional Price"
+                                            formControlName="additionalPrice" class="w-full" />
+                                    </div>
+
+                                    <p-button icon="pi pi-trash" severity="danger" (click)="removeVariant(i)" text />
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="flex justify-end mt-4">
+                            <!-- <p-button label="Submit" type="submit" icon="pi pi-check" /> -->
+                            <button pButton type="button" label="Update Product" icon="pi pi-check"
+                                [disabled]="isLoading" (click)="submitForm()">
+                            </button>
                         </div>
                     </div>
-                </div>
-
-
-                <div class="flex flex-col md:flex-row gap-6 my-4">
-                    <div class="flex flex-wrap gap-2 w-full">
-                        <p-button label="Add Product Variant" icon="pi pi-plus" (click)="addVariant()"
-                            severity="secondary" class="mt-2" />
-
-                        <div *ngFor="let variant of variants.controls; let i = index" [formGroup]="variant"
-                            class="flex gap-4 items-center w-full">
-
-                            <div class="w-1/4">
-                                <label for="color-{{i}}" class="block">Color</label>
-                                <input id="color-{{i}}" pInputText placeholder="Color" formControlName="color"
-                                    class="w-full" />
+                    <div class="w-full">
+                        <div class="flex flex-col md:flex-row gap-6 my-4">
+                            <div class="flex flex-wrap gap-2 w-full">
+                                <label for="price" class="font-semibold">Price</label>
+                                <p-inputnumber class="font-semibold" formControlName="price" inputId="currency-vn"
+                                    mode="currency" currency="VND" locale="vi-VN" min="0" />
                             </div>
-
-                            <div class="w-1/4">
-                                <label for="size-{{i}}" class="block">Size</label>
-                                <input id="size-{{i}}" pInputText placeholder="Size" formControlName="size"
-                                    class="w-full" />
+                            <div class="flex flex-wrap gap-2 w-full">
+                                <label for="originalPrice" class="font-semibold">Original Price</label>
+                                <p-inputnumber class="font-semibold" formControlName="originalPrice"
+                                    inputId="currency-vn" mode="currency" currency="VND" locale="vi-VN" min="0" />
                             </div>
-
-                            <div class="w-1/4">
-                                <label for="stock-{{i}}" class="block">Quantity</label>
-                                <p-inputnumber id="stock-{{i}}" min="0" placeholder="Quantity" formControlName="stock"
-                                    class="w-full" />
+                            <div class="flex flex-wrap gap-2 w-full" [ngClass]="{ 'disabled-div': true }">
+                                <label for="stock" class="font-semibold">Stock</label>
+                                <p-inputnumber formControlName="stock" class="font-semibold" />
                             </div>
-
-                            <div class="w-1/4">
-                                <label for="price-{{i}}" class="block">Additional Price</label>
-                                <p-inputnumber id="price-{{i}}" min="0" placeholder="Additional Price"
-                                    formControlName="additionalPrice" class="w-full" />
-                            </div>
-
-                            <p-button icon="pi pi-trash" severity="danger" (click)="removeVariant(i)" text />
                         </div>
-                    </div>
+                        <div class="flex flex-col md:flex-row gap-6 my-4">
+                            <div class="flex flex-wrap gap-2 w-full">
+                                <label for="shortDescription" class="font-semibold">Short Description</label>
+                                <textarea pTextarea id="shortDescription" formControlName="shortDescription"
+                                    rows="4"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex flex-col md:flex-row gap-6 my-4">
+                            <div class="flex flex-wrap gap-2 w-full">
+                                <label for="description" class="font-semibold">Descriptions</label>
+                                <p-editor class="w-full" formControlName="description" [style]="{height: '320px' }" />
+                            </div>
+                        </div>
 
+
+                    </div>
                 </div>
-                <div class="flex justify-end mt-4">
-                    <!-- <p-button label="Submit" type="submit" icon="pi pi-check" /> -->
-                    <button pButton type="button" label="Update Product" icon="pi pi-check" [disabled]="isLoading"
-                        (click)="submitForm()">
-                    </button>
-                </div>
+
             </form>
 
         </div>

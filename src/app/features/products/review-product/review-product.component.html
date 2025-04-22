@@ -1,0 +1,86 @@
+<div class="card">
+    <div class="font-semibold text-xl mb-4 flex justify-between items-center">
+        <p class="font-semibold text-xl">Product Reviews</p>
+        <div>
+            <p-button icon="pi pi-arrow-left" severity="secondary" label="Back" class="mb-2"
+                [routerLink]="['/products']"></p-button>
+        </div>
+    </div>
+    <p-table #dt1 [value]="reviews" dataKey="id" [rows]="10" [rowHover]="true" [showGridlines]="true" [paginator]="true"
+        [globalFilterFields]="['userName', 'rating', 'comment','createdAt']" stripedRows responsiveLayout="scroll">
+        <ng-template #caption>
+            <div class="flex justify-between items-center flex-column sm:flex-row">
+                <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash"
+                    (click)="clear(dt1)"></button>
+                <p-iconfield iconPosition="left" class="ml-auto">
+                    <p-inputicon>
+                        <i class="pi pi-search"></i>
+                    </p-inputicon>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt1, $event)" placeholder="Search keyword" />
+                </p-iconfield>
+            </div>
+        </ng-template>
+        <ng-template #header>
+            <tr>
+                <th style="min-width: 12rem" pSortableColumn="userName">
+                    <div class="flex justify-between items-center">
+                        <span><p-sortIcon field="userName" /> User Name</span>
+                        <p-columnFilter type="text" field="userName" display="menu"
+                            placeholder="Search by username"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 10rem" pSortableColumn="rating">
+                    <p-sortIcon field="rating" />
+                    Rating
+                </th>
+                <th style="min-width: 12rem" pSortableColumn="comment">
+                    <div class="flex justify-between items-center">
+                        <span>Comment</span>
+                        <p-columnFilter type="text" field="comment" display="menu"
+                            placeholder="Search by comment"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 10rem" pSortableColumn="createdAt">
+                    <p-sortIcon field="createdAt" />
+                    Created At
+                </th>
+                <th style="min-width: 10rem; position: relative;">
+                    Actions
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-review let-columns="columns">
+            <tr>
+                <td>
+                    {{ review.userName }}
+                </td>
+                <td>
+                    <p-rating [(ngModel)]="review.rating" [readonly]="true" />
+                </td>
+                <td>
+                    {{ review.comment }}
+                </td>
+                <td>{{ review.createdAt | date: 'dd/MM/yy, h:mm a' }}</td>
+
+                <td>
+                    <p-button (click)="confirmDelete($event, review.id)" severity="danger" [outlined]="true"
+                        icon="pi pi-trash" severity="danger" class="mx-2" />
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="8">No products found.</td>
+            </tr>
+        </ng-template>
+        <ng-template #loadingbody>
+            <tr>
+                <td colspan="8">Loading products data. Please wait.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<!-- toast and confirm dialog -->
+<p-toast />
+<p-confirmdialog />

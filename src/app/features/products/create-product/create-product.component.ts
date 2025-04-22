@@ -4,10 +4,15 @@ import { InputNumber } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  FormControl,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { TextareaModule } from 'primeng/textarea';
 import { FluidModule } from 'primeng/fluid';
-import { EditorModule } from 'primeng/editor';
+import { Editor } from 'primeng/editor';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { FileUploadModule } from 'primeng/fileupload';
 import { CommonModule } from '@angular/common';
@@ -18,7 +23,7 @@ import { ProductService } from '../../../core/service/product.service';
 import { ToastModule } from 'primeng/toast';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Dialog } from 'primeng/dialog';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 interface UploadEvent {
   originalEvent: Event;
@@ -39,11 +44,12 @@ interface UploadEvent {
     FluidModule,
     MultiSelectModule,
     InputNumber,
-    EditorModule,
+    Editor,
     CommonModule,
     ReactiveFormsModule,
     ToastModule,
     ProgressSpinner,
+    RouterLink,
   ],
   templateUrl: './create-product.component.html',
   styleUrl: './create-product.component.scss',
@@ -85,11 +91,12 @@ export class CreateProductComponent implements OnInit {
       name: ['', Validators.required],
       shortDescription: ['', Validators.required],
       description: ['', Validators.required],
-      price: ['', Validators.required],
+      price: [0, Validators.required],
+      originalPrice: [0, Validators.required],
       brand: ['', Validators.required],
       type: ['', Validators.required],
-      stock: [''],
-      categories: [[]], // Multi-select
+      stock: [0],
+      categories: [[]],
       productImages: [[], Validators.required],
       variants: this.fb.array([]), // Mảng biến thể
     });
@@ -123,8 +130,8 @@ export class CreateProductComponent implements OnInit {
     const variantForm = this.fb.group({
       color: [''],
       size: [''],
-      additionalPrice: [''],
-      stock: [''],
+      additionalPrice: [0],
+      stock: [0],
     });
     this.variants.push(variantForm);
   }
@@ -170,6 +177,7 @@ export class CreateProductComponent implements OnInit {
     formData.append('ShortDescription', formValue.shortDescription);
     formData.append('Description', formValue.description);
     formData.append('Price', formValue.price);
+    formData.append('OriginalPrice', formValue.originalPrice);
     formData.append('Brand', formValue.brand);
     formData.append('Type', formValue.type);
     formData.append('Stock', formValue.stock);

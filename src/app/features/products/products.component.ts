@@ -138,9 +138,9 @@ export class ProductsComponent implements OnInit {
   }
 
   formatCurrency(value: number) {
-    return value.toLocaleString('en-US', {
+    return value.toLocaleString('vi-VN', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'VND',
     });
   }
 

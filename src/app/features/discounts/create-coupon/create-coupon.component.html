@@ -1,0 +1,123 @@
+<div class="card max-w-screen-lg mx-auto">
+    <form [formGroup]="codeForm" class="flex flex-col gap-6">
+
+        <!-- Discount Code -->
+        <div class="flex flex-col gap-2">
+            <label for="code" class="font-semibold">Code</label>
+            <div class="flex gap-2">
+                <input pInputText id="code" formControlName="code" class="flex-1" autocomplete="off"
+                    placeholder="Enter code or generate" />
+                <p-button label="Generate" icon="pi pi-refresh" (click)="generateCodeAndSet()" type="button"
+                    severity="secondary" />
+            </div>
+            <small class="text-red-500" *ngIf="f['code'].touched && f['code'].errors?.['required']">
+                Code is required
+            </small>
+            <small class="text-red-500" *ngIf="f['code'].touched && f['code'].errors?.['minlength']">
+                Code must be at least 4 characters
+            </small>
+            <small class="text-red-500" *ngIf="f['code'].touched && f['code'].errors?.['maxlength']">
+                Code must not exceed 12 characters
+            </small>
+            <small class="text-red-500" *ngIf="f['code'].touched && f['code'].errors?.['pattern']">
+                Code can only contain letters and numbers
+            </small>
+
+        </div>
+
+        <!-- Discount Type + Value -->
+        <div class="flex gap-4">
+            <div class="flex flex-1 flex-col gap-2">
+                <label class="font-semibold">Discount Type</label>
+                <p-select [options]="discountTypes" formControlName="type" placeholder="Select Type" styleClass="w-full"
+                    display="chip">
+                    <ng-template let-type #item>
+                        <div class="flex items-center gap-2">
+                            <div>{{ type.label }}</div>
+                        </div>
+                    </ng-template>
+                    <ng-template #dropdownicon>
+                        <i class="pi pi-angle-down"></i>
+                    </ng-template>
+                </p-select>
+            </div>
+            <div class="flex flex-1 flex-col gap-2">
+                <label class="font-semibold">Value</label>
+                <input pInputText type="number" formControlName="value" class="w-full" placeholder="Value" />
+                <small class="text-red-500" *ngIf="f['value'].touched && f['value'].errors?.['max']">
+                    Value discount for percentage type is 100%
+                </small>
+
+            </div>
+        </div>
+
+        <!-- Usage Limit + Per User Limit -->
+        <div class="flex gap-4">
+            <div class="flex flex-1 flex-col gap-2">
+                <label class="font-semibold">Usage Limit</label>
+                <input pInputText formControlName="usageLimit" type="number" class="w-full" />
+            </div>
+            <div class="flex flex-1 flex-col gap-2">
+                <label class="font-semibold">Per User Limit</label>
+                <input pInputText formControlName="perUserLimit" type="number" class="w-full" />
+                <small class="text-red-500"
+                    *ngIf="codeForm.errors?.['maxPerUserExceeded'] && f['perUserLimit'].touched">
+                    User usage exceeds limit
+                </small>
+            </div>
+        </div>
+
+        <!-- Min Subtotal + Max Discount -->
+        <div class="flex gap-4">
+            <div class="flex flex-1 flex-col gap-2">
+                <label class="font-semibold">Min Subtotal</label>
+                <input pInputText formControlName="minSubtotal" type="number" class="w-full" />
+            </div>
+            <div class="flex flex-1 flex-col gap-2">
+                <label class="font-semibold">Max Discount Amount</label>
+                <input pInputText formControlName="maxDiscountAmount" type="number" class="w-full" />
+            </div>
+        </div>
+
+        <!-- Start Date + End Date -->
+        <div class="flex gap-4">
+            <div class="flex flex-1 flex-col gap-2">
+                <label class="font-semibold">Start Date</label>
+                <p-datepicker [showIcon]="true" formControlName="startDate" [showTime]="true" hourFormat="24"
+                    dateFormat="yy-mm-dd" class="w-full" />
+                <small class="text-red-500" *ngIf="f['startDate'].touched && f['startDate'].errors?.['required']">
+                    Start date is required
+                </small>
+                <small class="text-red-500" *ngIf="codeForm.errors?.['startBeforeNow'] && f['startDate'].touched">
+                    Start date must be in the future
+                </small>
+            </div>
+            <div class="flex flex-1 flex-col gap-2">
+                <label class="font-semibold">End Date</label>
+                <p-datepicker [showIcon]="true" formControlName="endDate" [showTime]="true" hourFormat="24"
+                    dateFormat="yy-mm-dd" class="w-full" />
+                <small class="text-red-500" *ngIf="f['endDate'].touched && f['endDate'].errors?.['required']">
+                    End date is required
+                </small>
+                <small class="text-red-500" *ngIf="codeForm.errors?.['startAfterEnd'] && f['endDate'].touched">
+                    End date must be after start date
+                </small>
+            </div>
+        </div>
+
+        <!-- Is Active -->
+        <div class="flex flex-col gap-2">
+            <label class="font-semibold">Is Active</label>
+            <p-checkbox formControlName="isActive" binary="true" />
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex justify-end gap-2 mt-4">
+            <p-button label="Back" severity="secondary" [routerLink]="['/discounts',discountId]" />
+            <p-button label="Clear" severity="info" (click)="codeForm.reset()" />
+            <p-button label="Save" (click)="createDiscountCode()" [disabled]="codeForm.invalid" />
+        </div>
+    </form>
+</div>
+<p-toast />
+<p-confirmdialog />
