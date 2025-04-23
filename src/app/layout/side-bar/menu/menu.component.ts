@@ -130,9 +130,25 @@ export class MenuComponent {
         routerLink: ['/pages'],
         items: [
           {
-            label: 'Landing',
-            icon: 'pi pi-fw pi-globe',
-            routerLink: ['/landing'],
+            label: 'Reports',
+            icon: 'pi pi-fw pi-book',
+            items: [
+              {
+                label: 'Best Selling Products',
+                icon: 'pi pi-fw pi-bookmark',
+                routerLink: ['/reports/best-selling'],
+              },
+              {
+                label: 'Top Rated Products',
+                icon: 'pi pi-fw pi-bookmark',
+                routerLink: ['/reports/top-rated'],
+              },
+              {
+                label: 'Top Customers',
+                icon: 'pi pi-fw pi-bookmark',
+                routerLink: ['/reports/top-customers'],
+              },
+            ],
           },
           {
             label: 'Auth',
@@ -154,21 +170,6 @@ export class MenuComponent {
                 routerLink: ['/auth/access'],
               },
             ],
-          },
-          {
-            label: 'Crud',
-            icon: 'pi pi-fw pi-pencil',
-            routerLink: ['/pages/crud'],
-          },
-          {
-            label: 'Not Found',
-            icon: 'pi pi-fw pi-exclamation-circle',
-            routerLink: ['/pages/notfound'],
-          },
-          {
-            label: 'Empty',
-            icon: 'pi pi-fw pi-circle-off',
-            routerLink: ['/pages/empty'],
           },
         ],
       },

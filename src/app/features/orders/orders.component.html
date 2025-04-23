@@ -3,7 +3,7 @@
         <p class="uppercase text-2xl">Orders</p>
     </div>
 
-    <p-table #dt [value]="orders" dataKey="id" [rows]="10" [rowHover]="true" [showGridlines]="true" [paginator]="true"
+    <p-table #dt [value]="orders" dataKey="id" [rows]="10" [rowHover]="true" [paginator]="true"
         [globalFilterFields]="['buyerEmail', 'orderDate', 'deliveryMethod','status','shippingPrice','paymentType','subtotal','total']"
         responsiveLayout="scroll">
 
@@ -83,10 +83,10 @@
         <ng-template #body let-order>
             <tr>
                 <td>{{ order.buyerEmail }}</td>
-                <td>{{ order.shippingPrice | currency : 'VND' }}
+                <td>{{ order.shippingPrice | currency:'VND':'symbol':'1.0-0' }}
                 </td>
-                <td class="font-semibold">{{ order.subtotal | currency : 'VND'}}</td>
-                <td class="font-semibold">{{ order.total | currency : 'VND'}}</td>
+                <td class="font-semibold">{{ order.subtotal | currency:'VND':'symbol':'1.0-0'}}</td>
+                <td class="font-semibold">{{ order.total | currency:'VND':'symbol':'1.0-0'}}</td>
                 <td>
                     <p-tag [value]="order.status" [severity]="getSeverity(order)" styleClass="dark:!bg-surface-900" />
                 </td>

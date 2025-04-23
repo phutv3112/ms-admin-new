@@ -1,0 +1,47 @@
+<div class="card">
+    <div class="font-semibold text-xl mb-4">Best Selling</div>
+    <p-table [value]="products" responsiveLayout="scroll">
+        <ng-template #header>
+            <tr>
+                <th>Image</th>
+                <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+                <th pSortableColumn="averageRating">Rating <p-sortIcon field="averageRating"></p-sortIcon></th>
+                <th pSortableColumn="price">Price <p-sortIcon field="price"></p-sortIcon></th>
+                <th>View</th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-product>
+            <tr>
+                <td style="width: 15%; min-width: 5rem;">
+                    <img src="{{ product.imageUrl }}" class="shadow-lg" alt="{{ product.name }}" width="45" />
+                </td>
+                <td [routerLink]="['/products', product.id]" style="width: 35%; max-width: 200px;"
+                    class="truncate whitespace-nowrap overflow-hidden cursor-pointer hover:underline">
+                    {{ product.name }}
+                </td>
+                <td style="width: 35%; min-width: 8rem;">
+                    <div class="flex items-center">
+                        <svg class="w-4 h-4 text-yellow-300 me-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor" viewBox="0 0 22 20">
+                            <path
+                                d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                        </svg>
+                        <p class="ms-2 mb-0 text-base font-bold text-gray-900 dark:text-white">{{product.averageRating}}
+                        </p>
+                        <span class="w-1 h-1 mx-1.5 bg-gray-500 rounded-full dark:bg-gray-400"></span>
+                        <a [routerLink]="['/products/reviews', product.id]"
+                            class="text-base font-medium text-gray-900 underline hover:no-underline dark:text-white">
+                            {{product.totalReview}} reviews
+                        </a>
+                    </div>
+                <td style="width: 35%; min-width: 8rem;" class="font-semibold">{{ product.price |
+                    currency:'VND':'symbol':'1.0-0' }}
+                </td>
+                <td style="width: 15%;">
+                    <button [routerLink]="['/products', product.id]" pButton pRipple type="button" icon="pi pi-search"
+                        class="p-button p-component p-button-text p-button-icon-only"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

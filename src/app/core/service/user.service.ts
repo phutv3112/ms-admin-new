@@ -28,6 +28,11 @@ export class UserService {
     return this.http.delete(url);
   }
 
+  countUserInRole(role: string): Observable<number> {
+    const url = `${this.baseUrl}/users/count-by-role/${role}`;
+    return this.http.get<number>(url);
+  }
+
   getAllRoles() {
     return this.http.get<RoleResponse[]>(`${this.baseUrl}/users/roles`);
   }

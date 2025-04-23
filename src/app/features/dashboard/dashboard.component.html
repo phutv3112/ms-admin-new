@@ -1,1 +1,92 @@
-<p>dashboard works!</p>
+<p-fluid class="grid grid-cols-12 gap-8">
+    <!-- top widget -->
+    <ng-container *ngFor="let stat of stats">
+        <div class="col-span-12 lg:col-span-6 xl:col-span-3">
+            <div class="card mb-0">
+                <div class="flex justify-between mb-4">
+                    <div>
+                        <span class="block text-muted-color text-xl font-bold mb-4">{{ stat.title }}</span>
+                        <div class="text-surface-900 dark:text-surface-0 font-semibold text-xl">
+                            <div *ngIf="stat.title == 'Revenue'; else otherStat">
+                                {{ stat.value | currency:'VND':'symbol':'1.0-0'}}
+                            </div>
+                            <ng-template #otherStat>
+                                {{ stat.value }}
+                            </ng-template>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center rounded-border" [ngClass]="stat.iconBg"
+                        style="width: 2.5rem; height: 2.5rem">
+                        <i class="{{ stat.icon }} !text-xl" [ngClass]="stat.iconColor"></i>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-1">
+                    <i class="pi" [ngClass]="{
+                  'pi-arrow-up text-green-500': stat.growthPercentage > 0,
+                  'pi-arrow-down text-red-500': stat.growthPercentage < 0
+                }"></i>
+                    <span class="text-blue-500 font-medium">
+                        {{ stat.growthPercentage | number: '1.0-2' }}%
+                    </span>
+                    <span class="text-muted-color">since last month</span>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <div class="col-span-12 lg:col-span-6 xl:col-span-3">
+        <div class="card mb-0">
+            <div class="flex justify-between mb-4">
+                <div>
+                    <span class="block text-muted-color text-xl font-bold mb-4">Customers</span>
+                    <div class="text-surface-900 dark:text-surface-0 font-semibold text-xl">{{countUser}}</div>
+                </div>
+                <div class="flex items-center justify-center bg-cyan-100 dark:bg-cyan-400/10 rounded-border"
+                    style="width: 2.5rem; height: 2.5rem">
+                    <i class="pi pi-users text-cyan-500 !text-xl"></i>
+                </div>
+            </div>
+            <span class="text-muted-color">Total user registered</span>
+        </div>
+    </div>
+
+    <!-- end top widget -->
+
+    <div class="col-span-12 xl:col-span-6">
+        <app-top-products></app-top-products>
+    </div>
+
+    <div class="col-span-12 xl:col-span-6">
+        <div class="card">
+            <div class="font-semibold text-xl mb-4">Monthly Sold</div>
+            <p-chart type="line" [data]="lineData" [options]="lineOptions"></p-chart>
+        </div>
+    </div>
+
+    <div class="col-span-12 xl:col-span-6">
+        <app-recent-orders></app-recent-orders>
+    </div>
+
+    <div class="col-span-12 xl:col-span-6">
+        <div class="card">
+            <div class="font-semibold text-xl mb-4">Top Brand & Type</div>
+            <p-chart type="bar" [data]="barData" [options]="barOptions"></p-chart>
+        </div>
+    </div>
+
+    <div class="col-span-12 xl:col-span-6">
+        <div class="card flex flex-col items-center">
+            <div class="font-semibold text-xl mb-4">Brand sold in month</div>
+            <p-chart type="pie" [data]="pieDataBrand" [options]="pieOptions"></p-chart>
+        </div>
+    </div>
+
+    <div class="col-span-12 xl:col-span-6">
+        <div class="card flex flex-col items-center">
+            <div class="font-semibold text-xl mb-4">Type sold in month</div>
+            <p-chart type="pie" [data]="pieDataType" [options]="pieOptions"></p-chart>
+        </div>
+    </div>
+
+</p-fluid>

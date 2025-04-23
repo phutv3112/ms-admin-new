@@ -2,8 +2,8 @@
     <div class="font-semibold text-xl mb-4 flex justify-between items-center">
         <p class="font-bold uppercase">Inventories</p>
     </div>
-    <p-table #dt1 [value]="inventories" dataKey="id" [rows]="10" [rowHover]="true" [showGridlines]="true"
-        [paginator]="true" [globalFilterFields]="['productName', 'color', 'size','quantity']" responsiveLayout="scroll">
+    <p-table #dt1 [value]="inventories" dataKey="id" [rows]="10" [rowHover]="true" [paginator]="true"
+        [globalFilterFields]="['productName', 'color', 'size','quantity']" responsiveLayout="scroll">
         <ng-template #caption>
             <div class="flex justify-between items-center flex-column sm:flex-row">
                 <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash"

@@ -1,0 +1,47 @@
+<div class="card">
+    <div class="flex justify-between mb-4 items-center">
+        <div class="font-semibold text-xl mb-4">Top Customers</div>
+        <div class="">
+            <label for="calendar-12h" class="font-bold block mb-2"> Filter Date</label>
+            <p-datepicker [(ngModel)]="date" view="month" dateFormat="mm/yy" [readonlyInput]="true"
+                (onSelect)="onDateChange()" />
+        </div>
+
+    </div>
+    <p-table #dt [value]="customers" responsiveLayout="scroll" [rows]="10" [paginator]="true">
+        <ng-template #header>
+            <tr>
+                <th>Customer#</th>
+                <th pSortableColumn="buyerEmail">Email <p-sortIcon field="name"></p-sortIcon></th>
+                <th pSortableColumn="totalProducts">Product quantity <p-sortIcon field="averageRating"></p-sortIcon>
+                </th>
+                <th pSortableColumn="totalAmount">Total Amount <p-sortIcon field="price"></p-sortIcon></th>
+                <th>View</th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-customer let-index="rowIndex">
+            <tr>
+                <td class="w-10">
+                    <p-tag [value]="'#' + (index + 1)" severity="info" styleClass="dark:!bg-surface-900" />
+                </td>
+                <td>
+                    {{ customer.buyerEmail }}
+                </td>
+                <td [routerLink]="['/customers', customer.id]" class="font-semibold">
+                    {{ customer.totalProducts }}
+                </td>
+                <td class="font-semibold">{{ customer.totalAmount | currency:'VND':'symbol':'1.0-0'}}
+                </td>
+                <td style="width: 15%;">
+                    <button [routerLink]="['/customers', customer.id]" pButton pRipple type="button" icon="pi pi-search"
+                        class="p-button p-component p-button-text p-button-icon-only"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="7">No products found.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

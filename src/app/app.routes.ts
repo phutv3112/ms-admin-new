@@ -21,8 +21,12 @@ import { ReviewProductComponent } from './features/products/review-product/revie
 import { CouponsComponent } from './features/discounts/coupons/coupons.component';
 import { UsersComponent } from './features/users/users.component';
 import { RolesComponent } from './features/roles/roles.component';
+import { BestSellingComponent } from './features/reports/best-selling/best-selling.component';
+import { TopRatedComponent } from './features/reports/top-rated/top-rated.component';
+import { TopCustomerComponent } from './features/reports/top-customer/top-customer.component';
 
 export const routes: Routes = [
+  { path: '', component: DashboardComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'auth-callback', component: AuthCallbackComponent },
 
@@ -71,5 +75,18 @@ export const routes: Routes = [
   {
     path: 'roles',
     component: RolesComponent,
+  },
+
+  {
+    path: 'reports/best-selling',
+    component: BestSellingComponent,
+  },
+  {
+    path: 'reports/top-rated',
+    component: TopRatedComponent,
+  },
+  {
+    path: 'reports/top-customers',
+    component: TopCustomerComponent,
   },
 ];

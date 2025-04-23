@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import {
   BrandResponse,
@@ -12,6 +12,10 @@ import {
   ProductReview,
   ProductTypeResponse,
 } from '../../shared/models/catalog/product';
+import {
+  GetBestSellingRequest,
+  GetProductsResponse,
+} from '../../shared/models/reports/bestselling';
 
 @Injectable({
   providedIn: 'root',
@@ -44,6 +48,21 @@ export class ProductService {
 
   updateProduct(productId: string, formData: FormData): Observable<any> {
     return this.http.put<any>(`${this.baseUrl}products/${productId}`, formData);
+  }
+
+  getBestSellingProducts(request: GetBestSellingRequest) {
+    let params = new HttpParams();
+    if (request.pageNumber) {
+      params = params.append('pageIndex', request.pageNumber.toString());
+    }
+    if (request.pageSize) {
+      params = params.append('pageSize', request.pageSize.toString());
+    }
+    return this.http.post<GetProductsResponse>(
+      this.baseUrl + 'products/best-selling',
+      request,
+      { params }
+    );
   }
 
   getInventories() {

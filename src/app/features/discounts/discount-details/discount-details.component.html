@@ -160,11 +160,12 @@
                         </td>
                         <td class="font-semibold">
                             <span *ngIf="code.type == '0'">{{ code.value }}%</span>
-                            <span *ngIf="code.type == '1'">{{ code.value | currency : 'VND' }}</span>
+                            <span *ngIf="code.type == '1'">{{ code.value | currency:'VND':'symbol':'1.0-0' }}</span>
                         </td>
-                        <td class="font-semibold">{{ code.minSubtotal | currency : 'VND' }}</td>
+                        <td class="font-semibold">{{ code.minSubtotal | currency:'VND':'symbol':'1.0-0' }}</td>
                         <td class="font-semibold">
-                            <span *ngIf="code.type == '0'">{{ code.maxDiscountAmount | currency : 'VND' }}</span>
+                            <span *ngIf="code.type == '0'">{{ code.maxDiscountAmount | currency:'VND':'symbol':'1.0-0'
+                                }}</span>
                             <span *ngIf="code.type == '1'">NA</span>
 
                         </td>

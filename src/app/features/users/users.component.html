@@ -7,7 +7,7 @@
             <p-button (click)="showCreateDialog()" label="+ Create new user" />
         </div>
     </div>
-    <p-table #dt1 [value]="users" dataKey="id" [rows]="10" [rowHover]="true" [showGridlines]="true" [paginator]="true"
+    <p-table #dt1 [value]="users" dataKey="id" [rows]="10" [rowHover]="true" [paginator]="true"
         [globalFilterFields]="['userName', 'fullName', 'email','phoneNumber','role']" responsiveLayout="scroll">
         <ng-template #caption>
             <div class="flex justify-between items-center flex-column sm:flex-row">

@@ -5,8 +5,8 @@
             <p-button (click)="showDialog()" label="+ Create new category" />
         </div>
     </div>
-    <p-table #dt1 [value]="categories" dataKey="id" [rows]="10" [rowHover]="true" [showGridlines]="true"
-        [paginator]="true" [globalFilterFields]="['name', 'productCount', 'updatedDate']" responsiveLayout="scroll">
+    <p-table #dt1 [value]="categories" dataKey="id" [rows]="10" [rowHover]="true" [paginator]="true"
+        [globalFilterFields]="['name', 'productCount', 'updatedDate']" responsiveLayout="scroll">
         <ng-template #caption>
             <div class="flex justify-between items-center flex-column sm:flex-row">
                 <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash"

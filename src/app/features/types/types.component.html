@@ -5,7 +5,7 @@
             <p-button (click)="showCreateDialog()" label="+ Create new type" />
         </div>
     </div>
-    <p-table #dt1 [value]="types" dataKey="id" [rows]="10" [rowHover]="true" [showGridlines]="true" [paginator]="true"
+    <p-table #dt1 [value]="types" dataKey="id" [rows]="10" [rowHover]="true" [paginator]="true"
         [globalFilterFields]="['name', 'isActive', 'changedBy','productCount','updatedDate']" responsiveLayout="scroll">
         <ng-template #caption>
             <div class="flex justify-between items-center flex-column sm:flex-row">

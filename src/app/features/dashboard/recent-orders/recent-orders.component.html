@@ -1,0 +1,28 @@
+<div class="card h-full">
+    <div class="font-semibold text-xl mb-4">Recent Orders</div>
+    <p-table [value]="recentOrders" responsiveLayout="scroll">
+        <ng-template #header>
+            <tr>
+                <th>Buyer Email</th>
+                <th pSortableColumn="total">Total <p-sortIcon field="total"></p-sortIcon></th>
+                <th>Status</th>
+                <th>View</th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-order>
+            <tr>
+                <td>
+                    {{ order.buyerEmail }}
+                </td>
+                <td>{{ order.total | currency:'VND':'symbol':'1.0-0'}}</td>
+                <td><p-tag [value]="order.status" [severity]="getSeverity(order)" styleClass="dark:!bg-surface-900" />
+                </td>
+                <td style="width: 15%;">
+                    <button pButton pRipple type="button" icon="pi pi-search"
+                        [routerLink]="['/orders/details', order.id]"
+                        class="p-button p-component p-button-text p-button-icon-only"></button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
