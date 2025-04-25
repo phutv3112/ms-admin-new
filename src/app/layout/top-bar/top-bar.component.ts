@@ -7,6 +7,9 @@ import { AppConfigurator } from '../configs/app.configurator';
 import { LayoutService } from '../service/layout.service';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { AuthService } from '../../core/service/auth.service';
+import { OverlayBadgeModule } from 'primeng/overlaybadge';
+import { DrawerModule } from 'primeng/drawer';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-top-bar',
@@ -17,12 +20,17 @@ import { AuthService } from '../../core/service/auth.service';
     StyleClassModule,
     AppConfigurator,
     SplitButtonModule,
+    DrawerModule,
+    OverlayBadgeModule,
+    ButtonModule,
   ],
   templateUrl: './top-bar.component.html',
   styleUrl: './top-bar.component.scss',
 })
 export class TopBarComponent {
   items!: MenuItem[];
+
+  showNotification: boolean = false;
 
   constructor(
     public layoutService: LayoutService,

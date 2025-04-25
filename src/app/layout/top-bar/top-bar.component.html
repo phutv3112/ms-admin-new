@@ -8,7 +8,10 @@
         </a>
     </div>
 
-    <div class="layout-topbar-actions">
+    <div class="layout-topbar-actions items-center">
+        <p-overlaybadge value="2" (click)="showNotification = true" class="cursor-pointer">
+            <i class="pi pi-bell" style="font-size: 2rem"></i>
+        </p-overlaybadge>
         <p-splitbutton label="Profile" dropdownIcon="pi pi-user" [model]="items" />
         <div class="layout-config-menu">
 
@@ -22,19 +25,10 @@
             </div>
         </div>
 
-        <button class="layout-topbar-menu-button layout-topbar-action" pStyleClass="@next" enterFromClass="hidden"
-            enterActiveClass="animate-scalein" leaveToClass="hidden" leaveActiveClass="animate-fadeout"
-            [hideOnOutsideClick]="true">
-            <i class="pi pi-ellipsis-v"></i>
-        </button>
-
         <div class="layout-topbar-menu hidden lg:block">
-            <div class="layout-topbar-menu-content">
-                <button type="button" class="layout-topbar-action">
-                    <i class="pi pi-calendar"></i>
-                    <span>Calendar</span>
-                </button>
-                <button type="button" class="layout-topbar-action">
+            <div class="layout-topbar-menu-content items-center">
+
+                <!-- <button type="button" class="layout-topbar-action">
                     <i class="pi pi-inbox"></i>
                     <span>Messages</span>
                 </button>
@@ -42,8 +36,22 @@
                     <i class="pi pi-user"></i>
                     <span>Profile</span>
 
-                </button>
+                </button> -->
             </div>
         </div>
+
+        <button class="layout-topbar-menu-button layout-topbar-action" pStyleClass="@next" enterFromClass="hidden"
+            enterActiveClass="animate-scalein" leaveToClass="hidden" leaveActiveClass="animate-fadeout"
+            [hideOnOutsideClick]="true">
+            <i class="pi pi-ellipsis-v"></i>
+        </button>
     </div>
 </div>
+
+<p-drawer header="Notifications" [(visible)]="showNotification" position="right">
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+        et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+        aliquip ex ea commodo consequat.
+    </p>
+</p-drawer>

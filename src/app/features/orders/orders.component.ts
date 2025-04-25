@@ -25,10 +25,12 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ConfirmDialog } from 'primeng/confirmdialog';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TextareaModule } from 'primeng/textarea';
 import { Order } from '../../shared/models/orders/order';
 import { OrderService } from '../../core/service/order.service';
+import { PaymentService } from '../../core/service/payment.service';
+import { catchError, EMPTY, switchMap, tap } from 'rxjs';
 @Component({
   selector: 'app-orders',
   standalone: true,
@@ -63,6 +65,7 @@ export class OrdersComponent implements OnInit {
   orders: Order[] = [];
 
   private orderService = inject(OrderService);
+  private paymentService = inject(PaymentService);
 
   statuses: any[] = [];
   paymentTypes: any[] = [];
@@ -75,7 +78,8 @@ export class OrdersComponent implements OnInit {
 
   constructor(
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -94,6 +98,116 @@ export class OrdersComponent implements OnInit {
       { label: 'Cards', value: 0 },
       { label: 'VnPay', value: 1 },
     ];
+  }
+
+  confirmDelete(event: Event, order: Order) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Are you sure to refund this order?',
+      header: 'Warning Zone',
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Cancel',
+      rejectButtonProps: {
+        label: 'Cancel',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Refund',
+        severity: 'warn',
+      },
+
+      accept: () => {
+        if (order.payment.paymentType === 0) {
+          this.refundStripe(order);
+        }
+
+        if (order.payment.paymentType === 1) {
+          this.refundVnPay(order);
+        }
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Rejected',
+          detail: 'You have rejected',
+        });
+      },
+    });
+  }
+
+  private refundStripe(order: Order) {
+    this.paymentService
+      .refundStripeOrder(order.payment.paymentIntentId)
+      .pipe(
+        switchMap((response) => {
+          if (response.status === 'succeeded') {
+            return this.orderService.refundedOrder(order.id);
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Refund failed',
+            });
+            return EMPTY;
+          }
+        }),
+        switchMap(() => this.orderService.getAllOrders()),
+        tap((data) => {
+          this.orders = data.orders;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Refunded successfully',
+          });
+        }),
+        catchError((error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.message || 'Something went wrong',
+          });
+          return EMPTY;
+        })
+      )
+      .subscribe();
+  }
+
+  private refundVnPay(order: Order) {
+    this.paymentService
+      .refundVnPayOrder(order.payment.vnPayTransaction!)
+      .pipe(
+        switchMap((response) => {
+          if (response.refundResponse.vnp_ResponseCode === '00') {
+            return this.orderService.refundedOrder(order.id);
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: response.refundResponse.vnp_Message,
+            });
+            return EMPTY;
+          }
+        }),
+        switchMap(() => this.orderService.getAllOrders()),
+        tap((data) => {
+          this.orders = data.orders;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Refunded successfully',
+          });
+        }),
+        catchError((error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.message || 'Something went wrong',
+          });
+          return EMPTY;
+        })
+      )
+      .subscribe();
   }
 
   formatCurrency(value: number) {

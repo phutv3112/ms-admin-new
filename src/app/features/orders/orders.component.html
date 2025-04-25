@@ -98,7 +98,7 @@
                 <td>
                     <p-button [routerLink]="['/orders/details', order.id]" icon="pi pi-eye" severity="info"
                         class="mx-2" />
-                    <p-button [routerLink]="['/orders', order.id]" label="Refund" icon="pi pi-undo" severity="warn"
+                    <p-button (click)="confirmDelete($event, order)" label="Refund" icon="pi pi-undo" severity="warn"
                         class="mx-2" />
                 </td>
             </tr>

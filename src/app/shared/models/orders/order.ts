@@ -26,6 +26,38 @@ export interface Payment {
   paymentIntentId: string;
   paymentType: number;
   paymentDetails: string;
+  vnPayTransaction?: VnPayTransaction;
+}
+
+export interface VnPayTransaction {
+  vnpTxnRef: string;
+  vnpAmount: number;
+  vnpTransactionNo: string;
+  vnpTransactionDate: string;
+  vnpOrderInfo: string;
+  vnpCreateBy: string;
+}
+
+export interface RefundResponse {
+  vnp_ResponseCode: string;
+  vnp_Message: string;
+}
+
+export interface VnPayRefundModel {
+  vnp_RequestId: string;
+  vnp_Version: string;
+  vnp_Command: 'refund';
+  vnp_TmnCode: string;
+  vnp_TransactionType: '02';
+  vnp_TxnRef: string;
+  vnp_Amount: number;
+  vnp_OrderInfo: string;
+  vnp_TransactionNo: string;
+  vnp_TransactionDate: string;
+  vnp_CreateBy: string;
+  vnp_CreateDate: string;
+  vnp_IpAddr: string;
+  vnp_SecureHash: string;
 }
 
 export interface OrderItem {

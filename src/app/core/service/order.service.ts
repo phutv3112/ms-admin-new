@@ -26,6 +26,13 @@ export class OrderService {
     return this.http.get<{ order: Order }>(`${this.baseUrl}/orders/${id}`);
   }
 
+  refundedOrder(id: string): Observable<{ isSuccess: boolean }> {
+    return this.http.put<{ isSuccess: boolean }>(
+      `${this.baseUrl}/orders/refunded/${id}`,
+      {}
+    );
+  }
+
   getBestSellingProducts(
     pageIndex: number,
     pageSize: number,
