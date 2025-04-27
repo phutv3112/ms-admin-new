@@ -27,10 +27,13 @@ import { Toast } from 'primeng/toast';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Router, RouterLink } from '@angular/router';
 import { TextareaModule } from 'primeng/textarea';
-import { Order } from '../../shared/models/orders/order';
+import { Order, OrderItem } from '../../shared/models/orders/order';
 import { OrderService } from '../../core/service/order.service';
 import { PaymentService } from '../../core/service/payment.service';
 import { catchError, EMPTY, switchMap, tap } from 'rxjs';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
+
 @Component({
   selector: 'app-orders',
   standalone: true,
@@ -208,6 +211,52 @@ export class OrdersComponent implements OnInit {
         })
       )
       .subscribe();
+  }
+
+  exportExcel(table: Table) {
+    // Flattening the order data
+    const flatData = table.value.map((order) => {
+      const flatOrder = {
+        id: order.id,
+        orderDate: order.orderDate,
+        buyerEmail: order.buyerEmail,
+        shippingAddress: `${order.shippingAddress.line1}, ${order.shippingAddress.city}, ${order.shippingAddress.state}, ${order.shippingAddress.country}`,
+        deliveryMethod: order.deliveryMethod,
+        shippingPrice: order.shippingPrice,
+        status: order.status,
+        subtotal: order.subtotal,
+        total: order.total,
+        ipAddress: order.ipAddress,
+        discount: order.discount,
+        // Add orderItems as a string (or you can format it differently if needed)
+        orderItems: order.orderItems
+          .map(
+            (item: OrderItem) =>
+              `${item.productName} (Quantity: ${item.quantity}, Price: ${item.price})`
+          )
+          .join('; '),
+      };
+      return flatOrder;
+    });
+
+    console.log('Flat data ========================', flatData);
+
+    // Tạo sheet từ dữ liệu đã "flatten"
+    const worksheet = XLSX.utils.json_to_sheet(flatData);
+    console.log('Worksheet:', worksheet);
+    const workbook = { Sheets: { Orders: worksheet }, SheetNames: ['Orders'] };
+
+    console.log('workbook:', workbook);
+
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    FileSaver.saveAs(blob, 'orders.xlsx');
   }
 
   formatCurrency(value: number) {

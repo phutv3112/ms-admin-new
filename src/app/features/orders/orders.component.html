@@ -9,7 +9,7 @@
 
         <ng-template #caption>
             <div class="flex justify-between items-center flex-column sm:flex-row">
-                <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash"
+                <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash"
                     (click)="clear(dt)"></button>
                 <p-iconfield iconPosition="left" class="ml-auto">
                     <p-inputicon>
@@ -17,6 +17,8 @@
                     </p-inputicon>
                     <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search keyword" />
                 </p-iconfield>
+                <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success ml-2"
+                    (click)="exportExcel(dt)"></button>
             </div>
         </ng-template>
 
