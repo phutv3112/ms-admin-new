@@ -9,10 +9,10 @@
     </div>
 
     <div class="layout-topbar-actions items-center">
-        <p-overlaybadge value="2" (click)="showNotification = true" class="cursor-pointer">
+        <p-overlaybadge [value]="unreadCount" (click)="showNotification = true" class="cursor-pointer">
             <i class="pi pi-bell" style="font-size: 2rem"></i>
         </p-overlaybadge>
-        <p-splitbutton label="Profile" dropdownIcon="pi pi-user" [model]="items" />
+        <p-splitbutton [label]="userProfile.email" dropdownIcon="pi pi-user" [model]="items" />
         <div class="layout-config-menu">
 
             <div class="relative">
@@ -48,10 +48,33 @@
     </div>
 </div>
 
-<p-drawer header="Notifications" [(visible)]="showNotification" position="right">
-    <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-        et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-        aliquip ex ea commodo consequat.
-    </p>
+<p-drawer header="New Notifications" [(visible)]="showNotification" position="right" [modal]="true"
+    (onHide)="badgeCount = 0">
+    <div *ngIf="refundMessages && refundMessages.length === 0">
+        <p>No new notifications</p>
+    </div>
+
+    <div *ngFor="let message of refundMessages" class="mb-3 border-bottom pb-2 p-2 cursor-pointer"
+        [ngClass]="{ 'bg-light text-muted': message.isRead }" (click)="markAsRead(message)">
+        <h5 class="text-yellow-500 text-base mb-1">Refund Request</h5>
+        <div class="py-1 border-b border-gray-400" (click)="seeDetails(message)">
+            <p class="m-0">Refund request has been create by <strong>{{message.createdBy}}</strong></p>
+            <p class="m-0"><strong>Reason:</strong> {{
+                message.reason }}</p>
+            <p *ngIf="message.otherReason" class="m-0">
+                Detail: {{ message.otherReason }}
+            </p>
+            <p>{{message.createdAt | date: 'dd/MM/yy, h:mm a'}}</p>
+        </div>
+    </div>
+
+    <div *ngFor="let message of paidOrderMessages" class="mb-3 border-bottom pb-2 p-2 cursor-pointer"
+        [ngClass]="{ 'bg-light text-muted': message.isRead }" (click)="markAsRead(message)">
+        <h5 class="text-primary text-base mb-1">Payment Received</h5>
+        <div class="py-1 border-b border-gray-400" (click)="seeDetails(message)">
+            <p class="m-0">New order has been paid successfully by <strong>{{message.createdBy}}</strong></p>
+            <p>{{message.createdAt | date: 'dd/MM/yy, h:mm a'}}</p>
+        </div>
+    </div>
+
 </p-drawer>

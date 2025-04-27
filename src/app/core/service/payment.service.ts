@@ -34,4 +34,11 @@ export class PaymentService {
       { requestModel: request }
     );
   }
+
+  sendMailRefund(email: string, rejected: boolean) {
+    return this.http.post<{ isSuccess: boolean }>(
+      `${this.baseUrl}/payments/mail-refund`,
+      { email, rejected }
+    );
+  }
 }

@@ -4,4 +4,6 @@ export const environment = {
   orderUrl: 'https://localhost:5053',
   paymentUrl: 'https://localhost:5055',
   identityServerUrl: 'https://localhost:5056',
+  refundHubUrl: 'https://localhost:5053/refund/hub',
+  paymentReceivedHubUrl: 'https://localhost:5053/payment-received/hub',
 };

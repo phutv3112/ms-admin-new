@@ -157,10 +157,3 @@
         </div>
     </form>
 </p-dialog>
-
-<p-dialog [(visible)]="isLoading" [modal]="true" [closable]="false" [showHeader]="false">
-    <div class="flex flex-column align-items-center justify-content-center">
-        <p-progressSpinner *ngIf="loading$ | async"></p-progressSpinner>
-        <p class="mt-2">Processing, please wait...</p>
-    </div>
-</p-dialog>

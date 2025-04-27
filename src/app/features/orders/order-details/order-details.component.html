@@ -74,10 +74,20 @@
     </p-panel>
 
     <!-- Tổng thanh toán -->
-    <div class="text-right space-y-2 text-lg">
-        <div><strong>Subtotal:</strong> {{ order.subtotal | number:'1.0-0' }}₫</div>
-        <div><strong>Shipping:</strong> {{ order.shippingPrice | number:'1.0-0' }}₫</div>
-        <div class="text-lg font-semibold"><strong>Total:</strong> {{ order.total | number:'1.0-0' }}₫</div>
+    <div class="flex" [ngClass]="order.status === 'PaymentReceived' ? 'justify-between' : 'justify-end'">
+        @if(order.status === 'PaymentReceived'){
+        <p-button (click)="confirmRefund($event, order)" label="Refund" icon="pi pi-undo" severity="warn"
+            class="mx-2" />
+        }
+        <div class="text-right space-y-2 text-lg">
+            <div><strong>Subtotal:</strong> {{ order.subtotal | number:'1.0-0' }}₫</div>
+            <div><strong>Shipping:</strong> {{ order.shippingPrice | number:'1.0-0' }}₫</div>
+            <div class="text-lg font-semibold"><strong>Total:</strong> {{ order.total | number:'1.0-0' }}₫</div>
+        </div>
+
     </div>
+
 </div>
+<p-toast></p-toast>
+<p-confirmdialog></p-confirmdialog>
 }

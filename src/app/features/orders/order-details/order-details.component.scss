@@ -4,3 +4,7 @@
     margin-bottom: 1rem; /* khoảng cách với nội dung */
   }
   
+  ::ng-deep .p-confirmdialog-icon {
+    font-size: 2rem !important; 
+    color: #c2c506 !important;  
+  }
