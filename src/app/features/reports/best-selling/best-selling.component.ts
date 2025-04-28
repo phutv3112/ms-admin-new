@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RippleModule } from 'primeng/ripple';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { OrderService } from '../../../core/service/order.service';
@@ -17,6 +17,8 @@ import {
   ProductDisplay,
 } from '../../../shared/models/reports/bestselling';
 import { map, of, switchMap } from 'rxjs';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-best-selling',
@@ -45,7 +47,7 @@ export class BestSellingComponent implements OnInit {
 
   products: any | undefined;
 
-  date: Date | undefined;
+  date: Date | undefined = new Date();
   month: number | undefined;
   year: number | undefined;
 
@@ -54,6 +56,25 @@ export class BestSellingComponent implements OnInit {
   }
   onDateChange() {
     this.getBestSellingProducts();
+  }
+
+  exportExcel(table: Table) {
+    console.log('table value===================', table.value);
+    const worksheet = XLSX.utils.json_to_sheet(table.value);
+    const workbook = {
+      Sheets: { BestSelling: worksheet },
+      SheetNames: ['BestSelling'],
+    };
+
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    FileSaver.saveAs(blob, 'best-selling.xlsx');
   }
 
   getBestSellingProducts() {

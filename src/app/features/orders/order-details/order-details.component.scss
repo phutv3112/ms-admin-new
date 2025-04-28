@@ -1,7 +1,9 @@
 :host ::ng-deep .p-panel .p-panel-header {
-    font-size: 2rem; /* text-xl */
+    font-size: 1.5rem; /* text-xl */
     font-weight: 600;   /* font-semibold */
-    margin-bottom: 1rem; /* khoảng cách với nội dung */
+    padding: 1.5rem 1rem;
+    text-transform: uppercase;
+    color: #059669 !important;
   }
   
   ::ng-deep .p-confirmdialog-icon {

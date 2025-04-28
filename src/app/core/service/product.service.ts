@@ -4,11 +4,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import {
   BrandResponse,
+  FilterProductRequest,
   InventoryById,
   InventoryHistory,
   InventoryHistoryResponse,
   InventoryItem,
   Product,
+  ProductLazyResponse,
   ProductReview,
   ProductTypeResponse,
 } from '../../shared/models/catalog/product';
@@ -24,19 +26,39 @@ export class ProductService {
   baseUrl = environment.productUrl;
   private http = inject(HttpClient);
 
-  private productsSubject = new BehaviorSubject<Product[]>([]);
+  private productsSubject = new BehaviorSubject<ProductLazyResponse>({
+    products: [],
+    totalCount: 0,
+  });
   products$ = this.productsSubject.asObservable();
 
   createProduct(formData: FormData): Observable<any> {
     return this.http.post(`${this.baseUrl}products`, formData);
   }
-  getAllProducts() {
+  getAllProducts(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+    sortField?: string;
+    sortDirection?: string;
+  }) {
     return this.http
-      .get<{ products: Product[] }>(`${this.baseUrl}products/admin`)
+      .get<ProductLazyResponse>(`${this.baseUrl}products/admin`, { params })
       .subscribe((data) => {
-        this.productsSubject.next(data.products);
+        this.productsSubject.next(data);
       });
   }
+
+  getFilterProducts(request: FilterProductRequest) {
+    return this.http
+      .post<ProductLazyResponse>(`${this.baseUrl}products/filters/admin`, {
+        request,
+      })
+      .subscribe((data) => {
+        this.productsSubject.next(data);
+      });
+  }
+
   deleteProduct(id: string) {
     return this.http.delete(this.baseUrl + 'products/' + id);
   }

@@ -54,24 +54,17 @@ export class TopBarComponent implements OnInit {
   ) {
     this.items = [
       {
-        label: 'Update',
-        icon: 'pi pi-refresh',
+        label: 'Profile',
+        icon: 'pi pi-user-edit',
         command: () => {
           // this.messageService.add({ severity: 'success', summary: 'Updated', detail: 'Data Updated', life: 3000 });
-        },
-      },
-      {
-        label: 'Delete',
-        icon: 'pi pi-times',
-        command: () => {
-          // this.messageService.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 });
         },
       },
       {
         separator: true,
       },
       {
-        label: 'Quit',
+        label: 'Logout',
         icon: 'pi pi-power-off',
         command: () => {
           this.authService.logout();

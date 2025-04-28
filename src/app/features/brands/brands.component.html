@@ -1,6 +1,6 @@
 <div class="card">
     <div class="font-semibold text-xl mb-4 flex justify-between items-center">
-        <p class="font-bold uppercase">Brands</p>
+        <p class="uppercase text-2xl">Total Brands: {{totalRecords}}</p>
         <div>
             <p-button (click)="showCreateDialog()" label="+ Create new brand" />
         </div>
@@ -21,6 +21,7 @@
         </ng-template>
         <ng-template #header>
             <tr>
+                <th>Brand#</th>
                 <th style="min-width: 12rem" pSortableColumn="name">
                     <div class="flex justify-between items-center">
                         <span><p-sortIcon field="name" /> Name</span>
@@ -69,6 +70,9 @@
         </ng-template>
         <ng-template #body let-brand let-index="rowIndex">
             <tr>
+                <td class="w-10">
+                    <p-tag [value]="'#' + (index + 1)" severity="info" styleClass="dark:!bg-surface-900" />
+                </td>
                 <td>
                     <span style="max-width: 250px; display: inline-block; word-wrap: break-word; white-space: normal;">
                         {{ brand.name }}

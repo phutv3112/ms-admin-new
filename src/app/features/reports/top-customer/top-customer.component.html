@@ -1,17 +1,19 @@
 <div class="card">
     <div class="flex justify-between mb-4 items-center">
-        <div class="font-semibold text-xl mb-4">Top Customers</div>
+        <div class="uppercase text-2xl font-semibold">Top Customers</div>
         <div class="">
             <label for="calendar-12h" class="font-bold block mb-2"> Filter Date</label>
             <p-datepicker [(ngModel)]="date" view="month" dateFormat="mm/yy" [readonlyInput]="true"
                 (onSelect)="onDateChange()" />
+            <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success ml-2"
+                (click)="exportExcel(dt)"></button>
         </div>
 
     </div>
     <p-table #dt [value]="customers" responsiveLayout="scroll" [rows]="10" [paginator]="true">
         <ng-template #header>
             <tr>
-                <th>Customer#</th>
+                <th>Top#</th>
                 <th pSortableColumn="buyerEmail">Email <p-sortIcon field="name"></p-sortIcon></th>
                 <th pSortableColumn="totalProducts">Product quantity <p-sortIcon field="averageRating"></p-sortIcon>
                 </th>

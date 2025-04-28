@@ -1,7 +1,6 @@
 <div class="card">
-
     <div class="flex justify-between items-center mb-4">
-        <div class="font-semibold text-xl">List Roles</div>
+        <div class="uppercase text-2xl font-semibold">List Roles</div>
         <div class="flex gap-2">
             <p-button (click)="showCreateDialog()" label="+ Create new role" />
         </div>
@@ -22,7 +21,7 @@
         </ng-template>
         <ng-template #header>
             <tr>
-                <th>#</th>
+                <th>Role#</th>
                 <th style="min-width: 12rem" pSortableColumn="name">
                     <div class="flex justify-between items-center">
                         <span><p-sortIcon field="name" /> Role Name</span>

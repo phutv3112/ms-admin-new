@@ -50,7 +50,8 @@
 
 <p-drawer header="New Notifications" [(visible)]="showNotification" position="right" [modal]="true"
     (onHide)="badgeCount = 0">
-    <div *ngIf="refundMessages && refundMessages.length === 0">
+    <div
+        *ngIf="(!refundMessages || refundMessages.length === 0)&&(!paidOrderMessages || paidOrderMessages.length === 0)">
         <p>No new notifications</p>
     </div>
 

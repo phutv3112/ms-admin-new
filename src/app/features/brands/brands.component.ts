@@ -87,6 +87,7 @@ export class BrandsComponent implements OnInit {
   activityValues: number[] = [0, 100];
 
   isLoading = false;
+  totalRecords = 0;
 
   brandUpdateForm: FormGroup;
   brandCreateForm: FormGroup;
@@ -166,6 +167,7 @@ export class BrandsComponent implements OnInit {
   ngOnInit() {
     this.productService.getAllBrands().subscribe((data) => {
       this.brands = data;
+      this.totalRecords = data.length;
     });
 
     this.statuses = [

@@ -1,16 +1,19 @@
 <div class="card">
     <div class="flex justify-between mb-4 items-center">
-        <div class="font-semibold text-xl mb-4">Best Selling Product</div>
+        <div class="uppercase text-2xl font-semibold">Best Selling Product</div>
         <div class="">
             <label for="calendar-12h" class="font-bold block mb-2"> Filter Date</label>
             <p-datepicker [(ngModel)]="date" view="month" dateFormat="mm/yy" [readonlyInput]="true"
                 (onSelect)="onDateChange()" />
+            <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success ml-2"
+                (click)="exportExcel(dt)"></button>
         </div>
 
     </div>
     <p-table #dt [value]="products" responsiveLayout="scroll" [rows]="10" [paginator]="true">
         <ng-template #header>
             <tr>
+                <th>Top#</th>
                 <th>Image</th>
                 <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
                 <th pSortableColumn="averageRating">Rating <p-sortIcon field="averageRating"></p-sortIcon></th>
@@ -20,8 +23,11 @@
                 <th>View</th>
             </tr>
         </ng-template>
-        <ng-template #body let-product>
+        <ng-template #body let-product let-index="rowIndex">
             <tr>
+                <td class="w-10">
+                    <p-tag [value]="'#' + (index + 1)" severity="info" styleClass="dark:!bg-surface-900" />
+                </td>
                 <td style="width: 15%; min-width: 5rem;">
                     <img src="{{ product.imageUrl }}" class="shadow-lg" alt="{{ product.name }}" width="50" />
                 </td>

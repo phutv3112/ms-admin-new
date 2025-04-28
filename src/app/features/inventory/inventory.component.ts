@@ -33,6 +33,8 @@ import {
 import { ProductService } from '../../core/service/product.service';
 import { AuthService } from '../../core/service/auth.service';
 import { RouterLink } from '@angular/router';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-inventory',
@@ -76,6 +78,7 @@ export class InventoryComponent implements OnInit {
   activityValues: number[] = [0, 100];
 
   loading: boolean = true;
+  totalRecords = 0;
 
   @ViewChild('filter') filter!: ElementRef;
 
@@ -116,6 +119,7 @@ export class InventoryComponent implements OnInit {
   ngOnInit() {
     this.productService.getInventories().subscribe((data) => {
       this.inventories = data.inventoryItems;
+      this.totalRecords = this.inventories.length;
     });
     console.log(this.inventories);
     this.statuses = [
@@ -154,6 +158,24 @@ export class InventoryComponent implements OnInit {
   }
 
   showHistories(id: string) {}
+
+  exportExcel(table: Table) {
+    const worksheet = XLSX.utils.json_to_sheet(table.value);
+    const workbook = {
+      Sheets: { Inventory: worksheet },
+      SheetNames: ['Inventory'],
+    };
+
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    FileSaver.saveAs(blob, 'inventory.xlsx');
+  }
 
   formatCurrency(value: number) {
     return value.toLocaleString('vi-VN', {

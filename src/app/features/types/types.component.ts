@@ -14,12 +14,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToastModule } from 'primeng/toast';
 import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RatingModule } from 'primeng/rating';
 import { ProgressSpinner } from 'primeng/progressspinner';
@@ -31,16 +26,10 @@ import { Dialog } from 'primeng/dialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ConfirmDialog } from 'primeng/confirmdialog';
-import { FileUploadModule } from 'primeng/fileupload';
 import { Tooltip } from 'primeng/tooltip';
-import { Checkbox } from 'primeng/checkbox';
-import {
-  BrandResponse,
-  ProductTypeResponse,
-} from '../../shared/models/catalog/product';
+import { ProductTypeResponse } from '../../shared/models/catalog/product';
 import { ProductService } from '../../core/service/product.service';
 import { AuthService } from '../../core/service/auth.service';
-import { RouterLink } from '@angular/router';
 import { LoadingService } from '../../core/service/loading.service';
 import { Subscription } from 'rxjs';
 
@@ -58,7 +47,6 @@ import { Subscription } from 'rxjs';
     ProgressBarModule,
     ToggleButtonModule,
     ToastModule,
-    ProgressSpinner,
     CommonModule,
     FormsModule,
     ButtonModule,
@@ -84,6 +72,7 @@ export class TypesComponent implements OnInit {
   statuses: any[] = [];
 
   isLoading = false;
+  totalRecords: number = 0;
 
   @ViewChild('filter') filter!: ElementRef;
 
@@ -136,6 +125,7 @@ export class TypesComponent implements OnInit {
   ngOnInit() {
     this.productService.getAllTypes().subscribe((data) => {
       this.types = data;
+      this.totalRecords = data.length;
     });
 
     this.statuses = [

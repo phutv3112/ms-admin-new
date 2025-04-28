@@ -101,3 +101,20 @@ export interface ProductReview {
   comment?: string;
   createdAt: Date;
 }
+
+export interface ProductLazyResponse {
+  products: Product[];
+  totalCount: number;
+}
+
+export interface FilterProductRequest {
+  page: number;
+  pageSize: number;
+  stock: FilterCondition;
+  averageRating: FilterCondition;
+}
+export interface FilterCondition {
+  value?: number;
+  matchMode: string;
+  operator: string;
+}

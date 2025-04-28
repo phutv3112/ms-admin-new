@@ -37,6 +37,8 @@ import {
   DiscountCode,
   DiscountCodeDto,
 } from '../../../shared/models/catalog/discount';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-coupons',
@@ -74,11 +76,14 @@ export class CouponsComponent implements OnInit {
   discountTypes: any[] = [];
   discountCodes: DiscountCodeDto[] = [];
 
+  totalRecords = 0;
+
   private discountService = inject(DiscountService);
 
   ngOnInit() {
     this.discountService.getAllDiscountCodes().subscribe((data) => {
       this.discountCodes = data;
+      this.totalRecords = data.length;
     });
     this.statuses = [
       { label: 'Active', value: true },
@@ -104,6 +109,24 @@ export class CouponsComponent implements OnInit {
   clear(table: Table) {
     table.clear();
     this.filter.nativeElement.value = '';
+  }
+
+  exportExcel(table: Table) {
+    const worksheet = XLSX.utils.json_to_sheet(table.value);
+    const workbook = {
+      Sheets: { Coupons: worksheet },
+      SheetNames: ['Coupons'],
+    };
+
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    FileSaver.saveAs(blob, 'coupons.xlsx');
   }
 
   getStatus(discount: Discount): string {

@@ -81,6 +81,7 @@ export class DiscountsComponent implements OnInit {
   statuses: any[] = [];
 
   loading: boolean = true;
+  totalRecords = 0;
 
   @ViewChild('filter') filter!: ElementRef;
 
@@ -103,6 +104,7 @@ export class DiscountsComponent implements OnInit {
   ngOnInit() {
     this.discountService.getAllDiscounts().subscribe((data) => {
       this.discounts = data;
+      this.totalRecords = data.length;
     });
 
     this.discountForm = this.fb.group(

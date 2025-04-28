@@ -1,11 +1,14 @@
 <div class="card">
     <div class="font-semibold text-xl mb-4 flex justify-between items-center">
-        <p class="font-semibold text-xl">List Product</p>
+        <p class="uppercase text-2xl">Total Products: {{totalRecords}}</p>
         <div>
             <p-button routerLink="/products/create" label="+ Create new product" />
         </div>
     </div>
-    <p-table #dt1 [value]="products" dataKey="id" [rows]="10" [rowHover]="true" [paginator]="true"
+    <p-table #dt1 [value]="products" dataKey="id" [rows]="10" [rowHover]="true" [paginator]="true" [lazy]="true"
+        [totalRecords]="totalRecords" [loading]="loading" (onLazyLoad)="loadProductsLazy($event)"
+        [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [rowsPerPageOptions]="[10, 20, 30]"
         [globalFilterFields]="['name', 'price', 'brand','type','stock','averageRating']" responsiveLayout="scroll">
         <ng-template #caption>
             <div class="flex justify-between items-center flex-column sm:flex-row">
@@ -15,17 +18,19 @@
                     <p-inputicon>
                         <i class="pi pi-search"></i>
                     </p-inputicon>
-                    <input pInputText type="text" (input)="onGlobalFilter(dt1, $event)" placeholder="Search keyword" />
+                    <input pInputText type="text" [(ngModel)]="searchKeyword" placeholder="Search keyword" />
                 </p-iconfield>
+                <p-button label="Search" icon="pi pi-search" (click)="onSearch()" class="ml-2"></p-button>
+                <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success ml-2"
+                    (click)="exportExcel(dt1)"></button>
             </div>
         </ng-template>
         <ng-template #header>
             <tr>
+                <th>Product#</th>
                 <th style="min-width: 12rem" pSortableColumn="name">
                     <div class="flex justify-between items-center">
                         <span><p-sortIcon field="name" /> Name</span>
-                        <p-columnFilter type="text" field="name" display="menu"
-                            placeholder="Search by name"></p-columnFilter>
                     </div>
                 </th>
                 <th style="min-width: 12rem">
@@ -36,32 +41,26 @@
                 <th style="min-width: 12rem" pSortableColumn="price">
                     <div class="flex justify-between items-center">
                         <span><p-sortIcon field="price" /> Price</span>
-                        <p-columnFilter type="numeric" field="price" display="menu"
-                            placeholder="Search by price"></p-columnFilter>
                     </div>
                 </th>
                 <th style="min-width: 12rem">
                     <div class="flex justify-between items-center">
                         Brand
-                        <p-columnFilter type="text" field="brand" display="menu"
-                            placeholder="Search by brand"></p-columnFilter>
                     </div>
                 </th>
                 <th style="min-width: 12rem">
                     <div class="flex justify-between items-center">
                         Type
-                        <p-columnFilter type="text" field="type" display="menu"
-                            placeholder="Search by type"></p-columnFilter>
                     </div>
                 </th>
                 <th style="min-width: 12rem" pSortableColumn="stock">
                     <div class="flex justify-between items-center">
                         <span><p-sortIcon field="stock" /> Stock</span>
-                        <p-columnFilter type="text" field="stock" display="menu"
+                        <p-columnFilter type="numeric" field="stock" display="menu"
                             placeholder="Search by stock"></p-columnFilter>
                     </div>
                 </th>
-                <th style="min-width: 12rem">
+                <th style="min-width: 12rem" pSortableColumn="averageRating">
                     <div class="flex justify-between items-center">
                         <span><p-sortIcon field="averageRating" /> Rating</span>
                         <p-columnFilter type="numeric" field="averageRating" display="menu"
@@ -73,8 +72,11 @@
                 </th>
             </tr>
         </ng-template>
-        <ng-template #body let-product>
+        <ng-template #body let-product let-index="rowIndex">
             <tr>
+                <td class="w-10">
+                    <p-tag [value]="'#' + (index + 1)" severity="info" styleClass="dark:!bg-surface-900" />
+                </td>
                 <td>
                     {{ product.name }}
                 </td>

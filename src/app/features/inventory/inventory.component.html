@@ -1,9 +1,11 @@
 <div class="card">
     <div class="font-semibold text-xl mb-4 flex justify-between items-center">
-        <p class="font-bold uppercase">Inventories</p>
+        <p class="uppercase text-2xl">Inventories: {{totalRecords}} records</p>
     </div>
     <p-table #dt1 [value]="inventories" dataKey="id" [rows]="10" [rowHover]="true" [paginator]="true"
-        [globalFilterFields]="['productName', 'color', 'size','quantity']" responsiveLayout="scroll">
+        [globalFilterFields]="['productName', 'color', 'size','quantity']" responsiveLayout="scroll"
+        [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
         <ng-template #caption>
             <div class="flex justify-between items-center flex-column sm:flex-row">
                 <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash"
@@ -13,11 +15,14 @@
                         <i class="pi pi-search"></i>
                     </p-inputicon>
                     <input pInputText type="text" (input)="onGlobalFilter(dt1, $event)" placeholder="Search keyword" />
+                    <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success ml-2"
+                        (click)="exportExcel(dt1)"></button>
                 </p-iconfield>
             </div>
         </ng-template>
         <ng-template #header>
             <tr>
+                <th>Inventory#</th>
                 <th style="min-width: 12rem" pSortableColumn="productName">
                     <div class="flex justify-between items-center">
                         <span><p-sortIcon field="productName" /> Product Name</span>
@@ -52,8 +57,11 @@
                 </th>
             </tr>
         </ng-template>
-        <ng-template #body let-inventory>
+        <ng-template #body let-inventory let-index="rowIndex">
             <tr>
+                <td class="w-10">
+                    <p-tag [value]="'#' + (index + 1)" severity="info" styleClass="dark:!bg-surface-900" />
+                </td>
                 <td>
                     <span style="max-width: 250px; display: inline-block; word-wrap: break-word; white-space: normal;">
                         {{ inventory.productName }}

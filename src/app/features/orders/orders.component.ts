@@ -73,7 +73,7 @@ export class OrdersComponent implements OnInit {
   statuses: any[] = [];
   paymentTypes: any[] = [];
 
-  loading: boolean = true;
+  totalRecords: number = 0;
 
   @ViewChild('filter') filter!: ElementRef;
 
@@ -88,6 +88,7 @@ export class OrdersComponent implements OnInit {
   ngOnInit() {
     this.orderService.getAllOrders().subscribe((data) => {
       this.orders = data.orders;
+      this.totalRecords = data.orders.length;
     });
 
     this.statuses = [
@@ -239,14 +240,9 @@ export class OrdersComponent implements OnInit {
       return flatOrder;
     });
 
-    console.log('Flat data ========================', flatData);
-
     // Tạo sheet từ dữ liệu đã "flatten"
     const worksheet = XLSX.utils.json_to_sheet(flatData);
-    console.log('Worksheet:', worksheet);
     const workbook = { Sheets: { Orders: worksheet }, SheetNames: ['Orders'] };
-
-    console.log('workbook:', workbook);
 
     const excelBuffer: any = XLSX.write(workbook, {
       bookType: 'xlsx',

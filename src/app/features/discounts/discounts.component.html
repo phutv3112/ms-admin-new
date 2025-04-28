@@ -1,6 +1,6 @@
 <div class="card">
     <div class="font-semibold text-xl mb-4 flex justify-between items-center">
-        <p>List Discount</p>
+        <p class="uppercase text-2xl">Total Discounts: {{totalRecords}}</p>
         <div>
             <p-button (click)="showCreateDialog()" label="+ Create new discount" />
         </div>
@@ -8,7 +8,8 @@
 
     <p-table #dt [value]="discounts" dataKey="id" [rows]="10" [rowHover]="true" [showGridlines]="true"
         [paginator]="true" [globalFilterFields]="['name', 'startDate', 'endDate','isActive','updatedDate','updatedBy']"
-        responsiveLayout="scroll">
+        responsiveLayout="scroll" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
 
         <ng-template #caption>
             <div class="flex justify-between items-center flex-column sm:flex-row">

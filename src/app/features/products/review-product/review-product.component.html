@@ -6,7 +6,7 @@
                 [routerLink]="['/products']"></p-button>
         </div>
     </div>
-    <p-table #dt1 [value]="reviews" dataKey="id" [rows]="10" [rowHover]="true" [showGridlines]="true" [paginator]="true"
+    <p-table #dt1 [value]="reviews" dataKey="id" [rows]="10" [rowHover]="true" [paginator]="true"
         [globalFilterFields]="['userName', 'rating', 'comment','createdAt']" stripedRows responsiveLayout="scroll">
         <ng-template #caption>
             <div class="flex justify-between items-center flex-column sm:flex-row">
@@ -22,6 +22,7 @@
         </ng-template>
         <ng-template #header>
             <tr>
+                <th>Review#</th>
                 <th style="min-width: 12rem" pSortableColumn="userName">
                     <div class="flex justify-between items-center">
                         <span><p-sortIcon field="userName" /> User Name</span>
@@ -49,8 +50,11 @@
                 </th>
             </tr>
         </ng-template>
-        <ng-template #body let-review let-columns="columns">
+        <ng-template #body let-review let-index="rowIndex">
             <tr>
+                <td class="w-10">
+                    <p-tag [value]="'#' + (index + 1)" severity="info" styleClass="dark:!bg-surface-900" />
+                </td>
                 <td>
                     {{ review.userName }}
                 </td>

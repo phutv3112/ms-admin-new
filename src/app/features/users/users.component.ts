@@ -37,6 +37,10 @@ import { User } from '../../shared/models/users/user';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { UserService } from '../../core/service/user.service';
 import { passwordValidator } from '../../shared/common/validator';
+import { Tooltip } from 'primeng/tooltip';
+import { RouterLink } from '@angular/router';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-users',
@@ -53,6 +57,7 @@ import { passwordValidator } from '../../shared/common/validator';
     ToggleButtonModule,
     ToastModule,
     CommonModule,
+    Tooltip,
     FormsModule,
     ButtonModule,
     RatingModule,
@@ -62,6 +67,7 @@ import { passwordValidator } from '../../shared/common/validator';
     Toast,
     ConfirmDialog,
     ReactiveFormsModule,
+    RouterLink,
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
@@ -77,10 +83,15 @@ export class UsersComponent implements OnInit {
 
   createVisible: boolean = false;
   editVisible: boolean = false;
+  assignVisible: boolean = false;
 
   roles: string[] = [];
+  assignToUserId: string = '';
+
+  totalRecords: number = 0;
 
   userForm!: FormGroup;
+  assignForm!: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -98,20 +109,30 @@ export class UsersComponent implements OnInit {
       ],
       role: ['', Validators.required],
     });
+    this.assignForm = this.fb.group({
+      role: ['', Validators.required],
+    });
   }
 
   get f() {
     return this.userForm.controls;
   }
+  get fRole() {
+    return this.assignForm.controls;
+  }
 
   showCreateDialog() {
     this.createVisible = true;
   }
-  showEditUserDialog(id: string) {}
+  showAssignRoleDialog(userId: string) {
+    this.assignVisible = true;
+    this.assignToUserId = userId;
+  }
 
   ngOnInit() {
     this.userService.getAllUsers().subscribe((data) => {
       this.users = data;
+      this.totalRecords = data.length;
     });
     this.userService.getAllRoles().subscribe((data) => {
       data.filter((role) => {
@@ -120,6 +141,44 @@ export class UsersComponent implements OnInit {
         }
       });
     });
+  }
+
+  exportExcel(table: Table) {
+    const flatData = table.value.map((user) => {
+      const flatUser = {
+        id: user.id,
+        userName: user.userName,
+        fullName: user.fullName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        addressLine1: user.address?.line1 || '',
+        addressLine2: user.address?.line2 || '',
+        city: user.address?.city || '',
+        state: user.address?.state || '',
+        postalCode: user.address?.postalCode || '',
+        country: user.address?.country || '',
+        isLocked: user.isLocked,
+      };
+      return flatUser;
+    });
+
+    // Tạo sheet từ dữ liệu đã "flatten"
+    const worksheet = XLSX.utils.json_to_sheet(flatData);
+    const workbook = {
+      Sheets: { Users: worksheet },
+      SheetNames: ['Users'],
+    };
+
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    FileSaver.saveAs(blob, 'users.xlsx');
   }
 
   toggleLock(user: User) {
@@ -241,6 +300,34 @@ export class UsersComponent implements OnInit {
           summary: 'Rejected',
           detail: 'You have rejected',
         });
+      },
+    });
+  }
+
+  assignRoleToUser() {
+    if (this.assignForm.invalid) return;
+    const role = this.assignForm.value.role;
+    this.userService.assignRoleToUser(this.assignToUserId, role).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Assign role to user successfully',
+        });
+        this.userService.getAllUsers().subscribe((data) => {
+          this.users = data;
+        });
+      },
+      error: (error) => {
+        console.error(error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to create user',
+        });
+      },
+      complete: () => {
+        this.assignVisible = false;
       },
     });
   }

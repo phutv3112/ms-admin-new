@@ -1,11 +1,12 @@
 <div class="card mt-6">
     <div class="font-semibold text-xl mb-4 flex justify-between items-center">
-        <p>Discount Codes</p>
+        <p class="uppercase text-2xl">Total Coupons: {{totalRecords}}</p>
     </div>
 
     <p-table #dtCodes [value]="discountCodes" dataKey="id" [rows]="10" [rowHover]="true" [paginator]="true"
         [globalFilterFields]="['code', 'type', 'discountName','value','minSubtotal','maxDiscountAmount','usageLimit','usedCount','isActive']"
-        responsiveLayout="scroll">
+        responsiveLayout="scroll" [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
 
         <ng-template #caption>
             <div class="flex justify-between items-center flex-column sm:flex-row">
@@ -17,6 +18,8 @@
                     </p-inputicon>
                     <input pInputText type="text" (input)="onGlobalFilter(dtCodes, $event)"
                         placeholder="Search code or type" />
+                    <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success ml-2"
+                        (click)="exportExcel(dtCodes)"></button>
                 </p-iconfield>
             </div>
         </ng-template>

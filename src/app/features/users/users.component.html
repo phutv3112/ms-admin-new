@@ -1,14 +1,16 @@
 <div class="card">
 
     <div class="flex justify-between items-center mb-4">
-        <div class="font-semibold text-xl">List Users</div>
+        <div class="uppercase text-2xl font-semibold">Total Users: {{totalRecords}}</div>
         <div class="flex gap-2">
-            <p-button severity="info" label="See all roles" />
+            <p-button [routerLink]="['/roles']" severity="info" label="See all roles" />
             <p-button (click)="showCreateDialog()" label="+ Create new user" />
         </div>
     </div>
     <p-table #dt1 [value]="users" dataKey="id" [rows]="10" [rowHover]="true" [paginator]="true"
-        [globalFilterFields]="['userName', 'fullName', 'email','phoneNumber','role']" responsiveLayout="scroll">
+        [globalFilterFields]="['userName', 'fullName', 'email','phoneNumber','role']" responsiveLayout="scroll"
+        [rowsPerPageOptions]="[10, 20, 30]" [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
         <ng-template #caption>
             <div class="flex justify-between items-center flex-column sm:flex-row">
                 <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash"
@@ -18,11 +20,14 @@
                         <i class="pi pi-search"></i>
                     </p-inputicon>
                     <input pInputText type="text" (input)="onGlobalFilter(dt1, $event)" placeholder="Search keyword" />
+                    <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success ml-2"
+                        (click)="exportExcel(dt1)"></button>
                 </p-iconfield>
             </div>
         </ng-template>
         <ng-template #header>
             <tr>
+                <th>User#</th>
                 <th style="min-width: 12rem" pSortableColumn="userName">
                     <div class="flex justify-between items-center">
                         <span><p-sortIcon field="userName" /> Username</span>
@@ -63,8 +68,11 @@
                 </th>
             </tr>
         </ng-template>
-        <ng-template #body let-user>
+        <ng-template #body let-user let-index="rowIndex">
             <tr>
+                <td class="w-10">
+                    <p-tag [value]="'#' + (index + 1)" severity="info" styleClass="dark:!bg-surface-900" />
+                </td>
                 <td>
                     {{ user.userName }}
                 </td>
@@ -82,8 +90,8 @@
                 </td>
                 <td>
                     <div *ngIf="user.role !== 'admin'">
-                        <p-button (click)="showEditUserDialog(user.id)" icon="pi pi-lock" severity="info"
-                            class="mx-2" />
+                        <p-button (click)="showAssignRoleDialog(user.id)" icon="pi pi-reply" severity="info"
+                            class="mx-2" pTooltip="Assign role" tooltipPosition="top" />
                         <p-togglebutton [(ngModel)]="user.isLocked" onLabel="Locked" offLabel="Unlocked"
                             offIcon="pi pi-lock-open" onIcon={{onIconLock}} styleClass="w-36" ariaLabel="Do you confirm"
                             (click)="confirmLockUser($event,user)" />
@@ -183,6 +191,11 @@
                         <div>{{ role }}</div>
                     </div>
                 </ng-template>
+                <ng-template pTemplate="selectedItem" let-role>
+                    <div class="flex items-center gap-2">
+                        <div>{{ role }}</div>
+                    </div>
+                </ng-template>
                 <ng-template #dropdownicon>
                     <i class="pi pi-angle-down"></i>
                 </ng-template>
@@ -196,6 +209,40 @@
         <div class="flex justify-end gap-2 mt-5">
             <p-button severity="info" label="Clear" [raised]="true" (click)="userForm.reset()" />
             <p-button label="Save" (click)="createUser()" [disabled]="userForm.invalid" />
+        </div>
+    </form>
+</p-dialog>
+
+<p-dialog header="Assign role to user" [modal]="true" [(visible)]="assignVisible" [style]="{ width: '35rem' }">
+    <form [formGroup]="assignForm" class="flex flex-col gap-4">
+        <!-- Role (SelectButton) -->
+        <div class="flex items-center gap-4">
+            <label for="role" class="w-32 font-semibold">Role</label>
+            <p-select appendTo="body" [options]="roles" formControlName="role" placeholder="Select role"
+                styleClass="w-1/2" display="chip">
+                <ng-template let-role #item>
+                    <div class="flex items-center gap-2">
+                        <div>{{ role }}</div>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="selectedItem" let-role>
+                    <div class="flex items-center gap-2">
+                        <div>{{ role }}</div>
+                    </div>
+                </ng-template>
+                <ng-template #dropdownicon>
+                    <i class="pi pi-angle-down"></i>
+                </ng-template>
+            </p-select>
+            <small class="text-red-500" *ngIf="fRole['role'].touched && fRole['role'].errors?.['required']">
+                Role is required
+            </small>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-end gap-2 mt-5">
+            <p-button severity="info" label="Clear" [raised]="true" (click)="assignForm.reset()" />
+            <p-button label="Save" (click)="assignRoleToUser()" [disabled]="assignForm.invalid" />
         </div>
     </form>
 </p-dialog>

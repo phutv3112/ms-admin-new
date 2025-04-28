@@ -68,11 +68,13 @@ export class CategoriesComponent implements OnInit {
   activityValues: number[] = [0, 100];
 
   loading: boolean = true;
+  totalRecords: number = 0;
 
   @ViewChild('filter') filter!: ElementRef;
 
   visible: boolean = false;
   editVisible: boolean = false;
+
   selectedCategory: Category = {
     id: '',
     name: '',
@@ -106,6 +108,7 @@ export class CategoriesComponent implements OnInit {
   ngOnInit() {
     this.categoryService.getCategories().subscribe((data) => {
       this.categories = data;
+      this.totalRecords = data.length;
     });
 
     this.statuses = [
@@ -185,6 +188,7 @@ export class CategoriesComponent implements OnInit {
       },
     });
   }
+
   updateCategory() {
     this.categoryService
       .updateCategory(

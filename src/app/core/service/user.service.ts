@@ -37,6 +37,13 @@ export class UserService {
     return this.http.get<RoleResponse[]>(`${this.baseUrl}/users/roles`);
   }
 
+  assignRoleToUser(userId: string, role: string) {
+    return this.http.post(`${this.baseUrl}/users/assign-role`, {
+      userId,
+      role,
+    });
+  }
+
   toggleLock(userId: string, isLocked: boolean) {
     const url = `${this.baseUrl}/users/${
       isLocked ? 'lock' : 'unlock'
