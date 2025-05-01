@@ -41,7 +41,7 @@ export class ReportService {
 
   getSalesBrandType(salesData: ProductMonthlySales[]) {
     return this.http.post<TopBrandTypeByMonth[]>(
-      this.productUrl + 'products/sales-brand-type',
+      this.productUrl + '/products/sales-brand-type',
       { salesData }
     );
   }
@@ -66,7 +66,7 @@ export class ReportService {
       params = params.append('year', year.toString());
     }
     return this.http.get<GetProductsResponse>(
-      this.productUrl + 'products/top-rated',
+      this.productUrl + '/products/top-rated',
       { params }
     );
   }

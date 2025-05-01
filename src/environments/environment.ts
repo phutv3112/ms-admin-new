@@ -6,4 +6,5 @@ export const environment = {
   identityServerUrl: 'https://localhost:5056',
   refundHubUrl: 'refund/hub',
   paymentReceivedHubUrl: 'payment-received/hub',
+  authenticationUrl: 'http://localhost:6006',
 };

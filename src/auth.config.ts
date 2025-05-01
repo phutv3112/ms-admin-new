@@ -2,7 +2,7 @@ import { AuthConfig } from 'angular-oauth2-oidc';
 import { environment } from './environments/environment';
 
 export const authConfig: AuthConfig = {
-  issuer: environment.identityServerUrl,
+  issuer: environment.authenticationUrl,
   redirectUri: window.location.origin + '/auth-callback',
   postLogoutRedirectUri: window.location.origin,
   clientId: 'mseadmin',

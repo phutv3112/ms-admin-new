@@ -1,9 +1,11 @@
 export const environment = {
-  productUrl: 'https://localhost:5050/',
-  discountUrl: 'https://localhost:5057/api',
-  orderUrl: 'https://localhost:5053',
-  paymentUrl: 'https://localhost:5055',
-  identityServerUrl: 'https://localhost:5056',
-  refundHubUrl: 'https://localhost:5053/refund/hub',
-  paymentReceivedHubUrl: 'https://localhost:5053/payment-received/hub',
+  productUrl: 'https://localhost:6064/catalog-service',
+  discountUrl: 'https://localhost:6064/discount-service/api',
+  orderUrl: 'https://localhost:6064/ordering-service',
+  paymentUrl: 'https://localhost:6064/payment-service',
+  identityServerUrl: 'https://localhost:6066',
+  refundHubUrl: 'https://localhost:6064/ordering-service/refund/hub',
+  paymentReceivedHubUrl:
+    'https://localhost:6064/ordering-service/payment-received/hub',
+  authenticationUrl: 'https://localhost:6066',
 };

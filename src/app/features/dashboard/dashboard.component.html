@@ -77,15 +77,33 @@
 
     <div class="col-span-12 xl:col-span-6">
         <div class="card flex flex-col items-center">
-            <div class="font-semibold text-xl mb-4">Brand sold in month</div>
+            <div class="flex items-center mb-4">
+                <div class="font-semibold text-xl me-4">Brand sold in month</div>
+                <p-datepicker [(ngModel)]="dateBrand" view="month" dateFormat="mm/yy" [readonlyInput]="true"
+                    (onSelect)="onDateBrandChange()" />
+            </div>
+
+            @if(pieDataBrand && pieDataBrand.datasets[0].data.length > 0) {
             <p-chart type="pie" [data]="pieDataBrand" [options]="pieOptions"></p-chart>
+            } @else {
+            <div class="text-center text-muted-color">No data available</div>
+            }
         </div>
     </div>
 
     <div class="col-span-12 xl:col-span-6">
         <div class="card flex flex-col items-center">
-            <div class="font-semibold text-xl mb-4">Type sold in month</div>
+            <div class="flex items-center mb-4">
+                <div class="font-semibold text-xl me-4">Type sold in month</div>
+                <p-datepicker [(ngModel)]="dateType" view="month" dateFormat="mm/yy" [readonlyInput]="true"
+                    (onSelect)="onDateTypeChange()" />
+            </div>
+
+            @if(pieDataType && pieDataType.datasets[0].data.length > 0) {
             <p-chart type="pie" [data]="pieDataType" [options]="pieOptions"></p-chart>
+            } @else {
+            <div class="text-center text-muted-color">No data available</div>
+            }
         </div>
     </div>
 

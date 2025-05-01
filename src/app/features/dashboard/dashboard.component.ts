@@ -12,10 +12,12 @@ import {
 } from '../../shared/models/reports/report';
 import { UserService } from '../../core/service/user.service';
 import { TopProductsComponent } from './top-products/top-products.component';
+import { DatePicker } from 'primeng/datepicker';
 import {
   TopBrandTypeByMonth,
   TopItem,
 } from '../../shared/models/reports/brand';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard',
@@ -26,6 +28,8 @@ import {
     FluidModule,
     RecentOrdersComponent,
     TopProductsComponent,
+    DatePicker,
+    FormsModule,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -52,6 +56,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   barOptions: any;
 
   pieOptions: any;
+
+  dateType: Date | undefined = new Date();
+  dateBrand: Date | undefined = new Date();
 
   subscription: Subscription;
   constructor(
@@ -148,6 +155,67 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  onDateTypeChange() {
+    if (this.dateType) {
+      var month = this.dateType.getMonth() + 1;
+      var year = this.dateType.getFullYear();
+
+      const currentMonthData = this.topBrandTypeByMonth.find(
+        (item) => item.month === month && item.year === year
+      );
+
+      if (currentMonthData) {
+        this.typesThisMonth = currentMonthData.types;
+      } else {
+        this.typesThisMonth = [];
+      }
+
+      this.pieDataType = {
+        labels: this.typesThisMonth.map((b) => b.name),
+        datasets: [
+          {
+            data: this.typesThisMonth.map((b) => b.quantity),
+            backgroundColor: this.getDynamicColors(this.typesThisMonth.length, [
+              '#34d399',
+              '#4c51bf',
+              '#a855f7',
+              '#fbbf24',
+            ]),
+          },
+        ],
+      };
+    }
+  }
+
+  onDateBrandChange() {
+    if (this.dateBrand) {
+      var month = this.dateBrand.getMonth() + 1;
+      var year = this.dateBrand.getFullYear();
+
+      const currentMonthData = this.topBrandTypeByMonth.find(
+        (item) => item.month === month && item.year === year
+      );
+
+      if (currentMonthData) {
+        this.brandsThisMonth = currentMonthData.brands;
+      } else {
+        this.brandsThisMonth = [];
+      }
+      this.pieDataBrand = {
+        labels: this.brandsThisMonth.map((b) => b.name),
+        datasets: [
+          {
+            data: this.brandsThisMonth.map((b) => b.quantity),
+            backgroundColor: this.getDynamicColors(
+              this.brandsThisMonth.length,
+              ['#34d399', '#4c51bf', '#a855f7', '#fbbf24']
+            ),
+          },
+        ],
+      };
+    }
+  }
+
   getTopBranTypeProducts() {
     this.reportService
       .getMonthlySalesProducts()
@@ -163,6 +231,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (result) => {
           const res = result as TopBrandTypeByMonth[];
+          this.topBrandTypeByMonth = res;
 
           const data = res.map((item) => {
             const topBrand = item.brands.reduce((a, b) =>
