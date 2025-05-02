@@ -1,7 +1,7 @@
 <p-toast />
 <p-fluid>
     <div class="flex">
-        <div class="card flex flex-col gap-6 w-full">
+        <div class="card flex flex-col gap-6 w-4/5 m-auto">
             <div class="flex justify-between items-center mb-4">
                 <div class="font-semibold text-xl">Edit product</div>
                 <div class="flex gap-2">
@@ -12,7 +12,7 @@
                 </div>
             </div>
             <form [formGroup]="productForm" (ngSubmit)="submitForm()">
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 gap-4">
                     <div class="w-full">
                         <div class="flex flex-col md:flex-row gap-6 my-4">
                             <div class="flex flex-wrap gap-2 w-full">
@@ -52,7 +52,7 @@
                         </div>
                         <div class="flex flex-col md:flex-row gap-6 my-4">
                             <div class="flex flex-wrap gap-2 w-full">
-                                <label for="brand">Brand</label>
+                                <label for="brand" class="font-semibold">Brand</label>
                                 <p-select [options]="brands" formControlName="brand" placeholder="Select Brand"
                                     styleClass="w-full" display="chip">
                                     <ng-template let-brand #item>
@@ -75,7 +75,7 @@
                                 </p-select>
                             </div>
                             <div class="flex flex-wrap gap-2 w-full">
-                                <label for="type">Type</label>
+                                <label for="type" class="font-semibold">Type</label>
                                 <p-select [options]="types" formControlName="type" placeholder="Select Type"
                                     styleClass="w-full" display="chip">
                                     <ng-template let-type #item>
@@ -96,6 +96,39 @@
                                         </div>
                                     </ng-template>
                                 </p-select>
+                            </div>
+                        </div>
+                        <div class="flex flex-col md:flex-row gap-6 my-4">
+                            <div class="flex flex-wrap gap-2 w-full">
+                                <label for="shortDescription" class="font-semibold">Short Description</label>
+                                <textarea pTextarea id="shortDescription" formControlName="shortDescription"
+                                    rows="5"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex flex-col md:flex-row gap-6 my-4">
+                            <div class="flex flex-wrap gap-2 w-full">
+                                <label for="price" class="font-semibold">Price</label>
+                                <p-inputnumber class="font-semibold" formControlName="price" inputId="currency-vn"
+                                    mode="currency" currency="VND" locale="vi-VN" min="0" />
+                            </div>
+                            <div class="flex flex-wrap gap-2 w-full">
+                                <label for="originalPrice" class="font-semibold">Original Price</label>
+                                <p-inputnumber class="font-semibold" formControlName="originalPrice"
+                                    inputId="currency-vn" mode="currency" currency="VND" locale="vi-VN" min="0" />
+                            </div>
+                            <div class="flex flex-wrap gap-2 w-full" [ngClass]="{ 'disabled-div': true }">
+                                <label for="stock" class="font-semibold">Stock</label>
+                                <p-inputnumber formControlName="stock" class="font-semibold" />
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col md:flex-row gap-6 my-4">
+                            <div class="flex flex-wrap gap-2 w-full">
+                                <label for="description" class="font-semibold">Descriptions</label>
+
+                                <ckeditor *ngIf="Editor" [editor]="Editor" [config]="config!"
+                                    formControlName="description" class="w-full">
+                                </ckeditor>
                             </div>
                         </div>
 
@@ -160,46 +193,13 @@
                             </div>
 
                         </div>
-                        <div class="flex justify-end mt-4">
-                            <!-- <p-button label="Submit" type="submit" icon="pi pi-check" /> -->
-                            <button pButton type="button" label="Update Product" icon="pi pi-check"
+                        <div class="flex mt-8 w-1/4">
+                            <button pButton type="button" label="Update Product" icon="pi pi-pencil"
                                 [disabled]="isLoading" (click)="submitForm()">
                             </button>
                         </div>
                     </div>
-                    <div class="w-full">
-                        <div class="flex flex-col md:flex-row gap-6 my-4">
-                            <div class="flex flex-wrap gap-2 w-full">
-                                <label for="price" class="font-semibold">Price</label>
-                                <p-inputnumber class="font-semibold" formControlName="price" inputId="currency-vn"
-                                    mode="currency" currency="VND" locale="vi-VN" min="0" />
-                            </div>
-                            <div class="flex flex-wrap gap-2 w-full">
-                                <label for="originalPrice" class="font-semibold">Original Price</label>
-                                <p-inputnumber class="font-semibold" formControlName="originalPrice"
-                                    inputId="currency-vn" mode="currency" currency="VND" locale="vi-VN" min="0" />
-                            </div>
-                            <div class="flex flex-wrap gap-2 w-full" [ngClass]="{ 'disabled-div': true }">
-                                <label for="stock" class="font-semibold">Stock</label>
-                                <p-inputnumber formControlName="stock" class="font-semibold" />
-                            </div>
-                        </div>
-                        <div class="flex flex-col md:flex-row gap-6 my-4">
-                            <div class="flex flex-wrap gap-2 w-full">
-                                <label for="shortDescription" class="font-semibold">Short Description</label>
-                                <textarea pTextarea id="shortDescription" formControlName="shortDescription"
-                                    rows="4"></textarea>
-                            </div>
-                        </div>
-                        <div class="flex flex-col md:flex-row gap-6 my-4">
-                            <div class="flex flex-wrap gap-2 w-full">
-                                <label for="description" class="font-semibold">Descriptions</label>
-                                <p-editor class="w-full" formControlName="description" [style]="{height: '320px' }" />
-                            </div>
-                        </div>
 
-
-                    </div>
                 </div>
 
             </form>

@@ -1,0 +1,81 @@
+<div class="card max-w-screen-xl m-auto">
+    <div class="font-semibold text-xl mb-4 flex justify-between items-center">
+        <p class="mb-0">Orders of: {{buyerEmail}} </p>
+        <div class="flex items-center gap-2">
+            <p class="mb-0 me-4">Total orders: {{totalRecords}}</p>
+            <p-button icon="pi pi-arrow-left" severity="secondary" label="Back" class="mb-2"
+                [routerLink]="['/reports/top-customers']"></p-button>
+        </div>
+    </div>
+    <p-table #dt1 [value]="orders" dataKey="id" [rows]="10" [rowHover]="true" [paginator]="true"
+        [globalFilterFields]="['orderDate', 'total', 'status']" responsiveLayout="scroll" [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [rowsPerPageOptions]="[10, 20, 30]">
+        <ng-template #header>
+            <tr>
+                <th style="min-width: 10rem">
+                    Order#
+                </th>
+                <th style="min-width: 10rem" pSortableColumn="orderDate">
+                    <p-sortIcon field="orderDate" />
+                    Order Date
+                </th>
+                <th style="min-width: 10rem" pSortableColumn="total">
+                    <p-sortIcon field="total" />
+                    Total
+                </th>
+                <th style="min-width: 12rem">
+                    <div class="flex items-center">
+                        <p class="me-4 mb-0">Status</p>
+                        <p-columnFilter field="status" matchMode="equals" [showMenu]="false">
+                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                <p-select [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)"
+                                    placeholder="Filter" [style]="{ 'min-width': '12rem' }">
+                                    <ng-template let-option pTemplate="item">
+                                        <p-tag [value]="option.value" [severity]="getSeverity(option.value)" />
+                                    </ng-template>
+                                </p-select>
+                            </ng-template>
+                        </p-columnFilter>
+
+                    </div>
+                </th>
+
+                <th style="min-width: 10rem; position: relative;">
+                    Details
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-order let-index="rowIndex">
+            <tr class="hover:bg-surface-200 dark:hover:bg-surface-800">
+                <td>
+                    <p-tag [value]="'#' + (index + 1)" severity="info" styleClass="dark:!bg-surface-900" />
+                </td>
+                <td>
+                    {{ order.orderDate | date: 'dd/MM/yyyy-HH:mm' }}
+                </td>
+                <td class="font-semibold">
+                    {{ order.total | currency: 'VND' }}
+                </td>
+                <td>
+                    <p-tag [value]="order.status" [severity]="getSeverity(order.status)"
+                        styleClass="dark:!bg-surface-900" />
+                </td>
+                <td>
+                    <p-button [routerLink]="['/orders/details', order.id]" class="me-1" pTooltip="Detail"
+                        tooltipPosition="top" severity="info" icon="pi pi-eye" />
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="8">No orders found.</td>
+            </tr>
+        </ng-template>
+        <ng-template #loadingbody>
+            <tr>
+                <td colspan="8">Loading orders data. Please wait.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>

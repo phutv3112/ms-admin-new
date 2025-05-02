@@ -2,7 +2,13 @@
 <p-fluid>
     <div class="flex">
         <div class="card flex flex-col gap-6 w-4/5 m-auto">
-            <div class="font-semibold text-xl">Create new product</div>
+            <div class="flex justify-between items-center mb-4">
+                <div class="font-semibold text-xl">Create new product</div>
+                <div class="flex gap-2">
+                    <p-button icon="pi pi-arrow-left" severity="secondary" label="Back" class="mb-2"
+                        [routerLink]="['/products']"></p-button>
+                </div>
+            </div>
             <form [formGroup]="productForm" (ngSubmit)="submitForm()">
                 <div class="flex flex-col md:flex-row gap-6 my-4">
                     <div class="flex flex-wrap gap-2 w-full">
@@ -92,14 +98,14 @@
                     <div class="flex flex-wrap gap-2 w-full">
                         <label for="shortDescription" class="font-semibold">Short Description</label>
                         <textarea pTextarea id="shortDescription" formControlName="shortDescription"
-                            rows="4"></textarea>
+                            rows="5"></textarea>
                     </div>
                 </div>
                 <div class="flex flex-col md:flex-row gap-6 my-4">
                     <div class="flex flex-wrap gap-2 w-full">
                         <label for="price" class="font-semibold">Price</label>
-                        <p-inputnumber formControlName="price" inputId="currency-vn" mode="currency" currency="VND"
-                            locale="vi-VN" min="0" />
+                        <p-inputnumber class="font-semibold" formControlName="price" inputId="currency-vn"
+                            mode="currency" currency="VND" locale="vi-VN" min="0" />
                     </div>
                     <div class="flex flex-wrap gap-2 w-full">
                         <label for="originalPrice" class="font-semibold">Original Price</label>
@@ -107,14 +113,16 @@
                             mode="currency" currency="VND" locale="vi-VN" min="0" />
                     </div>
                     <div class="flex flex-wrap gap-2 w-full">
-                        <label for="stock" class="font-semibold">Stock</label>
+                        <label for="stock" class="font-semibold" class="font-semibold">Stock</label>
                         <p-inputnumber formControlName="stock" />
                     </div>
                 </div>
                 <div class="flex flex-col md:flex-row gap-6 my-4">
                     <div class="flex flex-wrap gap-2 w-full">
                         <label for="descriptions" class="font-semibold">Descriptions</label>
-                        <p-editor class="w-full" formControlName="description" [style]="{height: '320px' }" />
+                        <app-text-editor class="w-full" [value]="productForm.get('description')?.value"
+                            (valueChange)="productForm.get('description')?.setValue($event)">
+                        </app-text-editor>
                     </div>
                 </div>
                 <div class="flex flex-col md:flex-row gap-6 my-4">
@@ -171,9 +179,8 @@
                     </div>
 
                 </div>
-                <div class="flex justify-end mt-4">
-                    <!-- <p-button label="Submit" type="submit" icon="pi pi-check" /> -->
-                    <button pButton type="button" label="Create Product" icon="pi pi-check" [disabled]="isLoading"
+                <div class="flex mt-8 w-1/4">
+                    <button pButton type="button" label="Create Product" icon="pi pi-plus" [disabled]="isLoading"
                         (click)="submitForm()">
                     </button>
                 </div>

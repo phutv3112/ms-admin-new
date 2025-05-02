@@ -26,6 +26,7 @@ import { AppLoadingComponent } from './shared/components/app-loading/app-loading
 export class AppComponent implements OnInit {
   title = 'admin-site';
   isAuthenticated = false;
+  role = '';
   overlayMenuOpenSubscription: Subscription;
 
   menuOutsideClickListener: any;
@@ -67,6 +68,7 @@ export class AppComponent implements OnInit {
   }
   ngOnInit(): void {
     this.isAuthenticated = this.authService.isAuthenticated;
+    this.role = this.authService.userInfo?.role;
   }
 
   login() {

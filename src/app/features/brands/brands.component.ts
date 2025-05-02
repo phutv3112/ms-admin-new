@@ -255,7 +255,6 @@ export class BrandsComponent implements OnInit {
         this.productService.getAllBrands().subscribe((data) => {
           this.brands = data;
         });
-        this.isLoading = false;
       },
       error: (error) => {
         console.error(error);
@@ -265,6 +264,10 @@ export class BrandsComponent implements OnInit {
           detail: 'Failed to update brand',
         });
         this.isLoading = false;
+      },
+      complete: () => {
+        this.isLoading = false;
+        this.brandCreateForm.reset();
       },
     });
   }

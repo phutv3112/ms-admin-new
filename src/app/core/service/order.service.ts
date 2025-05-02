@@ -33,6 +33,12 @@ export class OrderService {
     );
   }
 
+  getOrdersForUser(buyerEmail: string) {
+    return this.http.get<{ orders: Order[] }>(
+      this.baseUrl + '/orders/customer/' + buyerEmail
+    );
+  }
+
   getBestSellingProducts(
     pageIndex: number,
     pageSize: number,

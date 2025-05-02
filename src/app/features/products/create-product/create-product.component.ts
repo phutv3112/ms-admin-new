@@ -24,6 +24,7 @@ import { ToastModule } from 'primeng/toast';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Dialog } from 'primeng/dialog';
 import { Router, RouterLink } from '@angular/router';
+import { TextEditorComponent } from '../../../shared/components/text-editor/text-editor.component';
 
 interface UploadEvent {
   originalEvent: Event;
@@ -37,7 +38,6 @@ interface UploadEvent {
     FileUploadModule,
     InputTextModule,
     ButtonModule,
-    Dialog,
     SelectModule,
     FormsModule,
     TextareaModule,
@@ -48,8 +48,8 @@ interface UploadEvent {
     CommonModule,
     ReactiveFormsModule,
     ToastModule,
-    ProgressSpinner,
     RouterLink,
+    TextEditorComponent,
   ],
   templateUrl: './create-product.component.html',
   styleUrl: './create-product.component.scss',
@@ -200,7 +200,6 @@ export class CreateProductComponent implements OnInit {
     if (this.variants.length > 0) {
       formData.append('Variants', JSON.stringify(this.variants.value));
     }
-
     this.productService.createProduct(formData).subscribe({
       next: (response) => {
         this.messageService.add({

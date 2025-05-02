@@ -34,7 +34,7 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Checkbox } from 'primeng/checkbox';
 import { Product } from '../../shared/models/catalog/product';
 import { ProductService } from '../../core/service/product.service';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-products',
@@ -69,6 +69,7 @@ export class ProductsComponent implements OnInit {
   products: Product[] = [];
 
   private productService = inject(ProductService);
+  private router = inject(Router);
 
   statuses: any[] = [];
 
@@ -161,7 +162,14 @@ export class ProductsComponent implements OnInit {
             this.productService.getAllProducts({ page: 0, pageSize: 10 });
           },
           error: (error) => {
-            console.error(error);
+            if (error.status === 403) {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'You do not have permission to delete this product',
+              });
+              this.router.navigate(['/access-denied']);
+            }
             this.messageService.add({
               severity: 'error',
               summary: 'Error',

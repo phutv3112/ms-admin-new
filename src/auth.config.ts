@@ -10,4 +10,5 @@ export const authConfig: AuthConfig = {
   scope: 'openid profile roleBase offline_access IdentityServerApi',
   showDebugInformation: true,
   strictDiscoveryDocumentValidation: false,
+  requireHttps: false,
 };

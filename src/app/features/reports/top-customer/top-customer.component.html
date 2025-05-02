@@ -35,8 +35,8 @@
                 <td class="font-semibold">{{ customer.totalAmount | currency:'VND':'symbol':'1.0-0'}}
                 </td>
                 <td style="width: 15%;">
-                    <button [routerLink]="['/customers', customer.id]" pButton pRipple type="button" icon="pi pi-search"
-                        class="p-button p-component p-button-text p-button-icon-only"></button>
+                    <button [routerLink]="['/orders/customer', customer.buyerEmail]" pButton pRipple type="button"
+                        icon="pi pi-search" class="p-button p-component p-button-text p-button-icon-only"></button>
                 </td>
             </tr>
         </ng-template>

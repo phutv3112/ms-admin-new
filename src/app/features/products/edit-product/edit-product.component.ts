@@ -22,6 +22,18 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Product, ProductImage } from '../../../shared/models/catalog/product';
 import { LoadingService } from '../../../core/service/loading.service';
 import { Subscription } from 'rxjs';
+import { TextEditorComponent } from '../../../shared/components/text-editor/text-editor.component';
+import { environment } from '../../../../environments/environment';
+import {
+  CKEditorModule,
+  loadCKEditorCloud,
+  CKEditorCloudResult,
+  ChangeEvent,
+} from '@ckeditor/ckeditor5-angular';
+import type {
+  ClassicEditor,
+  EditorConfig,
+} from 'https://cdn.ckeditor.com/typings/ckeditor5.d.ts';
 interface UploadEvent {
   originalEvent: Event;
   files: File[];
@@ -45,6 +57,8 @@ interface UploadEvent {
     ReactiveFormsModule,
     ToastModule,
     RouterLink,
+    TextEditorComponent,
+    CKEditorModule,
   ],
   templateUrl: './edit-product.component.html',
   styleUrl: './edit-product.component.scss',
@@ -57,6 +71,11 @@ export class EditProductComponent implements OnInit, OnDestroy {
   private messageService = inject(MessageService);
   private categoryService = inject(CategoryService);
   private loadingService = inject(LoadingService);
+
+  private licenseKey = environment.CKEDITOR_GLOBAL_LICENSE_KEY;
+
+  public Editor: typeof ClassicEditor | null = null;
+  public config: EditorConfig | null = null;
 
   productForm: FormGroup;
   productId: string | null = null;
@@ -75,8 +94,8 @@ export class EditProductComponent implements OnInit, OnDestroy {
   productImages: ProductImage[] = [];
 
   //loading
-  loading$ = this.loadingService.loading$;
-  private sub: Subscription;
+  // loading$ = this.loadingService.loading$;
+  // private sub: Subscription;
 
   constructor(private router: Router) {
     this.productForm = this.fb.group({
@@ -93,9 +112,9 @@ export class EditProductComponent implements OnInit, OnDestroy {
       variants: this.fb.array([]),
     });
 
-    this.sub = this.loading$.subscribe((value) => {
-      this.isLoading = value;
-    });
+    // this.sub = this.loading$.subscribe((value) => {
+    //   this.isLoading = value;
+    // });
   }
   isInvalid(field: string): boolean {
     return (
@@ -117,10 +136,15 @@ export class EditProductComponent implements OnInit, OnDestroy {
         this.loadProduct();
       }
     });
+
+    loadCKEditorCloud({
+      version: '44.3.0',
+      premium: true,
+    }).then(this._setupEditor.bind(this));
   }
 
   ngOnDestroy() {
-    this.sub.unsubscribe();
+    //this.sub.unsubscribe();
   }
 
   get variants(): FormArray<FormGroup> {
@@ -279,5 +303,124 @@ export class EditProductComponent implements OnInit, OnDestroy {
     this.productForm.reset();
     this.variants.clear();
     this.uploadedFiles = [];
+  }
+
+  private _setupEditor(
+    cloud: CKEditorCloudResult<{ version: '44.3.0'; premium: true }>
+  ) {
+    const {
+      ClassicEditor,
+      Essentials,
+      Paragraph,
+      Bold,
+      Italic,
+      Underline,
+      Strikethrough,
+      Alignment,
+      Indent,
+      IndentBlock,
+      BlockQuote,
+      Code,
+      CodeBlock,
+      List,
+      ListProperties,
+      Table,
+      TableToolbar,
+      TableProperties,
+      TableCellProperties,
+      Image,
+      ImageToolbar,
+      ImageUpload,
+      Base64UploadAdapter,
+      ImageResize,
+      ImageStyle,
+      DragDrop,
+    } = cloud.CKEditor;
+
+    this.Editor = ClassicEditor;
+    this.config = {
+      licenseKey: this.licenseKey,
+      plugins: [
+        Essentials,
+        Paragraph,
+        Bold,
+        Italic,
+        Underline,
+        Strikethrough,
+        Alignment,
+        Indent,
+        IndentBlock,
+        BlockQuote,
+        Code,
+        CodeBlock,
+        List,
+        ListProperties,
+        Table,
+        TableToolbar,
+        TableProperties,
+        TableCellProperties,
+        Image,
+        ImageToolbar,
+        ImageUpload,
+        Base64UploadAdapter,
+        ImageResize,
+        ImageStyle, // 🔥 Căn ảnh (trái, giữa, phải, wrap text)
+        DragDrop,
+      ],
+      toolbar: [
+        'undo',
+        'redo',
+        '|',
+        'bold',
+        'italic',
+        'underline',
+        'strikethrough',
+        '|',
+        'alignment:left',
+        'alignment:center',
+        'alignment:right',
+        'alignment:justify',
+        '|',
+        'outdent',
+        'indent',
+        '|',
+        'blockQuote',
+        'code',
+        'codeBlock',
+        '|',
+        'bulletedList',
+        'numberedList',
+        '|',
+        'insertTable',
+        '|',
+        'uploadImage',
+        '|',
+        'dragDrop',
+      ],
+      table: {
+        contentToolbar: [
+          'tableColumn',
+          'tableRow',
+          'mergeTableCells',
+          'tableProperties',
+          'tableCellProperties',
+        ],
+      },
+      image: {
+        toolbar: [
+          'imageTextAlternative',
+          'imageStyle:alignLeft', // 🔥 Căn trái
+          'imageStyle:alignCenter', // 🔥 Căn giữa
+          'imageStyle:alignRight', // 🔥 Căn phải
+          'imageStyle:wrapText', // 🔥 Wrap text (Văn bản bao quanh ảnh)
+          '|',
+          'imageResize',
+        ],
+        upload: {
+          types: ['jpeg', 'png', 'gif', 'bmp', 'webp'],
+        },
+        resizeUnit: 'px',
+      },
+    };
   }
 }

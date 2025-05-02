@@ -54,4 +54,8 @@ export class AuthService {
     const claims = this.oauthService.getIdentityClaims();
     return claims ? claims['email'] : '';
   }
+  get role(): string {
+    const claims = this.oauthService.getIdentityClaims();
+    return claims ? claims['role'] : '';
+  }
 }

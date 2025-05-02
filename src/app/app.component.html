@@ -8,6 +8,23 @@
 </div>
 
 <div *ngIf="isAuthenticated" class="layout-wrapper" [ngClass]="containerClass">
+  <!-- <div *appIsAdmin>
+    <app-top-bar></app-top-bar>
+    <app-side-bar></app-side-bar>
+    <div class="layout-main-container">
+      <div class="layout-main">
+        <app-loading></app-loading>
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+    <div class="layout-mask animate-fadein"></div>
+  </div> -->
+  @if(role === 'user'){
+  <div class="layout-main">
+    <app-loading></app-loading>
+    <router-outlet></router-outlet>
+  </div>
+  }@else {
   <app-top-bar></app-top-bar>
   <app-side-bar></app-side-bar>
   <div class="layout-main-container">
@@ -17,4 +34,6 @@
     </div>
   </div>
   <div class="layout-mask animate-fadein"></div>
+  }
+
 </div>
