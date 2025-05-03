@@ -194,7 +194,7 @@ export class DiscountDetailsComponent implements OnInit {
     this.filter.nativeElement.value = '';
   }
 
-  getStatus(discount: Discount): string {
+  getStatus(discount: DiscountCode): string {
     const now = new Date();
     const endDate = new Date(discount.endDate);
 
@@ -205,7 +205,7 @@ export class DiscountDetailsComponent implements OnInit {
     return discount.isActive ? 'active' : 'inactive';
   }
 
-  getSeverity(discount: Discount) {
+  getSeverity(discount: DiscountCode) {
     const status = this.getStatus(discount);
     switch (status) {
       case 'active':

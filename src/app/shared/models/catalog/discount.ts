@@ -62,6 +62,7 @@ export interface DiscountCodeDto {
   code: string;
   type: DiscountType;
   value: number;
+  usedCount: number;
   usageLimit?: number;
   perUserLimit?: number;
   startDate: Date;

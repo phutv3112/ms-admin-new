@@ -86,7 +86,7 @@
                 <td>{{ discount.updatedDate | date: 'short' }}</td>
                 <td>
                     <p-button [routerLink]="['/discounts/coupon/create', discount.id]" label="Code" icon="pi pi-plus"
-                        severity="success" class="mx-2" />
+                        severity="success" class="mx-2" [disabled]="getStatus(discount) == 'expired'" />
                     <p-button [routerLink]="['/discounts', discount.id]" icon="pi pi-pencil" severity="info"
                         class="mx-2" />
                     <p-button (click)="confirmDelete($event, discount)" icon="pi pi-trash" [outlined]="true"

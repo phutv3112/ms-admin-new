@@ -4,15 +4,9 @@ import { InputNumber } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
-import {
-  FormsModule,
-  FormControl,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TextareaModule } from 'primeng/textarea';
 import { FluidModule } from 'primeng/fluid';
-import { Editor } from 'primeng/editor';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { FileUploadModule } from 'primeng/fileupload';
 import { CommonModule } from '@angular/common';
@@ -21,8 +15,6 @@ import { CategoryService } from '../../../core/service/category.service';
 import { MessageService } from 'primeng/api';
 import { ProductService } from '../../../core/service/product.service';
 import { ToastModule } from 'primeng/toast';
-import { ProgressSpinner } from 'primeng/progressspinner';
-import { Dialog } from 'primeng/dialog';
 import { Router, RouterLink } from '@angular/router';
 import { TextEditorComponent } from '../../../shared/components/text-editor/text-editor.component';
 
@@ -44,7 +36,6 @@ interface UploadEvent {
     FluidModule,
     MultiSelectModule,
     InputNumber,
-    Editor,
     CommonModule,
     ReactiveFormsModule,
     ToastModule,
@@ -80,8 +71,6 @@ export class CreateProductComponent implements OnInit {
 
   uploadedFiles: any[] = [];
 
-  isLoading = false;
-
   constructor(
     private fb: FormBuilder,
     private messageService: MessageService,
@@ -98,7 +87,7 @@ export class CreateProductComponent implements OnInit {
       stock: [0],
       categories: [[]],
       productImages: [[], Validators.required],
-      variants: this.fb.array([]), // Mảng biến thể
+      variants: this.fb.array([]),
     });
   }
 
@@ -153,9 +142,6 @@ export class CreateProductComponent implements OnInit {
     this.productForm.patchValue({
       productImages: files,
     });
-
-    // Log để kiểm tra
-    console.log('Selected Product Images:', files);
   }
 
   submitForm() {
@@ -167,7 +153,7 @@ export class CreateProductComponent implements OnInit {
       });
       return;
     }
-    this.isLoading = true;
+    //this.isLoading = true;
 
     const formData = new FormData();
     const formValue = this.productForm.value;
@@ -207,7 +193,6 @@ export class CreateProductComponent implements OnInit {
           summary: 'Success',
           detail: 'Create new product successfully',
         });
-        console.log('Product created successfully', response);
       },
       error: (error) => {
         this.messageService.add({
@@ -218,7 +203,6 @@ export class CreateProductComponent implements OnInit {
         console.error('Error creating product', error);
       },
       complete: () => {
-        this.isLoading = false;
         this.resetForm();
         setTimeout(() => {
           this.router.navigateByUrl('/products');

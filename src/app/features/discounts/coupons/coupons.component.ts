@@ -129,18 +129,18 @@ export class CouponsComponent implements OnInit {
     FileSaver.saveAs(blob, 'coupons.xlsx');
   }
 
-  getStatus(discount: Discount): string {
+  getStatus(coupon: DiscountCodeDto): string {
     const now = new Date();
-    const endDate = new Date(discount.endDate);
+    const endDate = new Date(coupon.endDate);
 
     if (endDate < now) {
       return 'expired';
     }
 
-    return discount.isActive ? 'active' : 'inactive';
+    return coupon.isActive ? 'active' : 'inactive';
   }
 
-  getSeverity(discount: Discount) {
+  getSeverity(discount: DiscountCodeDto) {
     const status = this.getStatus(discount);
     switch (status) {
       case 'active':

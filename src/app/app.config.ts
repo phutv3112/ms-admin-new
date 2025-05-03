@@ -27,6 +27,7 @@ import {
 } from 'angular-oauth2-oidc';
 import { InitService } from './core/service/init.service';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { errorInterceptor } from './core/interceptors/error.interceptor';
 
 export function initializeApp(initService: InitService) {
   return () => initService.init();
@@ -46,7 +47,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideHttpClient(
       withFetch(),
-      withInterceptors([loadingInterceptor, authInterceptor])
+      withInterceptors([authInterceptor, errorInterceptor, loadingInterceptor])
     ),
     provideOAuthClient(),
     { provide: OAuthStorage, useFactory: storageFactory },

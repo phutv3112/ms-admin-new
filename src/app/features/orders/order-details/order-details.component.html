@@ -74,10 +74,17 @@
     </p-panel>
 
     <!-- Tổng thanh toán -->
-    <div class="flex" [ngClass]="order.status === 'PaymentReceived' ? 'justify-between' : 'justify-end'">
-        @if(order.status === 'PaymentReceived'){
-        <p-button (click)="confirmRefund($event, order)" label="Refund" icon="pi pi-undo" severity="warn"
-            class="mx-2" />
+    <div class="flex"
+        [ngClass]="(order.status === 'PaymentReceived' && showCancelButton) ? 'justify-between' : 'justify-end'">
+        @if(order.status === 'PaymentReceived' && showCancelButton){
+        <div>
+            <p-button (click)="confirmRefund($event, order)" label="Refund" icon="pi pi-undo" severity="warn"
+                class="mx-2" />
+            <span *ngIf="minutes >= 0 && seconds >= 0">
+                ({{ minutes }}:{{ seconds | number: '2.0' }})
+            </span>
+        </div>
+
         }
         <div class="text-right space-y-2 text-lg">
             <div><strong>Subtotal:</strong> {{ order.subtotal | number:'1.0-0' }}₫</div>

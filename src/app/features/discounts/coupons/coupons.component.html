@@ -108,8 +108,9 @@
                 </td>
                 <td class="font-semibold">{{ code.usedCount }}/{{ code.usageLimit }}</td>
                 <td>
-                    <p-tag [value]="code.isActive ? 'Active' : 'Inactive'"
-                        [severity]="code.isActive ? 'success' : 'danger'" />
+                    <!-- <p-tag [value]="code.isActive ? 'Active' : 'Inactive'"
+                        [severity]="code.isActive ? 'success' : 'danger'" /> -->
+                    <p-tag [value]="getStatus(code)" [severity]="getSeverity(code)" styleClass="dark:!bg-surface-900" />
                 </td>
                 <td>{{ code.startDate | date: 'dd/MM/yy, h:mm a' }}
                 </td>

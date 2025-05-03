@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Tag } from 'primeng/tag';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
@@ -11,7 +11,14 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { PaymentService } from '../../../core/service/payment.service';
-import { catchError, EMPTY, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  EMPTY,
+  interval,
+  Subscription,
+  switchMap,
+  tap,
+} from 'rxjs';
 
 @Component({
   selector: 'app-order-details',
@@ -28,7 +35,7 @@ import { catchError, EMPTY, switchMap, tap } from 'rxjs';
   templateUrl: './order-details.component.html',
   styleUrl: './order-details.component.scss',
 })
-export class OrderDetailsComponent implements OnInit {
+export class OrderDetailsComponent implements OnInit, OnDestroy {
   id: string = '';
 
   private orderService = inject(OrderService);
@@ -36,6 +43,11 @@ export class OrderDetailsComponent implements OnInit {
   order: Order | null = null;
 
   parsedPayment: any;
+
+  showCancelButton = true;
+  private subscription!: Subscription;
+  minutes = 10;
+  seconds = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -54,6 +66,10 @@ export class OrderDetailsComponent implements OnInit {
         this.order = data.order;
         if (this.isJson(this.order.payment.paymentDetails)) {
           this.parsedPayment = JSON.parse(this.order.payment.paymentDetails);
+        }
+        if (this.order.status === 'PaymentReceived') {
+          this.showCancelButton = true;
+          this.startCountdown(this.order);
         }
       });
     }
@@ -187,6 +203,37 @@ export class OrderDetailsComponent implements OnInit {
       .subscribe();
   }
 
+  startCountdown(order: Order) {
+    const orderDate = new Date(order.orderDate).getTime();
+    const now = Date.now();
+    const timePassed = Math.floor((now - orderDate) / 1000); // giây đã trôi qua
+    let timeLeft = 600 - timePassed;
+
+    if (timeLeft <= 0) {
+      this.showCancelButton = false;
+      return;
+    }
+
+    this.updateTime(timeLeft);
+
+    this.subscription = interval(1000).subscribe(() => {
+      timeLeft--;
+      if (timeLeft <= 0) {
+        this.showCancelButton = false;
+        if (this.subscription) {
+          this.subscription.unsubscribe();
+        }
+      } else {
+        this.updateTime(timeLeft);
+      }
+    });
+  }
+
+  updateTime(timeLeft: number) {
+    this.minutes = Math.floor(timeLeft / 60);
+    this.seconds = timeLeft % 60;
+  }
+
   getStatusSeverity(status: string) {
     switch (status) {
       case 'PaymentReceived':
@@ -217,6 +264,12 @@ export class OrderDetailsComponent implements OnInit {
       return true;
     } catch {
       return false;
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 }

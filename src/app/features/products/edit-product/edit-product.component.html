@@ -195,7 +195,7 @@
                         </div>
                         <div class="flex mt-8 w-1/4">
                             <button pButton type="button" label="Update Product" icon="pi pi-pencil"
-                                [disabled]="isLoading" (click)="submitForm()">
+                                [disabled]="productForm.invalid" (click)="submitForm()">
                             </button>
                         </div>
                     </div>

@@ -54,7 +54,7 @@
                 </td>
                 <td>
                     <div *ngIf="role.name !== 'admin'">
-                        <p-button (click)="showEditDialog(role.id)" icon="pi pi-pencil" severity="info" class="mx-2" />
+                        <!-- <p-button (click)="showEditDialog(role.id)" icon="pi pi-pencil" severity="info" class="mx-2" /> -->
                         <p-button (click)="confirmDelete($event, role)" severity="danger" [outlined]="true"
                             icon="pi pi-trash" severity="danger" class="mx-2" />
                     </div>

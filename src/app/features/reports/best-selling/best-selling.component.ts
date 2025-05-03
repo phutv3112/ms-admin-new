@@ -101,7 +101,10 @@ export class BestSellingComponent implements OnInit {
       .subscribe({
         next: (result) => {
           const res = result as GetProductsResponse;
-          this.products = res?.products?.data ?? [];
+          this.products =
+            res?.products?.data.sort(
+              (a, b) => (b.totalSold ?? 0) - (a.totalSold ?? 0)
+            ) ?? [];
         },
         error: (err) => console.error(err),
       });

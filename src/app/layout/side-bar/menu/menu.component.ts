@@ -155,19 +155,9 @@ export class MenuComponent {
             icon: 'pi pi-fw pi-user',
             items: [
               {
-                label: 'Login',
-                icon: 'pi pi-fw pi-sign-in',
+                label: 'Logout',
+                icon: 'pi pi-fw pi-sign-out',
                 routerLink: ['/auth/login'],
-              },
-              {
-                label: 'Error',
-                icon: 'pi pi-fw pi-times-circle',
-                routerLink: ['/auth/error'],
-              },
-              {
-                label: 'Access Denied',
-                icon: 'pi pi-fw pi-lock',
-                routerLink: ['/auth/access'],
               },
             ],
           },

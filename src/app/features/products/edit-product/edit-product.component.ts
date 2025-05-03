@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumber } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
@@ -16,19 +16,14 @@ import { CategoryService } from '../../../core/service/category.service';
 import { MessageService } from 'primeng/api';
 import { ProductService } from '../../../core/service/product.service';
 import { ToastModule } from 'primeng/toast';
-import { ProgressSpinner } from 'primeng/progressspinner';
-import { Dialog } from 'primeng/dialog';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Product, ProductImage } from '../../../shared/models/catalog/product';
 import { LoadingService } from '../../../core/service/loading.service';
-import { Subscription } from 'rxjs';
-import { TextEditorComponent } from '../../../shared/components/text-editor/text-editor.component';
 import { environment } from '../../../../environments/environment';
 import {
   CKEditorModule,
   loadCKEditorCloud,
   CKEditorCloudResult,
-  ChangeEvent,
 } from '@ckeditor/ckeditor5-angular';
 import type {
   ClassicEditor,
@@ -57,14 +52,13 @@ interface UploadEvent {
     ReactiveFormsModule,
     ToastModule,
     RouterLink,
-    TextEditorComponent,
     CKEditorModule,
   ],
   templateUrl: './edit-product.component.html',
   styleUrl: './edit-product.component.scss',
   providers: [MessageService],
 })
-export class EditProductComponent implements OnInit, OnDestroy {
+export class EditProductComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private productService = inject(ProductService);
   private fb = inject(FormBuilder);
@@ -79,7 +73,7 @@ export class EditProductComponent implements OnInit, OnDestroy {
 
   productForm: FormGroup;
   productId: string | null = null;
-  isLoading = false;
+  //isLoading = false;
 
   categories: any[] = [];
   selectedCategories: Category[] = [];
@@ -92,10 +86,6 @@ export class EditProductComponent implements OnInit, OnDestroy {
 
   uploadedFiles: any[] = [];
   productImages: ProductImage[] = [];
-
-  //loading
-  // loading$ = this.loadingService.loading$;
-  // private sub: Subscription;
 
   constructor(private router: Router) {
     this.productForm = this.fb.group({
@@ -111,10 +101,6 @@ export class EditProductComponent implements OnInit, OnDestroy {
       productImages: [[]],
       variants: this.fb.array([]),
     });
-
-    // this.sub = this.loading$.subscribe((value) => {
-    //   this.isLoading = value;
-    // });
   }
   isInvalid(field: string): boolean {
     return (
@@ -141,10 +127,6 @@ export class EditProductComponent implements OnInit, OnDestroy {
       version: '44.3.0',
       premium: true,
     }).then(this._setupEditor.bind(this));
-  }
-
-  ngOnDestroy() {
-    //this.sub.unsubscribe();
   }
 
   get variants(): FormArray<FormGroup> {
@@ -188,7 +170,7 @@ export class EditProductComponent implements OnInit, OnDestroy {
   }
 
   loadProduct() {
-    this.isLoading = true;
+    //this.isLoading = true;
     this.categoryService.getCategories().subscribe((data) => {
       this.categories = data;
       this.productService.getProductById(this.productId!).subscribe({
@@ -221,14 +203,11 @@ export class EditProductComponent implements OnInit, OnDestroy {
             );
           }
           this.productImages = product.imageUrls;
-          this.isLoading = false;
-
-          console.log('Product categories:', this.productForm.value.categories);
-          console.log('All categories:', this.categories);
+          //this.isLoading = false;
         },
         error: (error) => {
           console.error(error);
-          this.isLoading = false;
+          //this.isLoading = false;
         },
       });
     });
@@ -244,7 +223,7 @@ export class EditProductComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.isLoading = true;
+    //this.isLoading = true;
     const formData = new FormData();
     const formValue = this.productForm.value;
 
@@ -280,7 +259,6 @@ export class EditProductComponent implements OnInit, OnDestroy {
           summary: 'Success',
           detail: 'Product updated successfully',
         });
-        console.log('Product updated successfully', response);
       },
       error: (error) => {
         this.messageService.add({
@@ -291,7 +269,7 @@ export class EditProductComponent implements OnInit, OnDestroy {
         console.error('Error updating product', error);
       },
       complete: () => {
-        this.isLoading = false;
+        //this.isLoading = false;
         this.resetForm();
         setTimeout(() => {
           this.router.navigateByUrl('/products');

@@ -180,8 +180,8 @@
 
                 </div>
                 <div class="flex mt-8 w-1/4">
-                    <button pButton type="button" label="Create Product" icon="pi pi-plus" [disabled]="isLoading"
-                        (click)="submitForm()">
+                    <button pButton type="button" label="Create Product" icon="pi pi-plus"
+                        [disabled]="productForm.invalid" (click)="submitForm()">
                     </button>
                 </div>
             </form>
