@@ -3,7 +3,7 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Tag } from 'primeng/tag';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { OrderService } from '../../../core/service/order.service';
 import { Order } from '../../../shared/models/orders/order';
 import { ConfirmDialog } from 'primeng/confirmdialog';
@@ -31,6 +31,7 @@ import {
     ConfirmDialog,
     ToastModule,
     ButtonModule,
+    RouterLink,
   ],
   templateUrl: './order-details.component.html',
   styleUrl: './order-details.component.scss',

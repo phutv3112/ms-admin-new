@@ -50,41 +50,9 @@ export const routes: Routes = [
   { path: 'errors', component: ErrorServerPageComponent },
 
   {
-    path: 'products',
-    component: ProductsComponent,
-    canActivate: [notAllowUserGuard],
-  },
-  {
-    path: 'products/create',
-    component: CreateProductComponent,
-    canActivate: [notAllowUserGuard, merchandiserGuard],
-  },
-  {
-    path: 'products/:id',
-    component: EditProductComponent,
-    canActivate: [notAllowUserGuard, merchandiserGuard],
-  },
-  {
-    path: 'products/reviews/:id',
-    component: ReviewProductComponent,
-    canActivate: [notAllowUserGuard, merchandiserGuard],
-  },
-
-  {
     path: 'categories',
     component: CategoriesComponent,
     canActivate: [notAllowUserGuard],
-  },
-
-  {
-    path: 'inventories',
-    component: InventoryComponent,
-    canActivate: [notAllowUserGuard, storekeeperGuard],
-  },
-  {
-    path: 'inventories/history/:id',
-    component: InventoryHistoryComponent,
-    canActivate: [notAllowUserGuard, storekeeperGuard],
   },
 
   {
@@ -96,48 +64,6 @@ export const routes: Routes = [
     path: 'types',
     component: TypesComponent,
     canActivate: [notAllowUserGuard, merchandiserGuard],
-  },
-
-  {
-    path: 'discounts',
-    component: DiscountsComponent,
-    canActivate: [notAllowUserGuard, marketerGuard],
-  },
-  {
-    path: 'discounts/coupons',
-    component: CouponsComponent,
-    canActivate: [notAllowUserGuard, marketerGuard],
-  },
-  {
-    path: 'discounts/:id',
-    component: DiscountDetailsComponent,
-    canActivate: [notAllowUserGuard, marketerGuard],
-  },
-  {
-    path: 'discounts/coupon/create/:discountId',
-    component: CreateCouponComponent,
-    canActivate: [notAllowUserGuard, marketerGuard],
-  },
-  {
-    path: 'discounts/coupon/edit/:id',
-    component: EditCouponComponent,
-    canActivate: [notAllowUserGuard, marketerGuard],
-  },
-
-  {
-    path: 'orders',
-    component: OrdersComponent,
-    canActivate: [notAllowUserGuard],
-  },
-  {
-    path: 'orders/details/:id',
-    component: OrderDetailsComponent,
-    canActivate: [notAllowUserGuard, analystGuard],
-  },
-  {
-    path: 'orders/customer/:email',
-    component: UserOrderComponent,
-    canActivate: [notAllowUserGuard, analystGuard],
   },
 
   {
@@ -158,28 +84,32 @@ export const routes: Routes = [
   },
 
   {
-    path: 'reports/best-selling',
-    component: BestSellingComponent,
-    canActivate: [notAllowUserGuard, analystGuard],
+    path: 'products',
+    loadChildren: () =>
+      import('./features/products/route').then((r) => r.productRoutes),
   },
+
   {
-    path: 'reports/top-rated',
-    component: TopRatedComponent,
-    canActivate: [notAllowUserGuard, analystGuard],
+    path: 'inventories',
+    loadChildren: () =>
+      import('./features/inventory/route').then((r) => r.inventoryRoutes),
   },
+
   {
-    path: 'reports/top-customers',
-    component: TopCustomerComponent,
-    canActivate: [notAllowUserGuard, analystGuard],
+    path: 'discounts',
+    loadChildren: () =>
+      import('./features/discounts/route').then((r) => r.discountRoutes),
   },
+
   {
-    path: 'reports/orders-status',
-    component: OrderStatusComponent,
-    canActivate: [notAllowUserGuard, analystGuard],
+    path: 'orders',
+    loadChildren: () =>
+      import('./features/orders/route').then((r) => r.orderRoutes),
   },
+
   {
-    path: 'reports/summary-stats',
-    component: BrandTypeComponent,
-    canActivate: [notAllowUserGuard, analystGuard],
+    path: 'reports',
+    loadChildren: () =>
+      import('./features/reports/route').then((r) => r.reportRoutes),
   },
 ];

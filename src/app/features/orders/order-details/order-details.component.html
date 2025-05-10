@@ -1,7 +1,15 @@
 @if(order){
+<div class="flex justify-between items-center max-w-6xl px-6 mx-auto">
+    <h1 class="text-2xl font-bold my-4">Order Details</h1>
+    <div class="flex justify-between items-center mb-4">
+        <p-button icon="pi pi-arrow-left" severity="secondary" label="Back" class="mb-2"
+            [routerLink]="['/orders']"></p-button>
+        <!-- <p-button label="Print" icon="pi pi-print" (click)="print()" class="p-button-secondary"></p-button> -->
+    </div>
+</div>
 <div class="max-w-6xl mx-auto px-6 space-y-6" id="oderDetails">
     <!-- Thông tin đơn hàng -->
-    <p-panel header="Order Details" [toggleable]="true" class="p-4">
+    <p-panel header="Information" [toggleable]="true" class="p-4">
         <div class="grid grid-cols-2 gap-4 text-lg">
             <div><strong>Order ID:</strong> {{ order.id }}</div>
             <div><strong>Order Date:</strong> {{ order.orderDate | date: 'dd/MM/yy, h:mm a' }}</div>
