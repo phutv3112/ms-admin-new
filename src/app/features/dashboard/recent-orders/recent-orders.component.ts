@@ -44,6 +44,8 @@ export class RecentOrdersComponent implements OnInit {
         return 'warn';
       case 'Refunded':
         return 'secondary';
+      case 'Cancelled':
+        return 'warn';
       default:
         return 'contrast';
     }

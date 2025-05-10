@@ -125,6 +125,15 @@
                         </app-text-editor>
                     </div>
                 </div>
+                <div class="flex flex-col md:flex-row gap-6 my-8">
+                    <div class="flex flex-wrap gap-2 w-full">
+                        <label for="productPrimaryImage" class="font-semibold">Primary Image</label>
+                        <p-fileupload class="w-full" name="productPrimaryImage"
+                            (onSelect)="onPrimaryImageSelect($event)" [multiple]="false" accept="image/*"
+                            maxFileSize="1000000" mode="basic">
+                        </p-fileupload>
+                    </div>
+                </div>
                 <div class="flex flex-col md:flex-row gap-6 my-4">
                     <div class="flex flex-wrap gap-2 w-full">
                         <label for="productImages" class="font-semibold">Products Images</label>

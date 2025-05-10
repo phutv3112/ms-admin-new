@@ -15,7 +15,7 @@ export class AuthService {
       await this.oauthService.loadDiscoveryDocumentAndTryLogin();
       console.log('Discovery document loaded successfully');
     } catch (error) {
-      this.router.navigate(['/errors']);
+      this.oauthService.logOut(false);
       console.error('Error loading discovery document', error);
     }
   }

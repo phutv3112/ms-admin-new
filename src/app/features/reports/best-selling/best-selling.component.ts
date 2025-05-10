@@ -4,15 +4,17 @@ import { Table, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { OrderService } from '../../../core/service/order.service';
-import { Order } from '../../../shared/models/orders/order';
 import { TagModule } from 'primeng/tag';
 import { RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/service/product.service';
 import { Pagination } from '../../../shared/models/paginations/pagination';
 import { DatePicker } from 'primeng/datepicker';
 import { FormsModule } from '@angular/forms';
+import { Select } from 'primeng/select';
+
 import {
   BestSelling,
+  GetProductsReportResponse,
   GetProductsResponse,
   ProductDisplay,
 } from '../../../shared/models/reports/bestselling';
@@ -32,6 +34,7 @@ import * as FileSaver from 'file-saver';
     RouterLink,
     DatePicker,
     FormsModule,
+    Select,
   ],
   templateUrl: './best-selling.component.html',
   styleUrl: './best-selling.component.scss',
@@ -48,8 +51,31 @@ export class BestSellingComponent implements OnInit {
   products: any | undefined;
 
   date: Date | undefined = new Date();
+
+  day: number | undefined;
   month: number | undefined;
   year: number | undefined;
+
+  filterType: 'date' | 'month' | 'year' = 'month';
+
+  filterOptions = [
+    { label: 'Day', value: 'date' },
+    { label: 'Month', value: 'month' },
+    { label: 'Year', value: 'year' },
+  ];
+
+  getDateFormat(): string {
+    switch (this.filterType) {
+      case 'month':
+        return 'mm/yy';
+      case 'year':
+        return 'yy';
+      case 'date':
+        return 'dd/mm/yy';
+      default:
+        return 'dd/mm/yy';
+    }
+  }
 
   ngOnInit(): void {
     this.getBestSellingProducts();
@@ -59,7 +85,6 @@ export class BestSellingComponent implements OnInit {
   }
 
   exportExcel(table: Table) {
-    console.log('table value===================', table.value);
     const worksheet = XLSX.utils.json_to_sheet(table.value);
     const workbook = {
       Sheets: { BestSelling: worksheet },
@@ -79,11 +104,19 @@ export class BestSellingComponent implements OnInit {
 
   getBestSellingProducts() {
     if (this.date) {
+      this.day = this.date.getDate();
       this.month = this.date.getMonth() + 1;
       this.year = this.date.getFullYear();
     }
     this.orderService
-      .getBestSellingProducts(0, 10, this.month, this.year)
+      .getBestSellingProducts(
+        0,
+        10,
+        this.filterType,
+        this.day,
+        this.month,
+        this.year
+      )
       .pipe(
         map((response) => response.products?.data ?? []),
         switchMap((bestSellingList) => {
@@ -91,7 +124,7 @@ export class BestSellingComponent implements OnInit {
             return of([]);
           }
 
-          return this.shopService.getBestSellingProducts({
+          return this.shopService.getBestSellingReportProducts({
             bestSellingList,
             pageNumber: 1,
             pageSize: 10,
@@ -100,7 +133,7 @@ export class BestSellingComponent implements OnInit {
       )
       .subscribe({
         next: (result) => {
-          const res = result as GetProductsResponse;
+          const res = result as GetProductsReportResponse;
           this.products =
             res?.products?.data.sort(
               (a, b) => (b.totalSold ?? 0) - (a.totalSold ?? 0)

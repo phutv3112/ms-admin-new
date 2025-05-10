@@ -7,6 +7,7 @@ import { TagModule } from 'primeng/tag';
 import { RouterLink } from '@angular/router';
 import { DatePicker } from 'primeng/datepicker';
 import { FormsModule } from '@angular/forms';
+import { Select } from 'primeng/select';
 import {
   GetProductsResponse,
   GetTopCustomersResponse,
@@ -27,6 +28,7 @@ import * as FileSaver from 'file-saver';
     RouterLink,
     DatePicker,
     FormsModule,
+    Select,
   ],
   templateUrl: './top-customer.component.html',
   styleUrl: './top-customer.component.scss',
@@ -39,28 +41,54 @@ export class TopCustomerComponent implements OnInit {
   customers: any | undefined;
 
   date: Date | undefined = new Date();
+
+  day: number | undefined;
   month: number | undefined;
   year: number | undefined;
 
-  ngOnInit(): void {
-    this.getBestSellingProducts();
-  }
-  onDateChange() {
-    this.getBestSellingProducts();
+  filterType: 'date' | 'month' | 'year' = 'month';
+
+  filterOptions = [
+    { label: 'Day', value: 'date' },
+    { label: 'Month', value: 'month' },
+    { label: 'Year', value: 'year' },
+  ];
+
+  getDateFormat(): string {
+    switch (this.filterType) {
+      case 'month':
+        return 'mm/yy';
+      case 'year':
+        return 'yy';
+      case 'date':
+        return 'dd/mm/yy';
+      default:
+        return 'dd/mm/yy';
+    }
   }
 
-  getBestSellingProducts() {
+  ngOnInit(): void {
+    this.getTopCustomers();
+  }
+  onDateChange() {
+    this.getTopCustomers();
+  }
+
+  getTopCustomers() {
     if (this.date) {
+      this.day = this.date.getDate();
       this.month = this.date.getMonth() + 1;
       this.year = this.date.getFullYear();
     }
-    this.reportService.getTopCustomers(0, 10, this.month, this.year).subscribe({
-      next: (result) => {
-        const res = result as GetTopCustomersResponse;
-        this.customers = res?.customers?.data ?? [];
-      },
-      error: (err) => console.error(err),
-    });
+    this.reportService
+      .getTopCustomers(0, 10, this.filterType, this.day, this.month, this.year)
+      .subscribe({
+        next: (result) => {
+          const res = result as GetTopCustomersResponse;
+          this.customers = res?.customers?.data ?? [];
+        },
+        error: (err) => console.error(err),
+      });
   }
 
   exportExcel(table: Table) {

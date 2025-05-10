@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { AppMenuitem } from '../menuitem/menuitem.component';
+import { AuthService } from '../../../core/service/auth.service';
 
 @Component({
   selector: 'app-menu',
@@ -13,6 +14,7 @@ import { AppMenuitem } from '../menuitem/menuitem.component';
 })
 export class MenuComponent {
   model: MenuItem[] = [];
+  private authService = inject(AuthService);
 
   ngOnInit() {
     this.model = [
@@ -148,6 +150,16 @@ export class MenuComponent {
                 icon: 'pi pi-fw pi-bookmark',
                 routerLink: ['/reports/top-customers'],
               },
+              {
+                label: 'Orders Stats',
+                icon: 'pi pi-fw pi-bookmark',
+                routerLink: ['/reports/orders-status'],
+              },
+              {
+                label: 'Summary Stats',
+                icon: 'pi pi-fw pi-bookmark',
+                routerLink: ['/reports/summary-stats'],
+              },
             ],
           },
           {
@@ -157,7 +169,9 @@ export class MenuComponent {
               {
                 label: 'Logout',
                 icon: 'pi pi-fw pi-sign-out',
-                routerLink: ['/auth/login'],
+                command: () => {
+                  this.authService.logout();
+                },
               },
             ],
           },

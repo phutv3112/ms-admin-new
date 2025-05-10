@@ -19,6 +19,10 @@ export class UserService {
     return this.http.get<User[]>(`${this.baseUrl}/users`);
   }
 
+  getUserDetails(email: string) {
+    return this.http.get<User>(`${this.baseUrl}/users/details/${email}`);
+  }
+
   createUser(user: CreateUserRequest) {
     return this.http.post(`${this.baseUrl}/users`, user);
   }

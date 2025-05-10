@@ -2,7 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import {
+  AggregatedProductStatsResult,
   MonthlySummary,
+  OrderBrandTypeStat,
+  OrderStatusStat,
   ProductSalesRevenueByMonth,
 } from '../../shared/models/reports/report';
 import {
@@ -49,6 +52,8 @@ export class ReportService {
   getTopRatedProducts(
     pageIndex?: number,
     pageSize?: number,
+    filterType?: string,
+    day?: number,
     month?: number,
     year?: number
   ) {
@@ -58,6 +63,12 @@ export class ReportService {
     }
     if (pageSize) {
       params = params.append('pageSize', pageSize.toString());
+    }
+    if (filterType) {
+      params = params.append('filterType', filterType.toString());
+    }
+    if (day) {
+      params = params.append('day', day.toString());
     }
     if (month) {
       params = params.append('month', month.toString());
@@ -73,6 +84,8 @@ export class ReportService {
   getTopCustomers(
     pageIndex?: number,
     pageSize?: number,
+    filterType?: string,
+    day?: number,
     month?: number,
     year?: number
   ) {
@@ -83,6 +96,12 @@ export class ReportService {
     if (pageSize) {
       params = params.append('pageSize', pageSize.toString());
     }
+    if (filterType) {
+      params = params.append('filterType', filterType.toString());
+    }
+    if (day) {
+      params = params.append('day', day.toString());
+    }
     if (month) {
       params = params.append('month', month.toString());
     }
@@ -92,6 +111,66 @@ export class ReportService {
     return this.http.get<GetTopCustomersResponse>(
       this.orderUrl + '/orders/reports/top-customers',
       { params }
+    );
+  }
+  getOrderStatusStats(
+    filterType?: string,
+    day?: number,
+    month?: number,
+    year?: number
+  ) {
+    let params = new HttpParams();
+    if (filterType) {
+      params = params.append('filterType', filterType.toString());
+    }
+    if (day) {
+      params = params.append('day', day.toString());
+    }
+    if (month) {
+      params = params.append('month', month.toString());
+    }
+    if (year) {
+      params = params.append('year', year.toString());
+    }
+    return this.http.get<OrderStatusStat[]>(
+      this.orderUrl + '/orders/reports/status-stats',
+      { params }
+    );
+  }
+
+  getOrderBrandTypeStats(
+    filterType?: string,
+    day?: number,
+    month?: number,
+    year?: number
+  ) {
+    let params = new HttpParams();
+    if (filterType) {
+      params = params.append('filterType', filterType.toString());
+    }
+    if (day) {
+      params = params.append('day', day.toString());
+    }
+    if (month) {
+      params = params.append('month', month.toString());
+    }
+    if (year) {
+      params = params.append('year', year.toString());
+    }
+    return this.http.get<OrderBrandTypeStat[]>(
+      this.orderUrl + '/orders/reports/brand-type-stats',
+      { params }
+    );
+  }
+
+  getCatalogBrandTypeStats(
+    productStats: OrderBrandTypeStat[],
+    brandName: string,
+    typeName: string
+  ) {
+    return this.http.post<AggregatedProductStatsResult>(
+      this.productUrl + '/products/reports/brand-type-stats',
+      { productStats, brandName, typeName }
     );
   }
 }

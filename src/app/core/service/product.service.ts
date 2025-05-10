@@ -16,6 +16,7 @@ import {
 } from '../../shared/models/catalog/product';
 import {
   GetBestSellingRequest,
+  GetProductsReportResponse,
   GetProductsResponse,
 } from '../../shared/models/reports/bestselling';
 
@@ -85,6 +86,21 @@ export class ProductService {
     }
     return this.http.post<GetProductsResponse>(
       this.baseUrl + '/products/best-selling',
+      request,
+      { params }
+    );
+  }
+
+  getBestSellingReportProducts(request: GetBestSellingRequest) {
+    let params = new HttpParams();
+    if (request.pageNumber) {
+      params = params.append('pageIndex', request.pageNumber.toString());
+    }
+    if (request.pageSize) {
+      params = params.append('pageSize', request.pageSize.toString());
+    }
+    return this.http.post<GetProductsReportResponse>(
+      this.baseUrl + '/products/report/best-selling',
       request,
       { params }
     );

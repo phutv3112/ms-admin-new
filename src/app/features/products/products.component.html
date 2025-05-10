@@ -81,7 +81,7 @@
                     {{ product.name }}
                 </td>
                 <td>
-                    <img *ngIf="product.imageUrls?.length > 0; else noImage" [src]="product.imageUrls[0]?.imageUrl"
+                    <img *ngIf="product.imageUrls?.length > 0; else noImage" [src]="getProductImagePrimary(product)"
                         [alt]="product.name" class="w-16 rounded" />
                     <ng-template #noImage>
                         <span>No Image</span>

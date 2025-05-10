@@ -11,6 +11,7 @@ import { GetProductsResponse } from '../../../shared/models/reports/bestselling'
 import { ReportService } from '../../../core/service/report.service';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
+import { Select } from 'primeng/select';
 
 @Component({
   selector: 'app-top-rated',
@@ -24,6 +25,7 @@ import * as FileSaver from 'file-saver';
     RouterLink,
     DatePicker,
     FormsModule,
+    Select,
   ],
   templateUrl: './top-rated.component.html',
   styleUrl: './top-rated.component.scss',
@@ -36,23 +38,54 @@ export class TopRatedComponent implements OnInit {
   products: any | undefined;
 
   date: Date | undefined = new Date();
+
+  day: number | undefined;
   month: number | undefined;
   year: number | undefined;
 
-  ngOnInit(): void {
-    this.getBestSellingProducts();
-  }
-  onDateChange() {
-    this.getBestSellingProducts();
+  filterType: 'date' | 'month' | 'year' = 'month';
+
+  filterOptions = [
+    { label: 'Day', value: 'date' },
+    { label: 'Month', value: 'month' },
+    { label: 'Year', value: 'year' },
+  ];
+
+  getDateFormat(): string {
+    switch (this.filterType) {
+      case 'month':
+        return 'mm/yy';
+      case 'year':
+        return 'yy';
+      case 'date':
+        return 'dd/mm/yy';
+      default:
+        return 'dd/mm/yy';
+    }
   }
 
-  getBestSellingProducts() {
+  ngOnInit(): void {
+    this.getTopRatedProducts();
+  }
+  onDateChange() {
+    this.getTopRatedProducts();
+  }
+
+  getTopRatedProducts() {
     if (this.date) {
+      this.day = this.date.getDate();
       this.month = this.date.getMonth() + 1;
       this.year = this.date.getFullYear();
     }
     this.reportService
-      .getTopRatedProducts(0, 10, this.month, this.year)
+      .getTopRatedProducts(
+        0,
+        10,
+        this.filterType,
+        this.day,
+        this.month,
+        this.year
+      )
       .subscribe({
         next: (result) => {
           const res = result as GetProductsResponse;

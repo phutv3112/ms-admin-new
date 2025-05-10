@@ -83,9 +83,11 @@ export class EditProductComponent implements OnInit {
 
   types: string[] = [];
   selectedType: string = '';
+  primaryImageUrl: string = '';
 
   uploadedFiles: any[] = [];
   productImages: ProductImage[] = [];
+  productSecondImages: ProductImage[] = [];
 
   constructor(private router: Router) {
     this.productForm = this.fb.group({
@@ -99,6 +101,7 @@ export class EditProductComponent implements OnInit {
       stock: [0],
       categories: [[]],
       productImages: [[]],
+      productPrimaryImage: [],
       variants: this.fb.array([]),
     });
   }
@@ -159,14 +162,19 @@ export class EditProductComponent implements OnInit {
   onFileSelect(event: any) {
     const files: File[] = Array.from(event.files);
 
-    // Cập nhật giá trị vào form control
     if (files.length > 0) {
       this.productForm.patchValue({
         productImages: files,
       });
     }
-    // Log để kiểm tra
-    console.log('Selected Product Images:', files);
+  }
+  onPrimaryImageSelect(event: any) {
+    const files: File[] = Array.from(event.files);
+    if (files.length > 0) {
+      this.productForm.patchValue({
+        productPrimaryImage: files[0],
+      });
+    }
   }
 
   loadProduct() {
@@ -203,11 +211,15 @@ export class EditProductComponent implements OnInit {
             );
           }
           this.productImages = product.imageUrls;
-          //this.isLoading = false;
+          this.primaryImageUrl =
+            product.imageUrls.filter((image) => image.isPrimary === true)[0]
+              ?.imageUrl || '';
+          this.productSecondImages = product.imageUrls.filter(
+            (image) => image.isPrimary === false
+          );
         },
         error: (error) => {
           console.error(error);
-          //this.isLoading = false;
         },
       });
     });
@@ -239,7 +251,11 @@ export class EditProductComponent implements OnInit {
       formData.append('Categories', category.name);
     });
 
-    // Thêm các tệp hình ảnh vào FormData
+    const primaryImage = this.productForm.value.productPrimaryImage;
+    if (primaryImage) {
+      formData.append('ProductPrimaryImage', primaryImage, primaryImage.name);
+    }
+    // Add product images to FormData
     const productImages = this.productForm.value.productImages;
     if (productImages && productImages.length > 0) {
       productImages.forEach((image: File) => {

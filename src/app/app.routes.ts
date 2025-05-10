@@ -32,6 +32,9 @@ import { merchandiserGuard } from './core/guards/merchandiser.guard';
 import { storekeeperGuard } from './core/guards/storekeeper.guard';
 import { marketerGuard } from './core/guards/marketer.guard';
 import { analystGuard } from './core/guards/analyst.guard';
+import { AccountProfileComponent } from './shared/components/account-profile/account-profile.component';
+import { OrderStatusComponent } from './features/reports/order-status/order-status.component';
+import { BrandTypeComponent } from './features/reports/brand-type/brand-type.component';
 
 export const routes: Routes = [
   { path: '', component: DashboardComponent, canActivate: [notAllowUserGuard] },
@@ -142,6 +145,11 @@ export const routes: Routes = [
     component: UsersComponent,
     canActivate: [adminGuard],
   },
+  {
+    path: 'users/details/:email',
+    component: AccountProfileComponent,
+    canActivate: [notAllowUserGuard, analystGuard],
+  },
 
   {
     path: 'roles',
@@ -162,6 +170,16 @@ export const routes: Routes = [
   {
     path: 'reports/top-customers',
     component: TopCustomerComponent,
+    canActivate: [notAllowUserGuard, analystGuard],
+  },
+  {
+    path: 'reports/orders-status',
+    component: OrderStatusComponent,
+    canActivate: [notAllowUserGuard, analystGuard],
+  },
+  {
+    path: 'reports/summary-stats',
+    component: BrandTypeComponent,
     canActivate: [notAllowUserGuard, analystGuard],
   },
 ];

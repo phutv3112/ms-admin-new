@@ -15,6 +15,9 @@ import { filter, firstValueFrom } from 'rxjs';
 import { RefundRequestMessage } from '../../shared/models/hubs/refundMessage';
 import { NotificationService } from '../../core/service/notification.service';
 import { PaidOrderMessage } from '../../shared/models/hubs/paidOrderMessage';
+import { Dialog } from 'primeng/dialog';
+import { UserService } from '../../core/service/user.service';
+import { User } from '../../shared/models/users/user';
 
 @Component({
   selector: 'app-top-bar',
@@ -29,6 +32,7 @@ import { PaidOrderMessage } from '../../shared/models/hubs/paidOrderMessage';
     OverlayBadgeModule,
     ButtonModule,
     RouterLink,
+    Dialog,
   ],
   templateUrl: './top-bar.component.html',
   styleUrl: './top-bar.component.scss',
@@ -46,18 +50,37 @@ export class TopBarComponent implements OnInit {
   showNotification: boolean = false;
 
   userProfile: any = null;
+  visible: boolean = false;
+  userProfileDetail: User = {
+    id: '',
+    userName: '',
+    fullName: 'Tran',
+    email: 'phu@gmail.com',
+    phoneNumber: '0969820123',
+    role: 'user',
+    address: {
+      line1: '311 tran phu',
+      line2: '',
+      city: 'Ha Noi',
+      state: 'Hanoi City',
+      postalCode: '90000',
+      country: 'VN',
+    },
+    isLocked: false,
+  };
 
   constructor(
     public layoutService: LayoutService,
     private authService: AuthService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private userService: UserService
   ) {
     this.items = [
       {
         label: 'Profile',
         icon: 'pi pi-user-edit',
         command: () => {
-          // this.messageService.add({ severity: 'success', summary: 'Updated', detail: 'Data Updated', life: 3000 });
+          this.visible = true;
         },
       },
       {
@@ -73,6 +96,7 @@ export class TopBarComponent implements OnInit {
     ];
 
     this.userProfile = this.authService.userInfo;
+    this.loadUserProfile(this.userProfile.email);
 
     this.notificationService
       .getRefundRequestMessage(false)
@@ -88,6 +112,12 @@ export class TopBarComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     await this.receiveRefundNotification();
     await this.receivePaidOrderNotification();
+  }
+
+  loadUserProfile(email: string) {
+    this.userService.getUserDetails(email).subscribe((data) => {
+      this.userProfileDetail = data;
+    });
   }
 
   async receiveRefundNotification() {

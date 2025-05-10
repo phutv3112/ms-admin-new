@@ -74,7 +74,8 @@
                     <p-tag [value]="'#' + (index + 1)" severity="info" styleClass="dark:!bg-surface-900" />
                 </td>
                 <td>
-                    {{ user.userName }}
+                    <a pTooltip="See details" tooltipPosition="top" class="cursor-pointer hover:underline"
+                        [routerLink]="['/users/details', user.email]"> {{ user.userName }}</a>
                 </td>
                 <td>
                     {{ user.fullName }}

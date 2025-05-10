@@ -15,7 +15,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
   if (!oauthService.discoveryDocumentLoaded) {
-    console.warn('Discovery Document chưa load, không refresh token.');
+    console.warn('Discovery Document has been loaded, do refresh token.');
     return next(req);
   }
 
@@ -27,7 +27,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           console.error(
             'New access token is missing after refresh. Logging out...'
           );
-          oauthService.logOut();
+          oauthService.logOut(false);
+          window.location.href = '/';
           return throwError(() => new Error('New access token is missing'));
         }
 
@@ -38,7 +39,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }),
       catchError((refreshError) => {
         console.error('Refresh Token failed', refreshError);
-        oauthService.logOut(); // Đăng xuất nếu refresh token thất bại
+        oauthService.logOut(false);
         return throwError(() => refreshError);
       })
     );

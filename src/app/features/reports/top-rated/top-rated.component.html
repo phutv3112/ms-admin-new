@@ -3,7 +3,9 @@
         <div class="uppercase text-2xl font-semibold">Top Rated Products</div>
         <div class="">
             <label for="calendar-12h" class="font-bold block mb-2"> Filter Date</label>
-            <p-datepicker [(ngModel)]="date" view="month" dateFormat="mm/yy" [readonlyInput]="true"
+            <p-select [(ngModel)]="filterType" [options]="filterOptions" optionLabel="label" optionValue="value"
+                class="w-32 mr-2 mb-2" placeholder="Filter by" />
+            <p-datepicker [(ngModel)]="date" [view]="filterType" [dateFormat]="getDateFormat()" [readonlyInput]="true"
                 (onSelect)="onDateChange()" />
             <button pButton label="Export Excel" icon="pi pi-file-excel" class="p-button-success ml-2"
                 (click)="exportExcel(dt)"></button>

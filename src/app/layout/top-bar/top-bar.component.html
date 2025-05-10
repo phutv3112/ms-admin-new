@@ -79,3 +79,55 @@
     </div>
 
 </p-drawer>
+
+<p-dialog header="Profile" [modal]="true" [(visible)]="visible" [style]="{ width: '40rem' }">
+    <div class="py-4 md:py-8">
+        <div class="mb-4 grid gap-4 sm:grid-cols-2 sm:gap-8 lg:gap-16">
+            <div class="space-y-4">
+                <div class="flex space-x-4">
+                    <img class="h-16 w-16 rounded-lg"
+                        src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/helene-engels.png"
+                        alt="Helene avatar" />
+                    <div>
+                        <h2
+                            class="flex items-center text-xl font-bold leading-none text-gray-900 dark:text-white sm:text-2xl">
+                            {{userProfileDetail.fullName? userProfileDetail.fullName : '' }}
+                        </h2>
+                    </div>
+                </div>
+                <dl>
+                    <dt class="font-semibold text-gray-900 dark:text-white">Email Address</dt>
+                    <dd class="text-gray-500 dark:text-gray-400">{{userProfileDetail.email}}</dd>
+                </dl>
+                <dl>
+                    <dt class="font-semibold text-gray-900 dark:text-white">Role</dt>
+                    <dd class="text-gray-500 dark:text-gray-400">{{userProfileDetail.role}}</dd>
+                </dl>
+            </div>
+            <div class="space-y-4">
+
+                <dl>
+                    <dt class="font-semibold text-gray-900 dark:text-white">Home Address</dt>
+                    <dd class="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                        <svg class="hidden h-5 w-5 shrink-0 text-gray-400 dark:text-gray-500 lg:inline"
+                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                            viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5" />
+                        </svg>
+                        {{userProfileDetail.address?.line1}}, {{userProfileDetail.address?.city}},
+                        {{userProfileDetail.address?.country}}
+                    </dd>
+                </dl>
+                <dl>
+                    <dt class="font-semibold text-gray-900 dark:text-white">Phone Number</dt>
+                    <dd class="text-gray-500 dark:text-gray-400">{{userProfileDetail.phoneNumber}}</dd>
+                </dl>
+            </div>
+        </div>
+
+    </div>
+    <div class="flex justify-end gap-2">
+        <p-button label="Close" severity="secondary" (click)="visible = false" />
+    </div>
+</p-dialog>

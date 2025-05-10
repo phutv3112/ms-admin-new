@@ -236,14 +236,20 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
   getStatusSeverity(status: string) {
     switch (status) {
+      case 'Pending':
+        return 'info';
       case 'PaymentReceived':
         return 'success';
       case 'PaymentFailed':
         return 'danger';
-      case 'Pending':
+      case 'OutOfStock':
+        return 'warn';
+      case 'Refunded':
+        return 'secondary';
+      case 'Cancelled':
         return 'warn';
       default:
-        return 'info';
+        return 'contrast';
     }
   }
 

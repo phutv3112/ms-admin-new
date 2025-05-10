@@ -132,13 +132,27 @@
                             </div>
                         </div>
 
+                        <!-- Product Images section -->
                         <div class="my-4 space-y-6">
+                            <!-- Upload section -->
+                            <label for="productPrimaryImage" class="font-semibold block mb-2">Primary Image</label>
+                            <div class="w-full flex flex-col gap-2">
+                                <p-fileupload class="" name="productPrimaryImage"
+                                    (onSelect)="onPrimaryImageSelect($event)" [multiple]="false" accept="image/*"
+                                    maxFileSize="1000000" mode="basic" chooseIcon="pi pi-upload">
+                                </p-fileupload>
+                                <img [src]="primaryImageUrl" alt="Product Image"
+                                    class="w-auto max-w-32 h-24 object-cover rounded border border-gray-300" />
+                            </div>
+                        </div>
+
+                        <div class="mb-4 space-y-6 mt-8">
                             <!-- Upload section -->
                             <div class="w-full">
                                 <label for="productImages" class="font-semibold block mb-2">Product Images</label>
                                 <p-fileupload class="w-full" name="productImages" (onUpload)="onUpload($event)"
                                     (onSelect)="onFileSelect($event)" [multiple]="true" accept="image/*"
-                                    maxFileSize="1000000" mode="advanced"
+                                    maxFileSize="1000000" mode="advanced" chooseIcon="pi pi-upload"
                                     url="https://www.primefaces.org/cdn/api/upload.php">
                                     <ng-template #empty>
                                         <div>Drag and drop files to here to upload.</div>
@@ -154,14 +168,17 @@
                             </div>
 
                             <!-- Preview section -->
-                            <div class="w-full">
+                            <div class="w-full mt-0">
                                 <label class="font-semibold block mb-2">Preview</label>
                                 <div class="flex flex-wrap gap-2">
-                                    <img *ngFor="let img of productImages" [src]="img.imageUrl" alt="Product Image"
-                                        class="w-24 h-24 object-cover rounded border border-gray-300" />
+                                    <img *ngFor="let img of productSecondImages" [src]="img.imageUrl"
+                                        alt="Product Image"
+                                        class="w-auto h-24 object-cover rounded border border-gray-300" />
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Variant section -->
                         <div class="flex flex-col md:flex-row gap-6 my-4">
                             <div class="flex flex-wrap gap-2 w-full">
                                 <p-button label="Add Product Variant" icon="pi pi-plus" (click)="addVariant()"

@@ -22,7 +22,6 @@ import {
 } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RatingModule } from 'primeng/rating';
-import { ProgressSpinner } from 'primeng/progressspinner';
 import { RippleModule } from 'primeng/ripple';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -33,7 +32,6 @@ import { Toast } from 'primeng/toast';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { FileUploadModule } from 'primeng/fileupload';
 import { Tooltip } from 'primeng/tooltip';
-import { Checkbox } from 'primeng/checkbox';
 import { BrandResponse } from '../../shared/models/catalog/product';
 import { ProductService } from '../../core/service/product.service';
 import { AuthService } from '../../core/service/auth.service';
@@ -55,7 +53,6 @@ import { Subscription } from 'rxjs';
     ProgressBarModule,
     ToggleButtonModule,
     ToastModule,
-    ProgressSpinner,
     CommonModule,
     FormsModule,
     ButtonModule,
@@ -66,9 +63,7 @@ import { Subscription } from 'rxjs';
     Toast,
     ConfirmDialog,
     Tooltip,
-    RouterLink,
     FileUploadModule,
-    Checkbox,
   ],
   templateUrl: './brands.component.html',
   styleUrl: './brands.component.scss',

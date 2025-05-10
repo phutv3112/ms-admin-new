@@ -99,7 +99,8 @@
                 </td>
                 <td>
                     <p-tag [value]="order.payment.paymentType == 0 ? 'Cards' : 'VnPay'"
-                        styleClass="dark:!bg-surface-900" />
+                        styleClass="dark:!bg-surface-900"
+                        [severity]="getPaymentTypeSeverity(order.payment.paymentType)" />
                 </td>
                 <td>{{ order.orderDate | date: 'dd/MM/yy, h:mm a' }}</td>
                 <td>

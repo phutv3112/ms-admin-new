@@ -42,12 +42,20 @@ export class OrderService {
   getBestSellingProducts(
     pageIndex: number,
     pageSize: number,
+    filterType?: string,
+    day?: number,
     month?: number,
     year?: number
   ) {
     let params = new HttpParams();
     params = params.append('pageIndex', pageIndex.toString());
     params = params.append('pageSize', pageSize.toString());
+    if (filterType) {
+      params = params.append('filterType', filterType.toString());
+    }
+    if (day) {
+      params = params.append('day', day.toString());
+    }
     if (month) {
       params = params.append('month', month.toString());
     }

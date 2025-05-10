@@ -86,7 +86,8 @@ export class CreateProductComponent implements OnInit {
       type: ['', Validators.required],
       stock: [0],
       categories: [[]],
-      productImages: [[], Validators.required],
+      productPrimaryImage: [null, Validators.required],
+      productImages: [[]],
       variants: this.fb.array([]),
     });
   }
@@ -143,6 +144,14 @@ export class CreateProductComponent implements OnInit {
       productImages: files,
     });
   }
+  onPrimaryImageSelect(event: any) {
+    const files: File[] = Array.from(event.files);
+    if (files.length > 0) {
+      this.productForm.patchValue({
+        productPrimaryImage: files[0],
+      });
+    }
+  }
 
   submitForm() {
     if (this.productForm.invalid) {
@@ -153,12 +162,11 @@ export class CreateProductComponent implements OnInit {
       });
       return;
     }
-    //this.isLoading = true;
 
     const formData = new FormData();
     const formValue = this.productForm.value;
 
-    // Thêm các thông tin khác vào FormData
+    // Add other field to FormData
     formData.append('Name', formValue.name);
     formData.append('ShortDescription', formValue.shortDescription);
     formData.append('Description', formValue.description);
@@ -172,7 +180,11 @@ export class CreateProductComponent implements OnInit {
       formData.append('Categories', category.name);
     });
 
-    // Thêm các tệp hình ảnh vào FormData
+    const primaryImage = this.productForm.value.productPrimaryImage;
+    if (primaryImage) {
+      formData.append('ProductPrimaryImage', primaryImage, primaryImage.name);
+    }
+    // Add product images to FormData
     const productImages = this.productForm.value.productImages;
     if (productImages && productImages.length > 0) {
       productImages.forEach((image: File) => {
@@ -182,7 +194,7 @@ export class CreateProductComponent implements OnInit {
       console.log('No images selected or productImages is not an array');
     }
 
-    // Thêm các biến thể vào FormData (nếu có)
+    // Add variant to form (if exists)
     if (this.variants.length > 0) {
       formData.append('Variants', JSON.stringify(this.variants.value));
     }

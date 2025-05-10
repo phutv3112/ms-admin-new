@@ -97,6 +97,7 @@ export class OrdersComponent implements OnInit {
       { label: 'PaymentFailed', value: 'PaymentFailed' },
       { label: 'OutOfStock', value: 'OutOfStock' },
       { label: 'Refunded', value: 'Refunded' },
+      { label: 'Cancelled', value: 'Cancelled' },
     ];
     this.paymentTypes = [
       { label: 'Cards', value: 0 },
@@ -284,8 +285,20 @@ export class OrdersComponent implements OnInit {
         return 'warn';
       case 'Refunded':
         return 'secondary';
+      case 'Cancelled':
+        return 'warn';
       default:
         return 'contrast';
+    }
+  }
+  getPaymentTypeSeverity(type: number) {
+    switch (type) {
+      case 0:
+        return 'success';
+      case 1:
+        return 'info';
+      default:
+        return 'secondary';
     }
   }
 }

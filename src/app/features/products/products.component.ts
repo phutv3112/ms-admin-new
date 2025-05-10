@@ -134,6 +134,18 @@ export class ProductsComponent implements OnInit {
     }
   }
 
+  getProductImagePrimary(product: Product) {
+    if (product.imageUrls && product.imageUrls.length > 0) {
+      var imageUrl = product.imageUrls.find((img) => img.isPrimary)?.imageUrl;
+      if (imageUrl) {
+        return imageUrl;
+      } else {
+        return product.imageUrls[0].imageUrl;
+      }
+    }
+    return '';
+  }
+
   confirmDelete(event: Event, id: string) {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
