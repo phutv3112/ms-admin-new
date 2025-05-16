@@ -264,23 +264,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.typesThisMonth = [];
           }
 
+          // ...existing code...
           this.barData = {
             labels: data.map((item) => {
               const monthLabel = item.month.toString().padStart(2, '0');
-              return `${monthLabel}/${item.year} (${item.topBrand.name} - ${item.topBrand.quantity} | ${item.topType.name} - ${item.topType.quantity})`;
+              return `${monthLabel}/${item.year}`;
             }),
             datasets: [
               {
-                label: 'Top Brand Quantity',
+                label: 'Top Brand',
                 backgroundColor: '#4c51bf',
                 borderColor: '#4c51bf',
                 data: data.map((item) => item.topBrand.quantity),
+                customLabels: data.map((item) => item.topBrand.name), // custom field for tooltip
               },
               {
-                label: 'Top Type Quantity',
+                label: 'Top Type',
                 backgroundColor: '#a855f7',
                 borderColor: '#a855f7',
                 data: data.map((item) => item.topType.quantity),
+                customLabels: data.map((item) => item.topType.name), // custom field for tooltip
               },
             ],
           };
@@ -355,6 +358,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
         legend: {
           labels: {
             color: textColor,
+          },
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context: any) {
+              const dataset = context.dataset;
+              const value = context.parsed.y;
+              const customLabel = dataset.customLabels
+                ? dataset.customLabels[context.dataIndex]
+                : '';
+              return `${dataset.label}: ${customLabel} - ${value}`;
+            },
           },
         },
       },
