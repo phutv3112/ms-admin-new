@@ -26,6 +26,8 @@
     "ckeditor5": "^45.0.0",
     "ckeditor5-premium-features": "^45.0.0",
     "file-saver": "^2.0.5",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "primeicons": "^7.0.0",
     "primeng": "^18.0.2",
     "quill": "^2.0.3",

@@ -8,6 +8,7 @@ import { SideBarComponent } from './layout/side-bar/side-bar.component';
 import { AuthService } from './core/service/auth.service';
 import { ButtonModule } from 'primeng/button';
 import { AppLoadingComponent } from './shared/components/app-loading/app-loading.component';
+import { ScrollTop } from 'primeng/scrolltop';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,7 @@ import { AppLoadingComponent } from './shared/components/app-loading/app-loading
     RouterModule,
     ButtonModule,
     AppLoadingComponent,
+    ScrollTop,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

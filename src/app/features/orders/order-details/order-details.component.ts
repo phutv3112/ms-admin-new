@@ -20,6 +20,9 @@ import {
   tap,
 } from 'rxjs';
 
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
 @Component({
   selector: 'app-order-details',
   standalone: true,
@@ -271,6 +274,130 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
       return true;
     } catch {
       return false;
+    }
+  }
+
+  getImageFromUrl(url: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous'; // giúp load từ public
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
+  }
+
+  async exportOrderToPdf() {
+    const doc = new jsPDF();
+    const order = this.order;
+
+    const logoUrl = '/images/logo.png';
+    try {
+      const logoBase64 = await this.getImageFromUrl(logoUrl);
+      doc.addImage(logoBase64, 'PNG', 14, 10, 30, 15);
+    } catch (error) {
+      console.error('Failed to load logo', error);
+    }
+
+    // Tiêu đề hóa đơn
+    doc.setFontSize(20);
+    doc.text('Order Invoice', 105, 20, { align: 'center' });
+
+    let y = 30;
+    if (order) {
+      // Thông tin đơn hàng
+      doc.setFontSize(12);
+      doc.text(`Order ID: ${order.id}`, 14, y);
+      doc.text(
+        `Order Date: ${new Date(order.orderDate).toLocaleString()}`,
+        14,
+        y + 6
+      );
+      doc.text(`Status: ${order.status}`, 14, y + 12);
+      doc.text(`Buyer Email: ${order.buyerEmail}`, 14, y + 18);
+
+      y += 30;
+
+      // Địa chỉ giao hàng
+      doc.setFontSize(14);
+      doc.text('Shipping Address:', 14, y);
+      y += 6;
+      doc.setFontSize(12);
+      const addr = order.shippingAddress;
+      doc.text(`${addr.name}`, 14, y);
+      doc.text(`${addr.line1}, ${addr.city}, ${addr.state}`, 14, y + 6);
+      doc.text(`${addr.postalCode}, ${addr.country}`, 14, y + 12);
+
+      y += 24;
+
+      // Bảng sản phẩm
+      const itemRows = order.orderItems.map((item) => {
+        let variantText: string;
+        try {
+          const variant =
+            typeof item.variant === 'string'
+              ? JSON.parse(item.variant)
+              : item.variant;
+          variantText = `${variant.color || ''} / Size ${variant.size || ''}`;
+        } catch {
+          variantText = item.variant!;
+        }
+        return [
+          item.productName,
+          variantText,
+          item.quantity,
+          item.price.toLocaleString('vi-VN'),
+          (item.price * item.quantity).toLocaleString('vi-VN'),
+        ];
+      });
+
+      autoTable(doc, {
+        startY: y,
+        head: [['Product', 'Variant', 'Quantity', 'Price', 'Total']],
+        body: itemRows,
+        styles: { fontSize: 10 },
+        headStyles: { fillColor: [52, 152, 219], textColor: 255 },
+        columnStyles: {
+          2: { halign: 'center' },
+          3: { halign: 'right' },
+          4: { halign: 'right' },
+        },
+      });
+
+      y = (doc as any).lastAutoTable.finalY + 10;
+
+      // Tổng tiền
+      doc.setDrawColor(200);
+      doc.line(14, y - 5, 196, y - 5);
+      doc.setFontSize(12);
+      doc.setFillColor(240, 240, 240); // nền xám nhẹ
+      doc.rect(140, y - 4, 56, 20, 'F');
+
+      doc.text('Subtotal:', 150, y);
+      doc.text(`${order.subtotal.toLocaleString('vi-VN')}₫`, 196, y, {
+        align: 'right',
+      });
+
+      doc.text('Shipping:', 150, y + 6);
+      doc.text(`${order.shippingPrice.toLocaleString('vi-VN')}₫`, 196, y + 6, {
+        align: 'right',
+      });
+
+      doc.setFontSize(14);
+      doc.setTextColor(40);
+      doc.text('Total:', 150, y + 14);
+      doc.text(`${order.total.toLocaleString('vi-VN')}₫`, 196, y + 14, {
+        align: 'right',
+      });
+
+      doc.save(`Order_${order.id}.pdf`);
     }
   }
 
