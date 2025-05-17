@@ -1,10 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  inject,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
@@ -22,7 +16,6 @@ import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { TagModule } from 'primeng/tag';
 import { DatePickerModule } from 'primeng/datepicker';
-import { Dialog } from 'primeng/dialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ConfirmDialog } from 'primeng/confirmdialog';
@@ -36,10 +29,7 @@ import {
   Discount,
   DiscountCode,
 } from '../../../shared/models/catalog/discount';
-import {
-  discountDateValidator,
-  discountUpdateDateValidator,
-} from '../../../shared/common/validator';
+import { discountUpdateDateValidator } from '../../../shared/common/validator';
 import { AuthService } from '../../../core/service/auth.service';
 
 @Component({
@@ -62,7 +52,6 @@ import { AuthService } from '../../../core/service/auth.service';
     RatingModule,
     RippleModule,
     IconFieldModule,
-    Dialog,
     Toast,
     ConfirmDialog,
     Checkbox,

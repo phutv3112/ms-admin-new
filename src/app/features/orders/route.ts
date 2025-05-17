@@ -9,7 +9,7 @@ export const orderRoutes: Route[] = [
   {
     path: '',
     component: OrdersComponent,
-    canActivate: [notAllowUserGuard],
+    canActivate: [notAllowUserGuard, analystGuard],
   },
   {
     path: 'details/:id',

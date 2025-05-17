@@ -52,7 +52,7 @@ export const routes: Routes = [
   {
     path: 'categories',
     component: CategoriesComponent,
-    canActivate: [notAllowUserGuard],
+    canActivate: [notAllowUserGuard, merchandiserGuard],
   },
 
   {

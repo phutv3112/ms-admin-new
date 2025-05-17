@@ -10,7 +10,7 @@ export const productRoutes: Route[] = [
   {
     path: '',
     component: ProductsComponent,
-    canActivate: [notAllowUserGuard],
+    canActivate: [notAllowUserGuard, merchandiserGuard],
   },
   {
     path: 'create',

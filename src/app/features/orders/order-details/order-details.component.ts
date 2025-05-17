@@ -296,50 +296,53 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
   async exportOrderToPdf() {
     const doc = new jsPDF();
+    doc.setFont('helvetica', 'normal'); // Hạn chế lỗi font tiếng Việt
     const order = this.order;
+    const marginLeft = 14;
+    let y = 20;
 
-    const logoUrl = '/images/logo.png';
+    // Logo
+    const logoUrl = '/images/ms-logo-no-bg.png';
     try {
       const logoBase64 = await this.getImageFromUrl(logoUrl);
-      doc.addImage(logoBase64, 'PNG', 14, 10, 30, 15);
-    } catch (error) {
-      console.error('Failed to load logo', error);
-    }
+      doc.addImage(logoBase64, 'PNG', marginLeft, y, 30, 15);
+    } catch (error) {}
 
     // Tiêu đề hóa đơn
-    doc.setFontSize(20);
-    doc.text('Order Invoice', 105, 20, { align: 'center' });
+    doc.setFontSize(18);
+    doc.text('ORDER INVOICE', 105, y + 10, { align: 'center' });
+    y += 25;
 
-    let y = 30;
     if (order) {
-      // Thông tin đơn hàng
-      doc.setFontSize(12);
-      doc.text(`Order ID: ${order.id}`, 14, y);
-      doc.text(
-        `Order Date: ${new Date(order.orderDate).toLocaleString()}`,
-        14,
-        y + 6
-      );
-      doc.text(`Status: ${order.status}`, 14, y + 12);
-      doc.text(`Buyer Email: ${order.buyerEmail}`, 14, y + 18);
+      // Thông tin đơn hàng & địa chỉ giao hàng
+      autoTable(doc, {
+        startY: y,
+        body: [
+          ['Order ID:', order.id],
+          ['Order Date:', new Date(order.orderDate).toLocaleString('vi-VN')],
+          ['Status:', order.status],
+          ['Buyer Email:', order.buyerEmail],
+          ['Shipping Name:', order.shippingAddress.name],
+          [
+            'Shipping Address:',
+            `${order.shippingAddress.line1}, ${order.shippingAddress.city}, ${order.shippingAddress.state}`,
+          ],
+          ['Postal/Zip:', order.shippingAddress.postalCode],
+          ['Country:', order.shippingAddress.country],
+        ],
+        theme: 'plain',
+        styles: { fontSize: 11, cellPadding: 2 },
+        columnStyles: {
+          0: { fontStyle: 'bold', cellWidth: 38 },
+          1: { cellWidth: 120 },
+        },
+      });
 
-      y += 30;
-
-      // Địa chỉ giao hàng
-      doc.setFontSize(14);
-      doc.text('Shipping Address:', 14, y);
-      y += 6;
-      doc.setFontSize(12);
-      const addr = order.shippingAddress;
-      doc.text(`${addr.name}`, 14, y);
-      doc.text(`${addr.line1}, ${addr.city}, ${addr.state}`, 14, y + 6);
-      doc.text(`${addr.postalCode}, ${addr.country}`, 14, y + 12);
-
-      y += 24;
+      y = (doc as any).lastAutoTable.finalY + 6;
 
       // Bảng sản phẩm
       const itemRows = order.orderItems.map((item) => {
-        let variantText: string;
+        let variantText = '';
         try {
           const variant =
             typeof item.variant === 'string'
@@ -347,12 +350,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
               : item.variant;
           variantText = `${variant.color || ''} / Size ${variant.size || ''}`;
         } catch {
-          variantText = item.variant!;
+          variantText = item.variant || '';
         }
         return [
           item.productName,
           variantText,
-          item.quantity,
+          item.quantity.toString(),
           item.price.toLocaleString('vi-VN'),
           (item.price * item.quantity).toLocaleString('vi-VN'),
         ];
@@ -362,40 +365,51 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
         startY: y,
         head: [['Product', 'Variant', 'Quantity', 'Price', 'Total']],
         body: itemRows,
-        styles: { fontSize: 10 },
-        headStyles: { fillColor: [52, 152, 219], textColor: 255 },
+        styles: { fontSize: 11, cellPadding: 2 },
+        headStyles: { fillColor: [76, 81, 191], textColor: 255 },
         columnStyles: {
-          2: { halign: 'center' },
-          3: { halign: 'right' },
-          4: { halign: 'right' },
+          0: { cellWidth: 60, halign: 'left' },
+          1: { cellWidth: 35, halign: 'center' },
+          2: { cellWidth: 25, halign: 'center' },
+          3: { cellWidth: 25, halign: 'right' },
+          4: { cellWidth: 25, halign: 'right' },
         },
+        theme: 'grid',
       });
 
-      y = (doc as any).lastAutoTable.finalY + 10;
+      y = (doc as any).lastAutoTable.finalY + 8;
 
       // Tổng tiền
-      doc.setDrawColor(200);
-      doc.line(14, y - 5, 196, y - 5);
-      doc.setFontSize(12);
-      doc.setFillColor(240, 240, 240); // nền xám nhẹ
-      doc.rect(140, y - 4, 56, 20, 'F');
-
-      doc.text('Subtotal:', 150, y);
-      doc.text(`${order.subtotal.toLocaleString('vi-VN')}₫`, 196, y, {
-        align: 'right',
+      autoTable(doc, {
+        startY: y,
+        body: [
+          ['Subtotal:', `${order.subtotal.toLocaleString('vi-VN')} VND`],
+          ['Shipping:', `${order.shippingPrice.toLocaleString('vi-VN')} VND`],
+          [
+            { content: 'Total:', styles: { fontStyle: 'bold', fontSize: 13 } },
+            {
+              content: `${order.total.toLocaleString('vi-VN')} VND`,
+              styles: { fontStyle: 'bold', fontSize: 13 },
+            },
+          ],
+        ],
+        theme: 'plain',
+        styles: { fontSize: 12, cellPadding: 2 },
+        columnStyles: {
+          0: { halign: 'right', cellWidth: 40 },
+          1: { halign: 'right', cellWidth: 35 },
+        },
+        tableLineWidth: 0,
       });
 
-      doc.text('Shipping:', 150, y + 6);
-      doc.text(`${order.shippingPrice.toLocaleString('vi-VN')}₫`, 196, y + 6, {
-        align: 'right',
-      });
+      // ...existing code...
+      y = (doc as any).lastAutoTable.finalY + 10;
 
-      doc.setFontSize(14);
-      doc.setTextColor(40);
-      doc.text('Total:', 150, y + 14);
-      doc.text(`${order.total.toLocaleString('vi-VN')}₫`, 196, y + 14, {
-        align: 'right',
-      });
+      // Footer
+      doc.setFont('times', 'normal');
+      doc.setFontSize(11);
+      doc.setTextColor(60, 60, 60);
+      doc.text('Thank you for your order!', 105, y, { align: 'right' });
 
       doc.save(`Order_${order.id}.pdf`);
     }
