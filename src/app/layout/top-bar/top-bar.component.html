@@ -9,7 +9,8 @@
     </div>
 
     <div class="layout-topbar-actions items-center">
-        <p-overlaybadge [value]="unreadCount" (click)="showNotification = true" class="cursor-pointer">
+        <p-overlaybadge [value]="unreadCount" *ngIf="role == 'admin'" (click)="showNotification = true"
+            class="cursor-pointer">
             <i class="pi pi-bell" style="font-size: 2rem"></i>
         </p-overlaybadge>
         <p-splitbutton [label]="userProfile.email" dropdownIcon="pi pi-user" [model]="items" />

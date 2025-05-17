@@ -134,7 +134,7 @@ export class TypesComponent implements OnInit {
     ];
   }
 
-  updateBrand() {
+  updateType() {
     this.isLoading = true;
     if (!this.editType.name || !this.userProfile?.userName) {
       this.messageService.add({

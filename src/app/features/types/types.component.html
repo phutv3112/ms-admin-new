@@ -139,7 +139,7 @@
 
 <!-- Edit inventory dialog -->
 <p-dialog header="Update Brand" [modal]="true" [(visible)]="editVisible" [style]="{ width: '40rem' }">
-    <form #brandUpdateForm="ngForm" (ngSubmit)="updateBrand()" novalidate>
+    <form #brandUpdateForm="ngForm" (ngSubmit)="updateType()" novalidate>
         <!-- Brand Name -->
         <div class="flex flex-col md:flex-row gap-6 my-4">
             <div class="flex flex-wrap gap-2 w-full">

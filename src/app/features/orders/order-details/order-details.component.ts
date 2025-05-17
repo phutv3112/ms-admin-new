@@ -50,8 +50,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
   showCancelButton = true;
   private subscription!: Subscription;
-  minutes = 10;
-  seconds = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -73,7 +71,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
         }
         if (this.order.status === 'PaymentReceived') {
           this.showCancelButton = true;
-          this.startCountdown(this.order);
         }
       });
     }
@@ -205,37 +202,6 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe();
-  }
-
-  startCountdown(order: Order) {
-    const orderDate = new Date(order.orderDate).getTime();
-    const now = Date.now();
-    const timePassed = Math.floor((now - orderDate) / 1000); // giây đã trôi qua
-    let timeLeft = 600 - timePassed;
-
-    if (timeLeft <= 0) {
-      this.showCancelButton = false;
-      return;
-    }
-
-    this.updateTime(timeLeft);
-
-    this.subscription = interval(1000).subscribe(() => {
-      timeLeft--;
-      if (timeLeft <= 0) {
-        this.showCancelButton = false;
-        if (this.subscription) {
-          this.subscription.unsubscribe();
-        }
-      } else {
-        this.updateTime(timeLeft);
-      }
-    });
-  }
-
-  updateTime(timeLeft: number) {
-    this.minutes = Math.floor(timeLeft / 60);
-    this.seconds = timeLeft % 60;
   }
 
   getStatusSeverity(status: string) {

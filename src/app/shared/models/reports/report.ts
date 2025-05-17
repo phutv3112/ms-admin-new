@@ -33,4 +33,17 @@ export interface AggregatedProductStatsResult {
   totalQuantity: number;
   totalRevenue: number;
   totalRefunded: number;
+  productStats: ProductStatSummary[];
+}
+export interface ProductStatSummary {
+  productId: string;
+  productName: string;
+  imageUrl: string;
+  brandName: string;
+  typeName: string;
+  price: number;
+  stock: number;
+  soldQuantity: number;
+  revenue: number;
+  refundedQuantity: number;
 }

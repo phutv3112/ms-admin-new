@@ -49,15 +49,17 @@ export class TopBarComponent implements OnInit {
   badgeCount: number = 0;
   showNotification: boolean = false;
 
+  role?: string = '';
+
   userProfile: any = null;
   visible: boolean = false;
   userProfileDetail: User = {
     id: '',
     userName: '',
-    fullName: 'Tran',
-    email: 'phu@gmail.com',
-    phoneNumber: '0969820123',
-    role: 'user',
+    fullName: '',
+    email: '',
+    phoneNumber: '',
+    role: '',
     address: {
       line1: '311 tran phu',
       line2: '',
@@ -117,6 +119,7 @@ export class TopBarComponent implements OnInit {
   loadUserProfile(email: string) {
     this.userService.getUserDetails(email).subscribe((data) => {
       this.userProfileDetail = data;
+      this.role = this.userProfileDetail.role;
     });
   }
 

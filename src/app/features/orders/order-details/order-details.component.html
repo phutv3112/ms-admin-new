@@ -87,13 +87,10 @@
     <!-- Tổng thanh toán -->
     <div class="flex"
         [ngClass]="(order.status === 'PaymentReceived' && showCancelButton) ? 'justify-between' : 'justify-end'">
-        @if(order.status === 'PaymentReceived' && showCancelButton){
+        @if(order.status === 'PaymentReceived'){
         <div>
             <p-button (click)="confirmRefund($event, order)" label="Refund" icon="pi pi-undo" severity="warn"
                 class="mx-2" />
-            <span *ngIf="minutes >= 0 && seconds >= 0">
-                ({{ minutes }}:{{ seconds | number: '2.0' }})
-            </span>
         </div>
 
         }

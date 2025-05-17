@@ -12,10 +12,12 @@ import {
   AggregatedProductStatsResult,
   OrderBrandTypeStat,
   OrderStatusStat,
+  ProductStatSummary,
 } from '../../../shared/models/reports/report';
 import { ChartModule } from 'primeng/chart';
 import { CategoryService } from '../../../core/service/category.service';
 import { map, of, switchMap } from 'rxjs';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-brand-type',
@@ -30,6 +32,7 @@ import { map, of, switchMap } from 'rxjs';
     FormsModule,
     Select,
     ChartModule,
+    RouterLink,
   ],
   templateUrl: './brand-type.component.html',
   styleUrl: './brand-type.component.scss',
@@ -42,6 +45,7 @@ export class BrandTypeComponent implements OnInit {
     totalQuantity: 0,
     totalRevenue: 0,
     totalRefunded: 0,
+    productStats: [],
   };
 
   date: Date | undefined = new Date();
@@ -62,6 +66,8 @@ export class BrandTypeComponent implements OnInit {
   types: string[] = [];
   selectedBrand!: string;
   selectedType!: string;
+
+  productStatSummary: ProductStatSummary[] = [];
 
   getDateFormat(): string {
     switch (this.filterType) {
@@ -105,6 +111,7 @@ export class BrandTypeComponent implements OnInit {
               totalQuantity: 0,
               totalRevenue: 0,
               totalRefunded: 0,
+              productStats: [],
             });
           }
 
@@ -115,8 +122,11 @@ export class BrandTypeComponent implements OnInit {
           );
         })
       )
-      .subscribe((result: AggregatedProductStatsResult) => {
+      .subscribe((result) => {
         this.resultStats = result;
+        this.productStatSummary = result.productStats.sort(
+          (a, b) => b.soldQuantity - a.soldQuantity
+        );
       });
   }
 }
