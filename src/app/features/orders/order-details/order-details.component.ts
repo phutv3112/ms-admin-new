@@ -260,9 +260,16 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
+  removeVietnameseTones(str: string): string {
+    return str
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd')
+      .replace(/Đ/g, 'D');
+  }
   async exportOrderToPdf() {
     const doc = new jsPDF();
-    doc.setFont('helvetica', 'normal'); // Hạn chế lỗi font tiếng Việt
+    doc.setFont('times', 'normal');
     const order = this.order;
     const marginLeft = 14;
     let y = 20;
@@ -276,7 +283,9 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
 
     // Tiêu đề hóa đơn
     doc.setFontSize(18);
-    doc.text('ORDER INVOICE', 105, y + 10, { align: 'center' });
+    doc.text(this.removeVietnameseTones('ORDER INVOICE'), 105, y + 10, {
+      align: 'center',
+    });
     y += 25;
 
     if (order) {
@@ -288,10 +297,15 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
           ['Order Date:', new Date(order.orderDate).toLocaleString('vi-VN')],
           ['Status:', order.status],
           ['Buyer Email:', order.buyerEmail],
-          ['Shipping Name:', order.shippingAddress.name],
+          [
+            'Shipping Name:',
+            this.removeVietnameseTones(order.shippingAddress.name),
+          ],
           [
             'Shipping Address:',
-            `${order.shippingAddress.line1}, ${order.shippingAddress.city}, ${order.shippingAddress.state}`,
+            this.removeVietnameseTones(
+              `${order.shippingAddress.line1}, ${order.shippingAddress.city}, ${order.shippingAddress.state}`
+            ),
           ],
           ['Postal/Zip:', order.shippingAddress.postalCode],
           ['Country:', order.shippingAddress.country],
@@ -299,9 +313,11 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
         theme: 'plain',
         styles: { fontSize: 11, cellPadding: 2 },
         columnStyles: {
-          0: { fontStyle: 'bold', cellWidth: 38 },
+          0: { fontStyle: 'bold', cellWidth: 50 },
           1: { cellWidth: 120 },
         },
+        tableLineWidth: 0.2,
+        tableLineColor: 200,
       });
 
       y = (doc as any).lastAutoTable.finalY + 6;
@@ -319,7 +335,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
           variantText = item.variant || '';
         }
         return [
-          item.productName,
+          this.removeVietnameseTones(item.productName),
           variantText,
           item.quantity.toString(),
           item.price.toLocaleString('vi-VN'),
@@ -334,7 +350,7 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
         styles: { fontSize: 11, cellPadding: 2 },
         headStyles: { fillColor: [76, 81, 191], textColor: 255 },
         columnStyles: {
-          0: { cellWidth: 60, halign: 'left' },
+          0: { cellWidth: 72, halign: 'left' },
           1: { cellWidth: 35, halign: 'center' },
           2: { cellWidth: 25, halign: 'center' },
           3: { cellWidth: 25, halign: 'right' },
@@ -343,39 +359,38 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
         theme: 'grid',
       });
 
-      y = (doc as any).lastAutoTable.finalY + 8;
+      // Sau khi autoTable bảng sản phẩm xong:
+      y = (doc as any).lastAutoTable.finalY + 10;
+      const rightX = marginLeft + 72 + 35 + 25 + 25 + 25; // = 184
 
-      // Tổng tiền
-      autoTable(doc, {
-        startY: y,
-        body: [
-          ['Subtotal:', `${order.subtotal.toLocaleString('vi-VN')} VND`],
-          ['Shipping:', `${order.shippingPrice.toLocaleString('vi-VN')} VND`],
-          [
-            { content: 'Total:', styles: { fontStyle: 'bold', fontSize: 13 } },
-            {
-              content: `${order.total.toLocaleString('vi-VN')} VND`,
-              styles: { fontStyle: 'bold', fontSize: 13 },
-            },
-          ],
-        ],
-        theme: 'plain',
-        styles: { fontSize: 12, cellPadding: 2 },
-        columnStyles: {
-          0: { halign: 'right', cellWidth: 40 },
-          1: { halign: 'right', cellWidth: 35 },
-        },
-        tableLineWidth: 0,
+      doc.setFont('times', 'bold');
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+
+      doc.text(
+        `Subtotal: ${order.subtotal.toLocaleString('vi-VN')} VND`,
+        rightX,
+        y,
+        { align: 'right' }
+      );
+      y += 7;
+      doc.text(
+        `Shipping: ${order.shippingPrice.toLocaleString('vi-VN')} VND`,
+        rightX,
+        y,
+        { align: 'right' }
+      );
+      y += 9;
+      doc.setFontSize(14);
+      doc.text(`Total: ${order.total.toLocaleString('vi-VN')} VND`, rightX, y, {
+        align: 'right',
       });
 
-      // ...existing code...
-      y = (doc as any).lastAutoTable.finalY + 10;
+      y += 12;
 
-      // Footer
-      doc.setFont('times', 'normal');
-      doc.setFontSize(11);
       doc.setTextColor(60, 60, 60);
-      doc.text('Thank you for your order!', 105, y, { align: 'right' });
+      doc.setFontSize(12);
+      doc.text('Thank you for your order!', 130, y, { align: 'right' });
 
       doc.save(`Order_${order.id}.pdf`);
     }
