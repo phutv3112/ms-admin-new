@@ -39,7 +39,7 @@
                 <th style="min-width: 12rem">
                     <div class="flex justify-between items-center">
                         Status
-                        <p-columnFilter field="isActived" matchMode="equals" display="menu">
+                        <p-columnFilter field="isActive" matchMode="equals" display="menu">
                             <ng-template #filter let-value let-filter="filterCallback">
                                 <p-select [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)"
                                     placeholder="Any" [style]="{ 'min-width': '12rem' }">
@@ -137,10 +137,9 @@
     </form>
 </p-dialog>
 
-<!-- Edit inventory dialog -->
+<!-- Edit product type dialog -->
 <p-dialog header="Update Brand" [modal]="true" [(visible)]="editVisible" [style]="{ width: '40rem' }">
     <form #brandUpdateForm="ngForm" (ngSubmit)="updateType()" novalidate>
-        <!-- Brand Name -->
         <div class="flex flex-col md:flex-row gap-6 my-4">
             <div class="flex flex-wrap gap-2 w-full">
                 <label for="brandName" class="font-semibold">Brand Name</label>
@@ -149,9 +148,16 @@
                     [ngClass]="{ 'p-invalid': brandNameRef.invalid && brandNameRef.touched }" />
             </div>
         </div>
-        <!-- Hiển thị lỗi -->
+
         <div *ngIf="brandNameRef.invalid && brandNameRef.touched" class="text-red-500 text-sm mb-2">
             Type name is required.
+        </div>
+        <!-- Is Active Checkbox -->
+        <div class="flex flex-col md:flex-row gap-6 my-4">
+            <div class="flex items-center gap-2">
+                <label for="isActive" class="font-semibold">Is Active</label>
+                <p-checkbox id="isActive" [(ngModel)]="editType.isActive" name="isActive" binary="true"></p-checkbox>
+            </div>
         </div>
 
         <!-- Actions -->

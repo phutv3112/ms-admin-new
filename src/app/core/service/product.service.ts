@@ -10,6 +10,7 @@ import {
   InventoryHistoryResponse,
   InventoryItem,
   Product,
+  ProductHistory,
   ProductLazyResponse,
   ProductReview,
   ProductTypeResponse,
@@ -106,6 +107,19 @@ export class ProductService {
     );
   }
 
+  changeProductStatus(productId: string, isActive: boolean, changedBy: string) {
+    return this.http.put(
+      `${this.baseUrl}/products/change-status/${productId}`,
+      { isActive, changedBy }
+    );
+  }
+
+  getProductHistory(productId: string) {
+    return this.http.get<{ histories: ProductHistory[] }>(
+      `${this.baseUrl}/products/history/${productId}`
+    );
+  }
+
   getInventories() {
     return this.http.get<{ inventoryItems: InventoryItem[] }>(
       `${this.baseUrl}/products/inventories`
@@ -170,7 +184,7 @@ export class ProductService {
       { name, changedBy }
     );
   }
-  updateType(id: string, name: string, changedBy: string) {
+  updateType(id: string, name: string, isActive: boolean, changedBy: string) {
     return this.http.put<boolean>(
       `${this.baseUrl}/products/manage/types/${id}`,
       { id, name, changedBy }

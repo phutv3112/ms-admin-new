@@ -21,12 +21,20 @@ import { RippleModule } from 'primeng/ripple';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { TagModule } from 'primeng/tag';
-import { InventoryHistoryResponse } from '../../../shared/models/catalog/product';
-import { ProductService } from '../../../core/service/product.service';
+import { Dialog } from 'primeng/dialog';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { Toast } from 'primeng/toast';
+import { ConfirmDialog } from 'primeng/confirmdialog';
+import { Tooltip } from 'primeng/tooltip';
+
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
+import { ProductHistory } from '../../../shared/models/catalog/product';
+import { ProductService } from '../../../core/service/product.service';
 
 @Component({
-  selector: 'app-inventory-history',
+  selector: 'app-product-history',
   standalone: true,
   imports: [
     TableModule,
@@ -45,40 +53,69 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
     RatingModule,
     RippleModule,
     IconFieldModule,
+    Toast,
+    ConfirmDialog,
     RouterLink,
   ],
-  templateUrl: './inventory-history.component.html',
-  styleUrl: './inventory-history.component.scss',
+  templateUrl: './product-history.component.html',
+  styleUrl: './product-history.component.scss',
 })
-export class InventoryHistoryComponent implements OnInit {
-  histories: InventoryHistoryResponse[] = [];
+export class ProductHistoryComponent implements OnInit {
+  histories: ProductHistory[] = [];
 
   private productService = inject(ProductService);
   private route = inject(ActivatedRoute);
 
-  inventoryId: string | null = null;
+  productId: string | null = null;
+
+  statuses: any[] = [];
+
+  totalRecords = 0;
 
   @ViewChild('filter') filter!: ElementRef;
 
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
-      this.inventoryId = params.get('id');
-      if (this.inventoryId) {
-        this.loadHistory(this.inventoryId);
+      this.productId = params.get('id');
+      if (this.productId) {
+        this.loadHistory(this.productId);
       }
     });
+
+    this.statuses = [
+      { label: 'Active', value: true },
+      { label: 'InActive', value: false },
+    ];
   }
 
   loadHistory(id: string) {
-    this.productService.getInventoryHistory(id).subscribe({
+    this.productService.getProductHistory(id).subscribe({
       next: (response) => {
         this.histories = response.histories;
-        console.log(this.histories);
+        this.totalRecords = response.histories.length;
       },
       error: (error) => {
-        console.error('Error loading inventory history', error);
+        console.error('Error loading product history', error);
       },
     });
+  }
+
+  exportExcel(table: Table) {
+    const worksheet = XLSX.utils.json_to_sheet(table.value);
+    const workbook = {
+      Sheets: { ProductHistory: worksheet },
+      SheetNames: ['ProductHistory'],
+    };
+
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    FileSaver.saveAs(blob, 'ProductHistory.xlsx');
   }
 
   formatCurrency(value: number) {

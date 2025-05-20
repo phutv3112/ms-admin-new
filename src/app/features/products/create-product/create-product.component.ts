@@ -17,6 +17,7 @@ import { ProductService } from '../../../core/service/product.service';
 import { ToastModule } from 'primeng/toast';
 import { Router, RouterLink } from '@angular/router';
 import { TextEditorComponent } from '../../../shared/components/text-editor/text-editor.component';
+import { AuthService } from '../../../core/service/auth.service';
 
 interface UploadEvent {
   originalEvent: Event;
@@ -49,9 +50,12 @@ interface UploadEvent {
 export class CreateProductComponent implements OnInit {
   private categoryService = inject(CategoryService);
   private productService = inject(ProductService);
+  private authService = inject(AuthService);
 
   productImages: File[] = [];
   productForm: FormGroup;
+
+  userProfile: any = null;
 
   productVariants: {
     color: string;
@@ -90,6 +94,7 @@ export class CreateProductComponent implements OnInit {
       productImages: [[]],
       variants: this.fb.array([]),
     });
+    this.userProfile = this.authService.userInfo;
   }
 
   isInvalid(field: string): boolean {
@@ -175,6 +180,7 @@ export class CreateProductComponent implements OnInit {
     formData.append('Brand', formValue.brand);
     formData.append('Type', formValue.type);
     formData.append('Stock', formValue.stock);
+    formData.append('CreatedBy', this.userProfile.userName);
 
     formValue.categories.forEach((category: Category) => {
       formData.append('Categories', category.name);

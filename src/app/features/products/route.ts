@@ -5,6 +5,7 @@ import { CreateProductComponent } from './create-product/create-product.componen
 import { merchandiserGuard } from '../../core/guards/merchandiser.guard';
 import { EditProductComponent } from './edit-product/edit-product.component';
 import { ReviewProductComponent } from './review-product/review-product.component';
+import { ProductHistoryComponent } from './product-history/product-history.component';
 
 export const productRoutes: Route[] = [
   {
@@ -25,6 +26,11 @@ export const productRoutes: Route[] = [
   {
     path: 'reviews/:id',
     component: ReviewProductComponent,
+    canActivate: [notAllowUserGuard, merchandiserGuard],
+  },
+  {
+    path: 'histories/:id',
+    component: ProductHistoryComponent,
     canActivate: [notAllowUserGuard, merchandiserGuard],
   },
 ];

@@ -36,6 +36,7 @@ import { BrandResponse } from '../../shared/models/catalog/product';
 import { ProductService } from '../../core/service/product.service';
 import { AuthService } from '../../core/service/auth.service';
 import { RouterLink } from '@angular/router';
+import { CheckboxModule } from 'primeng/checkbox';
 import { LoadingService } from '../../core/service/loading.service';
 import { Subscription } from 'rxjs';
 
@@ -64,6 +65,7 @@ import { Subscription } from 'rxjs';
     ConfirmDialog,
     Tooltip,
     FileUploadModule,
+    CheckboxModule,
   ],
   templateUrl: './brands.component.html',
   styleUrl: './brands.component.scss',

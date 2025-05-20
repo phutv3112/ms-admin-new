@@ -33,27 +33,27 @@
                         <span><p-sortIcon field="name" /> Name</span>
                     </div>
                 </th>
-                <th style="min-width: 12rem">
+                <th style="min-width: 10rem">
                     <div class="flex justify-between items-center">
                         Image
                     </div>
                 </th>
-                <th style="min-width: 12rem" pSortableColumn="price">
+                <th style="min-width: 10rem" pSortableColumn="price">
                     <div class="flex justify-between items-center">
                         <span><p-sortIcon field="price" /> Price</span>
                     </div>
                 </th>
-                <th style="min-width: 12rem">
+                <th>
                     <div class="flex justify-between items-center">
                         Brand
                     </div>
                 </th>
-                <th style="min-width: 12rem">
+                <th>
                     <div class="flex justify-between items-center">
                         Type
                     </div>
                 </th>
-                <th style="min-width: 12rem" pSortableColumn="stock">
+                <th style="min-width: 10rem" pSortableColumn="stock">
                     <div class="flex justify-between items-center">
                         <span><p-sortIcon field="stock" /> Stock</span>
                         <p-columnFilter type="numeric" field="stock" display="menu"
@@ -67,7 +67,10 @@
                             placeholder="Search by rating"></p-columnFilter>
                     </div>
                 </th>
-                <th style="min-width: 10rem; position: relative;">
+                <th>
+                    Status
+                </th>
+                <th>
                     Actions
                 </th>
             </tr>
@@ -96,7 +99,7 @@
                 <td>
                     {{ product.type}}
                 </td>
-                <td>
+                <td class="text-center-quantity">
                     <span class="font-semibold" *ngIf="product.stock > 0; else outOfStock">
                         {{ product.stock }}
                     </span>
@@ -120,11 +123,23 @@
                         </a>
                     </div>
                 </td>
+                <td class="text-center-quantity">
+                    <p-checkbox binary="true" [ngModel]="product.isActive"
+                        (onChange)="confirmStatusChange($event, product)">
+                    </p-checkbox>
+                </td>
                 <td>
-                    <p-button [routerLink]="['/products', product.id]" icon="pi pi-pencil" severity="info"
-                        class="mx-2" />
-                    <p-button (click)="confirmDelete($event, product.id)" severity="danger" [outlined]="true"
-                        icon="pi pi-trash" severity="danger" class="mx-2" />
+                    <div class="flex">
+                        <p-button pTooltip="See details" tooltipPosition="top" [routerLink]="['/products', product.id]"
+                            icon="pi pi-pencil" severity="info" class="mx-2" />
+                        <p-button pTooltip="Delete" tooltipPosition="top" (click)="confirmDelete($event, product.id)"
+                            severity="danger" [outlined]="true" icon="pi pi-trash" severity="danger" class="mx-2" />
+
+                        <p-button pTooltip="See histories" tooltipPosition="top"
+                            [routerLink]="['/products/histories',product.id]" severity="danger" [outlined]="true"
+                            icon="pi pi-history" severity="warn" class="mx-2" />
+                    </div>
+
                 </td>
             </tr>
         </ng-template>

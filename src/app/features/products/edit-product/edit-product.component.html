@@ -9,6 +9,9 @@
                         [routerLink]="['/products']"></p-button>
                     <p-button icon="pi pi-star" severity="warn" label="See reviews" class="mb-2 ml-2"
                         [routerLink]="['/products/reviews',productId]"></p-button>
+                    <p-button pTooltip="See histories" tooltipPosition="top"
+                        [routerLink]="['/products/histories',productId]" severity="danger" [outlined]="true"
+                        icon="pi pi-history" severity="warn" class="mx-2" />
                 </div>
             </div>
             <form [formGroup]="productForm" (ngSubmit)="submitForm()">
@@ -142,7 +145,7 @@
                                     maxFileSize="1000000" mode="basic" chooseIcon="pi pi-upload">
                                 </p-fileupload>
                                 <img [src]="primaryImageUrl" alt="Product Image"
-                                    class="w-auto max-w-32 h-24 object-cover rounded border border-gray-300" />
+                                    class="w-auto max-w-32 h-auto object-cover rounded border border-gray-300" />
                             </div>
                         </div>
 

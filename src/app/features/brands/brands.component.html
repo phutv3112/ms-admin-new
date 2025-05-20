@@ -44,7 +44,7 @@
                 <th style="min-width: 12rem">
                     <div class="flex justify-between items-center">
                         Status
-                        <p-columnFilter field="isActived" matchMode="equals" display="menu">
+                        <p-columnFilter field="isActive" matchMode="equals" display="menu">
                             <ng-template #filter let-value let-filter="filterCallback">
                                 <p-select [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)"
                                     placeholder="Any" [style]="{ 'min-width': '12rem' }">
@@ -186,8 +186,12 @@
         <div class="flex flex-col md:flex-row gap-6 my-4">
             <div class="flex flex-wrap gap-2 w-full">
                 <label for="brandImage" class="font-semibold">Brand Image</label>
+                <div *ngIf="editBrand.imageUrl" class="mb-2">
+                    <img [src]="editBrand.imageUrl" [alt]="editBrand.name" class="w-24 rounded border" />
+                    <div class="text-xs text-gray-500">Current image</div>
+                </div>
                 <p-fileupload class="w-full" name="brandImage" (onSelect)="onFileSelect($event)" accept="image/*"
-                    maxFileSize="1000000" mode="advanced">
+                    multiple="false" maxFileSize="1000000" mode="advanced">
                     <ng-template #empty>
                         <div>Drag and drop an image here to upload.</div>
                     </ng-template>
@@ -196,12 +200,12 @@
         </div>
 
         <!-- Is Active Checkbox -->
-        <!-- <div class="flex flex-col md:flex-row gap-6 my-4">
+        <div class="flex flex-col md:flex-row gap-6 my-4">
             <div class="flex items-center gap-2">
                 <label for="isActive" class="font-semibold">Is Active</label>
                 <p-checkbox id="isActive" [(ngModel)]="editBrand.isActive" name="isActive" binary="true"></p-checkbox>
             </div>
-        </div> -->
+        </div>
 
         <!-- Actions -->
         <div class="flex justify-end gap-2">

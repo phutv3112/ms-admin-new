@@ -18,8 +18,8 @@ import { ProductService } from '../../../core/service/product.service';
 import { ToastModule } from 'primeng/toast';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Product, ProductImage } from '../../../shared/models/catalog/product';
-import { LoadingService } from '../../../core/service/loading.service';
 import { environment } from '../../../../environments/environment';
+import { Tooltip } from 'primeng/tooltip';
 import {
   CKEditorModule,
   loadCKEditorCloud,
@@ -29,6 +29,7 @@ import type {
   ClassicEditor,
   EditorConfig,
 } from 'https://cdn.ckeditor.com/typings/ckeditor5.d.ts';
+import { AuthService } from '../../../core/service/auth.service';
 interface UploadEvent {
   originalEvent: Event;
   files: File[];
@@ -53,6 +54,7 @@ interface UploadEvent {
     ToastModule,
     RouterLink,
     CKEditorModule,
+    Tooltip,
   ],
   templateUrl: './edit-product.component.html',
   styleUrl: './edit-product.component.scss',
@@ -64,7 +66,7 @@ export class EditProductComponent implements OnInit {
   private fb = inject(FormBuilder);
   private messageService = inject(MessageService);
   private categoryService = inject(CategoryService);
-  private loadingService = inject(LoadingService);
+  private authService = inject(AuthService);
 
   private licenseKey = environment.CKEDITOR_GLOBAL_LICENSE_KEY;
 
@@ -73,7 +75,8 @@ export class EditProductComponent implements OnInit {
 
   productForm: FormGroup;
   productId: string | null = null;
-  //isLoading = false;
+
+  userProfile: any = null;
 
   categories: any[] = [];
   selectedCategories: Category[] = [];
@@ -104,6 +107,8 @@ export class EditProductComponent implements OnInit {
       productPrimaryImage: [],
       variants: this.fb.array([]),
     });
+
+    this.userProfile = this.authService.userInfo;
   }
   isInvalid(field: string): boolean {
     return (
@@ -246,6 +251,7 @@ export class EditProductComponent implements OnInit {
     formData.append('OriginalPrice', formValue.originalPrice);
     formData.append('Brand', formValue.brand);
     formData.append('Type', formValue.type);
+    formData.append('ChangedBy', this.userProfile.userName);
 
     formValue.categories.forEach((category: Category) => {
       formData.append('Categories', category.name);

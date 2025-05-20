@@ -22,6 +22,7 @@ export interface Product {
   stock: number;
   averageRating: number;
   totalReview: number;
+  isActive: boolean;
   imageUrls: ProductImage[];
   variants: ProductVariant[];
   categories: Category[];
@@ -39,6 +40,17 @@ export interface ProductVariant {
   size: string;
   additionalPrice: number;
   stock: number;
+}
+
+export interface ProductHistory {
+  productId: string;
+  nameProductName: string;
+  productImageUrl: string;
+  brand: string;
+  type: string;
+  changedBy: string;
+  action: string;
+  changedAt: Date;
 }
 
 export interface InventoryItem {

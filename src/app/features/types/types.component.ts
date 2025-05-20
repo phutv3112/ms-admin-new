@@ -32,6 +32,7 @@ import { ProductService } from '../../core/service/product.service';
 import { AuthService } from '../../core/service/auth.service';
 import { LoadingService } from '../../core/service/loading.service';
 import { Subscription } from 'rxjs';
+import { CheckboxModule } from 'primeng/checkbox';
 
 @Component({
   selector: 'app-types',
@@ -57,6 +58,7 @@ import { Subscription } from 'rxjs';
     Toast,
     ConfirmDialog,
     Tooltip,
+    CheckboxModule,
   ],
   templateUrl: './types.component.html',
   styleUrl: './types.component.scss',
@@ -148,6 +150,7 @@ export class TypesComponent implements OnInit {
       .updateType(
         this.editType.id,
         this.editType.name,
+        this.editType.isActive,
         this.userProfile?.userName
       )
       .subscribe({

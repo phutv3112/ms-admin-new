@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   inject,
@@ -20,6 +21,7 @@ import { RatingModule } from 'primeng/rating';
 import { RippleModule } from 'primeng/ripple';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
+import { Tooltip } from 'primeng/tooltip';
 import { TagModule } from 'primeng/tag';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
@@ -31,10 +33,11 @@ import {
 } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ConfirmDialog } from 'primeng/confirmdialog';
-import { Checkbox } from 'primeng/checkbox';
+import { Checkbox, CheckboxModule } from 'primeng/checkbox';
 import { Product } from '../../shared/models/catalog/product';
 import { ProductService } from '../../core/service/product.service';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../core/service/auth.service';
 
 @Component({
   selector: 'app-products',
@@ -59,6 +62,8 @@ import { Router, RouterLink } from '@angular/router';
     Toast,
     ConfirmDialog,
     RouterLink,
+    Tooltip,
+    CheckboxModule,
   ],
   templateUrl: './products.component.html',
   styleUrl: './products.component.scss',
@@ -70,13 +75,16 @@ export class ProductsComponent implements OnInit {
 
   private productService = inject(ProductService);
   private router = inject(Router);
-
-  statuses: any[] = [];
+  private authService = inject(AuthService);
 
   activityValues: number[] = [0, 100];
+  userProfile: any = null;
 
   totalRecords = 0;
   loading = false;
+
+  pendingStatusProduct: Product | null = null;
+  pendingStatusValue: boolean = false;
 
   searchTerm = '';
   sortField = '';
@@ -86,8 +94,11 @@ export class ProductsComponent implements OnInit {
 
   constructor(
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
-  ) {}
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
+  ) {
+    this.userProfile = this.authService.userInfo;
+  }
 
   ngOnInit() {
     this.productService.getAllProducts({ page: 0, pageSize: 10 });
@@ -96,11 +107,6 @@ export class ProductsComponent implements OnInit {
       this.totalRecords = data.totalCount;
       this.loading = false;
     });
-
-    this.statuses = [
-      { label: 'Active', value: true },
-      { label: 'InActive', value: false },
-    ];
   }
 
   loadProductsLazy(event: any) {
@@ -280,16 +286,69 @@ export class ProductsComponent implements OnInit {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
 
-  getSeverity(active: boolean) {
-    switch (active) {
-      case true:
-        return 'success';
+  confirmStatusChange(event: any, product: Product) {
+    // Lưu lại sản phẩm và trạng thái mới
+    this.pendingStatusProduct = product;
+    this.pendingStatusValue = event.checked;
 
-      case false:
-        return 'danger';
+    this.confirmationService.confirm({
+      message: `Are you sure you want to ${
+        event.checked ? 'activate' : 'deactivate'
+      } this product?`,
+      header: 'Confirm Status Change',
+      icon: 'pi pi-exclamation-triangle',
+      rejectLabel: 'Cancel',
+      rejectButtonProps: {
+        label: 'Cancel',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Yes',
+        severity: 'success',
+      },
+      accept: () => {
+        this.updateProductStatus();
+      },
+      reject: () => {
+        // Nếu từ chối, trả lại trạng thái cũ cho checkbox
+        if (this.pendingStatusProduct) {
+          this.pendingStatusProduct.isActive = !this.pendingStatusValue;
+          this.productService.getAllProducts({ page: 0, pageSize: 10 });
+          this.cdr.detectChanges(); // ép Angular cập nhật lại view
+        }
+      },
+    });
+  }
 
-      default:
-        return 'info';
-    }
+  updateProductStatus() {
+    if (!this.pendingStatusProduct) return;
+    this.productService
+      .changeProductStatus(
+        this.pendingStatusProduct.id,
+        this.pendingStatusValue,
+        this.userProfile.userName
+      )
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Product status updated successfully',
+          });
+          this.productService.getAllProducts({ page: 0, pageSize: 10 });
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to update product status',
+          });
+          // Nếu lỗi, trả lại trạng thái cũ cho checkbox
+          if (this.pendingStatusProduct) {
+            this.pendingStatusProduct.isActive = !this.pendingStatusValue;
+          }
+        },
+      });
   }
 }
