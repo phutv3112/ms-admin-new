@@ -26,6 +26,7 @@
 
         <ng-template #header>
             <tr>
+                <th>No#</th>
                 <th pSortableColumn="code">
                     <p-sortIcon field="code" /> Code
                     <p-columnFilter field="code" display="menu" placeholder="Search by code" />
@@ -84,8 +85,11 @@
             </tr>
         </ng-template>
 
-        <ng-template #body let-code>
+        <ng-template #body let-code let-index="rowIndex">
             <tr>
+                <td class="w-16">
+                    <p-tag [value]="'#' + (index + 1)" severity="info" styleClass="dark:!bg-surface-900" />
+                </td>
                 <td pInputText pTooltip="Go to coupon" tooltipPosition="top"
                     class="font-semibold cursor-pointer hover:underline"
                     [routerLink]="['/discounts/coupon/edit',code.id]">{{ code.code
@@ -93,7 +97,7 @@
                 <td pInputText pTooltip="Go to discount" tooltipPosition="top" class="cursor-pointer hover:underline"
                     [routerLink]="['/discounts', code.discountId]">{{
                     code.discountName }}</td>
-                <td class="font-semibold"><span *ngIf="code.type == '0'">Percentage</span>
+                <td><span *ngIf="code.type == '0'">Percentage</span>
                     <span *ngIf="code.type == '1'">Fixed Amount</span>
                 </td>
                 <td class="font-semibold">
