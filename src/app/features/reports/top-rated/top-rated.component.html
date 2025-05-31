@@ -54,7 +54,13 @@
                     </div>
                 <td class="font-semibold">{{ product.price | currency:'VND':'symbol':'1.0-0' }}
                 </td>
-                <td class="font-semibold">{{ product.stock}}
+                <td class="font-semibold">
+                    <span class="font-semibold" *ngIf="product.stock > 0; else outOfStock">
+                        {{ product.stock }}
+                    </span>
+                    <ng-template #outOfStock>
+                        <span class="bg-red-400 text-white p-1">Out of Stock</span>
+                    </ng-template>
                 </td>
                 <td class="font-semibold">{{ product.totalSold}}
                 </td>

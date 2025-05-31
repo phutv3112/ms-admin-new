@@ -28,11 +28,11 @@ export class MenuComponent {
         label: 'Catalog',
         items: [
           {
-            label: 'Products',
+            label: 'Product',
             icon: 'pi pi-fw pi-box',
             items: [
               {
-                label: 'List Product',
+                label: 'Products',
                 icon: 'pi pi-fw pi-bookmark',
                 routerLink: ['/products'],
               },
@@ -44,11 +44,11 @@ export class MenuComponent {
             ],
           },
           {
-            label: 'Categories',
+            label: 'Category',
             icon: 'pi pi-fw pi-list',
             items: [
               {
-                label: 'List Category',
+                label: 'Categories',
                 icon: 'pi pi-fw pi-bookmark',
                 routerLink: ['/categories'],
               },
@@ -82,11 +82,11 @@ export class MenuComponent {
             ],
           },
           {
-            label: 'Orders',
+            label: 'Order',
             icon: 'pi pi-fw pi-shopping-cart',
             items: [
               {
-                label: 'List Orders',
+                label: 'Orders',
                 icon: 'pi pi-fw pi-bookmark',
                 routerLink: ['/orders'],
               },

@@ -95,7 +95,7 @@ export class InventoryComponent implements OnInit {
     userName: '',
   };
 
-  reasonOptions = ['Restock', 'Inventory Adjustment', 'Damaged Items', 'Other'];
+  reasonOptions = ['Restock', 'Inventory Adjustment', 'Add new item', 'Other'];
 
   constructor(
     private confirmationService: ConfirmationService,

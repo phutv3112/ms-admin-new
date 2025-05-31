@@ -11,9 +11,15 @@ export const storekeeperGuard: CanActivateFn = (route, state) => {
   if (claims) {
     const roles = claims.role || claims.roles;
     if (Array.isArray(roles)) {
-      isAllowed = roles.includes('storekeeper') || roles.includes('admin');
+      isAllowed =
+        roles.includes('storekeeper') ||
+        roles.includes('admin') ||
+        roles.includes('merchandiser');
     } else if (typeof roles === 'string') {
-      isAllowed = roles === 'storekeeper' || roles === 'admin';
+      isAllowed =
+        roles === 'storekeeper' ||
+        roles === 'admin' ||
+        roles === 'merchandiser';
     }
   }
   if (!isAllowed) {
