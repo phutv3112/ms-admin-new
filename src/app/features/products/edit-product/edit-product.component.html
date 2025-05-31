@@ -180,6 +180,11 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- After preview section -->
+                        <div class="w-1/6 mt-8" *ngIf="variants.controls.length === 0">
+                            <p-button label="Update Inventory" icon="pi pi-box" (click)="showUpdateInventoryDialog()"
+                                severity="info" />
+                        </div>
 
                         <!-- Variant section -->
                         <div class="flex flex-col md:flex-row gap-6 my-4">
@@ -208,7 +213,13 @@
                                             formControlName="additionalPrice" class="w-full" />
                                     </div>
 
-                                    <p-button icon="pi pi-trash" severity="danger" (click)="removeVariant(i)" text />
+                                    <div class="flex gap-2 mt-3">
+
+                                        <p-button icon="pi pi-trash" pTooltip="Remove variant" tooltipPosition="top"
+                                            severity="danger" (click)="removeVariant(i)" text />
+                                        <p-button pTooltip="Update Inventory" tooltipPosition="top" icon="pi pi-box"
+                                            severity="info" (click)="showUpdateInventoryDialog(variant.value)" />
+                                    </div>
                                 </div>
                             </div>
 
@@ -227,3 +238,49 @@
         </div>
     </div>
 </p-fluid>
+
+<!-- Update inventory dialog -->
+<p-dialog header="Update Inventory" [modal]="true" [(visible)]="updateInventoryVisible"
+    [style]="{ width: '35rem', height: '300px' }">
+
+    <form #inventoryForm="ngForm" (ngSubmit)="updateProductInventory()" novalidate>
+        <!-- Quantity input -->
+        <div class="flex items-center gap-4 mb-4">
+            <label for="newQuantity" class="font-semibold w-24">Quantity</label>
+            <input pInputText id="newQuantity" type="number" [(ngModel)]="inventoryData.newQuantity" name="newQuantity"
+                class="flex-auto md:w-56" autocomplete="off" required #quantityRef="ngModel"
+                [ngClass]="{ 'p-invalid': quantityRef.invalid && quantityRef.touched }" />
+        </div>
+        <!-- Error display -->
+        <div *ngIf="quantityRef.invalid && quantityRef.touched" class="text-red-500 text-sm mb-2">
+            Quantity is required.
+        </div>
+
+        <!-- Reason dropdown -->
+        <div class="flex items-center gap-4 mb-6">
+            <label for="reason" class="font-semibold w-24">Reason</label>
+            <p-select [options]="reasonOptions" [(ngModel)]="inventoryData.reason" name="reason"
+                placeholder="Select a reason" class="md:w-56" display="chip" appendTo="body" required
+                #reasonRef="ngModel" [ngClass]="{ 'p-invalid': reasonRef.invalid && reasonRef.touched }">
+                <ng-template let-type #item>
+                    <div class="flex items-center gap-2">
+                        <div>{{ type }}</div>
+                    </div>
+                </ng-template>
+                <ng-template #dropdownicon>
+                    <i class="pi pi-angle-down"></i>
+                </ng-template>
+            </p-select>
+        </div>
+        <!-- Error display -->
+        <div *ngIf="reasonRef.invalid && reasonRef.touched" class="text-red-500 text-sm mb-2">
+            Reason is required.
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-end gap-2">
+            <p-button label="Cancel" severity="secondary" (click)="updateInventoryVisible = false" />
+            <p-button label="Update" type="submit" [disabled]="inventoryForm.invalid" />
+        </div>
+    </form>
+</p-dialog>

@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import {
+  AddOrUpdateInventory,
   BrandResponse,
   FilterProductRequest,
   InventoryById,
@@ -137,6 +138,12 @@ export class ProductService {
   }
   updateInventory(history: InventoryHistory) {
     return this.http.put(`${this.baseUrl}/products/inventory`, {
+      inventoryHistory: history,
+    });
+  }
+
+  addOrUpdateInventory(history: AddOrUpdateInventory) {
+    return this.http.put(`${this.baseUrl}/products/inventory/add-or-update`, {
       inventoryHistory: history,
     });
   }

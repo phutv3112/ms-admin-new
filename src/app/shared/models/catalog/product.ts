@@ -73,6 +73,13 @@ export interface InventoryHistory {
   reason: string;
   userName: string;
 }
+export interface AddOrUpdateInventory {
+  productId: string;
+  variantId?: string;
+  newQuantity: number;
+  reason: string;
+  userName: string;
+}
 export interface InventoryHistoryResponse {
   id: string;
   inventoryId: string;

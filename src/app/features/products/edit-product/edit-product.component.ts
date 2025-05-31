@@ -17,7 +17,11 @@ import { MessageService } from 'primeng/api';
 import { ProductService } from '../../../core/service/product.service';
 import { ToastModule } from 'primeng/toast';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Product, ProductImage } from '../../../shared/models/catalog/product';
+import {
+  AddOrUpdateInventory,
+  Product,
+  ProductImage,
+} from '../../../shared/models/catalog/product';
 import { environment } from '../../../../environments/environment';
 import { Tooltip } from 'primeng/tooltip';
 import {
@@ -30,6 +34,7 @@ import type {
   EditorConfig,
 } from 'https://cdn.ckeditor.com/typings/ckeditor5.d.ts';
 import { AuthService } from '../../../core/service/auth.service';
+import { Dialog } from 'primeng/dialog';
 interface UploadEvent {
   originalEvent: Event;
   files: File[];
@@ -55,6 +60,7 @@ interface UploadEvent {
     RouterLink,
     CKEditorModule,
     Tooltip,
+    Dialog,
   ],
   templateUrl: './edit-product.component.html',
   styleUrl: './edit-product.component.scss',
@@ -91,6 +97,21 @@ export class EditProductComponent implements OnInit {
   uploadedFiles: any[] = [];
   productImages: ProductImage[] = [];
   productSecondImages: ProductImage[] = [];
+
+  updateInventoryVisible: boolean = false;
+  inventoryData: {
+    productId: string;
+    variantId?: string;
+    newQuantity: number;
+    reason: string;
+  } = {
+    productId: '',
+    variantId: '',
+    newQuantity: 0,
+    reason: '',
+  };
+
+  reasonOptions = ['Restock', 'Inventory Adjustment', 'Add new item', 'Other'];
 
   constructor(private router: Router) {
     this.productForm = this.fb.group({
@@ -422,5 +443,60 @@ export class EditProductComponent implements OnInit {
         resizeUnit: 'px',
       },
     };
+  }
+
+  // Show dialog when button is clicked
+  showUpdateInventoryDialog(variant?: any) {
+    this.updateInventoryVisible = true;
+
+    // Reset the form data
+    this.inventoryData = {
+      productId: this.productId!,
+      variantId: variant ? variant.id : null,
+      newQuantity: 0,
+      reason: '',
+    };
+  }
+
+  updateProductInventory() {
+    if (!this.inventoryData.productId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Product ID is required',
+      });
+      return;
+    }
+
+    const inventoryUpdate: AddOrUpdateInventory = {
+      productId: this.inventoryData.productId,
+      variantId: this.inventoryData.variantId,
+      newQuantity: this.inventoryData.newQuantity,
+      reason: this.inventoryData.reason,
+      userName: this.userProfile.userName,
+    };
+
+    this.productService.addOrUpdateInventory(inventoryUpdate).subscribe({
+      next: (response) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Inventory updated successfully',
+        });
+        this.updateInventoryVisible = false;
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.message || 'Failed to update inventory',
+        });
+      },
+      complete: () => {
+        setTimeout(() => {
+          this.router.navigateByUrl('/inventories');
+        }, 1000);
+      },
+    });
   }
 }
