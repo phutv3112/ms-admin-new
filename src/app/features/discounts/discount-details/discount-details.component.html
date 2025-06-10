@@ -63,6 +63,21 @@
                 <p-button label="Save" (click)="updateDiscount()" [disabled]="discountForm.invalid" />
             </div>
 
+            <!-- Image Upload -->
+            <div class="col-span-12 mt-4">
+                <label class="block font-semibold mb-1">Discount Images</label>
+                <div class="mb-4">
+                    <p-button icon="pi pi-images" label="Add Images" (click)="openImageUploadDialog()"></p-button>
+
+                    <!-- Preview existing images -->
+                    <div *ngIf="discount.images && discount.images.length > 0" class="flex flex-wrap gap-2 mt-2">
+                        <div *ngFor="let img of discount.images" class="relative">
+                            <img [src]="img.imageUrl" alt="discount-image" class="w-16 h-16 object-cover rounded" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </form>
     </div>
 
@@ -205,5 +220,42 @@
     </div>
 
 </div>
+
+<!-- Add this at the end of the file, just before the closing </div> tag -->
+<p-dialog header="Upload Discount Images" [(visible)]="displayImageDialog" [style]="{width: '500px'}" [modal]="true"
+    [draggable]="false" [resizable]="false">
+    <div class="p-fluid">
+        <!-- File Upload -->
+        <p-fileUpload mode="basic" [multiple]="true" accept="image/*" [maxFileSize]="1000000"
+            chooseLabel="Select Images" [customUpload]="true" (onSelect)="onFileSelect($event)" class="mb-2">
+        </p-fileUpload>
+        <div class="text-center mb-3">
+            <small class="text-gray-500">Add up to 5 photos (max 1MB each)</small>
+        </div>
+
+        <div *ngIf="fileError" class="text-red-600 text-xs mt-1 mb-3">
+            {{fileError}}
+        </div>
+
+        <!-- Preview images -->
+        <div *ngIf="uploadedFiles.length > 0" class="flex flex-wrap gap-2 mt-2 mb-4">
+            <div *ngFor="let file of uploadedFiles; let i = index" class="relative">
+                <img [src]="file | safeUrl" alt="discount-image" class="w-16 h-16 object-cover rounded" />
+                <button type="button"
+                    class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                    (click)="removeFile(i)">
+                    <i class="pi pi-times text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <p-button icon="pi pi-times" label="Cancel" (click)="closeImageDialog()" styleClass="p-button-text"></p-button>
+        <p-button icon="pi pi-upload" label="Upload" [disabled]="uploadedFiles.length === 0" (click)="uploadImages()"
+            [loading]="uploading"></p-button>
+    </ng-template>
+</p-dialog>
+
 <p-toast />
 <p-confirmdialog />

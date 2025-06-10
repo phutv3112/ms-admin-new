@@ -23,6 +23,7 @@ import { Checkbox } from 'primeng/checkbox';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FloatLabel } from 'primeng/floatlabel';
 import { TextareaModule } from 'primeng/textarea';
+import { FileUploadModule } from 'primeng/fileupload';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DiscountService } from '../../../core/service/discount.service';
 import {
@@ -31,6 +32,8 @@ import {
 } from '../../../shared/models/catalog/discount';
 import { discountUpdateDateValidator } from '../../../shared/common/validator';
 import { AuthService } from '../../../core/service/auth.service';
+import { SafeUrlPipe } from '../../../shared/pipes/safe-url.pipe';
+import { DialogModule } from 'primeng/dialog';
 
 @Component({
   selector: 'app-discount-details',
@@ -60,6 +63,9 @@ import { AuthService } from '../../../core/service/auth.service';
     DatePickerModule,
     TextareaModule,
     ReactiveFormsModule,
+    FileUploadModule,
+    SafeUrlPipe,
+    DialogModule,
   ],
   templateUrl: './discount-details.component.html',
   styleUrl: './discount-details.component.scss',
@@ -71,6 +77,12 @@ export class DiscountDetailsComponent implements OnInit {
   @ViewChild('filter') filter!: ElementRef;
   id: string = '';
   userProfile: any = null;
+
+  // Add these properties to your component class
+  uploadedFiles: File[] = [];
+  fileError: string | null = null;
+  displayImageDialog: boolean = false;
+  uploading: boolean = false;
 
   statuses: any[] = [];
   discountTypes: any[] = [];
@@ -133,6 +145,30 @@ export class DiscountDetailsComponent implements OnInit {
     ];
   }
 
+  loadDiscountDetails() {
+    this.discountService.getDiscountById(this.id).subscribe({
+      next: (data) => {
+        this.discount = data;
+        // Set form values with the fetched data
+        this.discountForm.patchValue({
+          name: this.discount.name,
+          description: this.discount.description,
+          startDate: new Date(this.discount.startDate),
+          endDate: new Date(this.discount.endDate),
+          isActive: this.discount.isActive,
+        });
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load discount details',
+        });
+        console.error('Error loading discount details:', error);
+      },
+    });
+  }
+
   updateDiscount() {
     if (this.discountForm.invalid) return;
     if (this.userProfile) {
@@ -165,6 +201,70 @@ export class DiscountDetailsComponent implements OnInit {
         },
       });
     }
+  }
+
+  // Add these methods to your component class
+  openImageUploadDialog() {
+    this.displayImageDialog = true;
+    this.uploadedFiles = [];
+    this.fileError = null;
+  }
+
+  closeImageDialog() {
+    this.displayImageDialog = false;
+    this.uploadedFiles = [];
+    this.fileError = null;
+  }
+
+  onFileSelect(event: any) {
+    const files = event.files;
+    this.fileError = null;
+
+    // Check file limit
+    if (this.uploadedFiles.length + files.length > 5) {
+      this.fileError = 'You can only upload up to 5 images';
+      return;
+    }
+
+    // Add files to the list
+    this.uploadedFiles = [...this.uploadedFiles, ...files];
+  }
+
+  removeFile(index: number) {
+    this.uploadedFiles = this.uploadedFiles.filter((_, i) => i !== index);
+  }
+
+  uploadImages() {
+    if (this.uploadedFiles.length === 0) return;
+
+    this.uploading = true;
+
+    this.discountService
+      .updateDiscountImages(this.id, this.uploadedFiles)
+      .subscribe({
+        next: (response) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Images uploaded successfully',
+          });
+
+          // Refresh discount data to show newly uploaded images
+          this.loadDiscountDetails();
+
+          this.uploading = false;
+          this.closeImageDialog();
+        },
+        error: (error) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to upload images',
+          });
+          console.error('Error uploading images:', error);
+          this.uploading = false;
+        },
+      });
   }
 
   formatCurrency(value: number) {

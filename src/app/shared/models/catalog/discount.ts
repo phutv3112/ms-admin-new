@@ -9,6 +9,13 @@ export interface Discount {
   updatedDate: Date;
   createdBy: string;
   updatedBy: string;
+  images?: DiscountImage[] | null;
+}
+
+export interface DiscountImage {
+  imageUrl: string;
+  publicId: string;
+  isDisplay: boolean;
 }
 
 export interface DiscountRequest {

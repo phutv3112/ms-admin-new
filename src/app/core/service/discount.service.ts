@@ -41,6 +41,27 @@ export class DiscountService {
     );
   }
 
+  updateDiscountImages(id: string, images?: File[]): Observable<any> {
+    const formData = new FormData();
+
+    if (images && images.length > 0) {
+      for (let i = 0; i < images.length; i++) {
+        formData.append('Images', images[i], images[i].name);
+      }
+    }
+    formData.forEach((value, key) => {
+      console.log(
+        `FormData: ${key} = ${value instanceof File ? value.name : value}`
+      );
+    });
+
+    return this.http.post(this.baseUrl + '/discounts/images/' + id, formData);
+  }
+
+  clearDiscountImages(id: string): Observable<any> {
+    return this.http.delete(this.baseUrl + `/discounts/${id}/images`);
+  }
+
   // Coupons
   createDiscountCode(discountCode: CreateDiscountCode): Observable<any> {
     return this.http.post(`${this.baseUrl}/discounts/coupons`, discountCode);
