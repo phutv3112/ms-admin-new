@@ -75,6 +75,13 @@
                             <img [src]="img.imageUrl" alt="discount-image" class="w-16 h-16 object-cover rounded" />
                         </div>
                     </div>
+
+                    <!-- Clear All Images Button - Add this -->
+                    <div *ngIf="discount.images && discount.images.length > 0" class="mt-2">
+                        <p-button icon="pi pi-trash" label="Clear All Images" severity="danger" [outlined]="true"
+                            (click)="confirmClearImages()">
+                        </p-button>
+                    </div>
                 </div>
             </div>
 

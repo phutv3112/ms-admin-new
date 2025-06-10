@@ -357,4 +357,50 @@ export class DiscountDetailsComponent implements OnInit {
       },
     });
   }
+
+  // Add these methods to your component class
+  confirmClearImages() {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete all images for this discount?',
+      header: 'Confirm',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Yes',
+      rejectLabel: 'No',
+      acceptButtonProps: {
+        label: 'Yes',
+        severity: 'danger',
+      },
+      rejectButtonProps: {
+        label: 'No',
+        severity: 'secondary',
+        outlined: true,
+      },
+      accept: () => {
+        this.clearAllImages();
+      },
+    });
+  }
+
+  clearAllImages() {
+    this.discountService.clearDiscountImages(this.id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'All images have been removed',
+        });
+
+        // Refresh discount data to update the UI
+        this.loadDiscountDetails();
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to remove images',
+        });
+        console.error('Error clearing images:', error);
+      },
+    });
+  }
 }
